@@ -1,0 +1,11 @@
+GridBackground
+{
+    /* 격자 배경색 */
+    --grid-background-color: rgb(40, 40, 40);
+    /* 격자 라인 색 */
+    --line-color: rgba(51, 51, 51, 0.4);
+    /* 격자 주라인 색 */
+    --thick-line-color: rgba(51, 51, 51, 1.0);
+    /* 격자 간격 */
+    --spacing: 25;
+}

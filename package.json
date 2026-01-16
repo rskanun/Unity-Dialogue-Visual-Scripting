@@ -1,0 +1,11 @@
+{
+  "name": "com.rskanun.dialogue-visual-scripting",
+  "version": "1.0.0",
+  "displayName": "Dialogue Visual Scripting",
+  "description": "A visual tool for designing dialogue flows and converting them into object-based data for Unity.",
+  "unity": "2021.3",
+  "author": {
+    "name": "Rskanun",
+    "url": "https://github.com/rskanun"
+  }
+}

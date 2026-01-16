@@ -1,0 +1,122 @@
+/* Node Style */
+.line-node__IMGUI-textfield
+{
+    min-width: 100px;
+    max-width: 320px;
+}
+
+.line-node__IMGUI-textfield:focus
+{
+    background-color: #1D1D1E;
+    border-color: #27292C;
+}
+
+.line-node__IMGUI-container
+{
+    border-color: rgba(0,0,0,0);
+    border-width: 1px;
+}
+
+.line-node__extension-container
+{
+    background-color: #3A3A3A;
+    padding: 5px 2px;
+}
+
+.line-node__extension-container > .unity-base-field
+{
+    padding: 1px 0px;
+}
+
+.line-node__textfield > .unity-text-field__input
+{
+    background-color: #1D1D1E;
+    border-color: #ffffff;
+    border-radius: 4px;
+    max-width: 240px;
+    min-width: 160px;
+    padding: 8px;
+}
+
+.line-node__textfield__hidden > .unity-text-field__input
+{
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.line-node__textfield__hidden > .unity-text-field__input:focus
+{
+    background-color: #1D1D1E;
+    border-color: #27292C;
+}
+
+.line-node__filename-textfield > .unity-text-field__input
+{
+    width: 500px;
+}
+
+.line-node__filename-textfield > .unity-text-field__input:focus
+{
+    margin: 4px;
+    padding: 4px;
+}
+
+.line-node__integerfield > .unity-integer-field__input
+{
+    width: 60px;
+}
+
+/* Text Node Style (Reference: https://www.youtube.com/watch?v=A0amLS4LWyc) */
+
+.line-node__name-dropdown > .unity-popup-field__input
+{
+    min-width: 120px;
+}
+
+.line-node__dialogue-field
+{
+    flex-direction: column;
+}
+
+.line-node__dialogue-field > .unity-label
+{
+    padding: 0 0 4px 0;
+}
+
+/* Select Node Style */
+
+.line-node__select-textfield > .line-node__IMGUI-container
+{
+    width: 100px;
+}
+
+/* Image Node Style */
+
+.line-node__image-vectorfield .unity-composite-field__field > .unity-base-field__input
+{
+    min-width: 40px;
+}
+
+.line-node__image-vectorfield > .unity-vector2-field__input
+{
+    width: 150px;
+}
+
+.line-node__image-vectorfield .unity-composite-field__field-spacer
+{
+    display: none;
+}
+
+/* LineNode Field Style */
+.line-node__nodefield
+{
+    min-width: 100px;
+}
+
+.line-node__nodefield > .unity-object-field__object
+{
+    padding: 0 0 0 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
