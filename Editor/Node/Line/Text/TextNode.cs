@@ -1,223 +1,232 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEngine.UIElements;
 
-public class TextNode : LineNode, ILineProvider
+namespace Rskanun.DialogueVisualScripting.Editor
 {
-    private DropdownField nameDropdownField;
-    private IMGUI_TextField nameField;
-    private IMGUI_TextField dialogueField;
-
-    private string noneLabel = "None";
-    private string speakerKey; // 마지막으로 사용 가능했던 이름 키
-    private bool hasDialogueKeyError;
-
-    public string dialogue => dialogueField.value;
-    public string speaker
+    [NodeMenu("Text", Order = 1)]
+    public class TextNode : LineNode, ILineProvider
     {
-        get
-        {
-            var useLocalization = VisualScriptingSettings.Instance.UseLocalization;
+        private DropdownField nameDropdownField;
+        private IMGUI_TextField nameField;
+        private IMGUI_TextField dialogueField;
 
-            return useLocalization ? nameDropdownField.value : nameField.value;
-        }
-    }
+        private string noneLabel = "None";
+        private string speakerKey; // 마지막으로 사용 가능했던 이름 키
+        private bool hasDialogueKeyError;
 
-    public TextNode() : base() { }
-    public TextNode(string guid) : base(guid) { }
-    public TextNode(NodeData data) : base(data)
-    {
-        // 다운케스팅이 불가능한 경우
-        if (data is not TextNodeData textNodeData)
+        public string dialogue => dialogueField.value;
+        public string speaker
         {
-            // 타이틀과 위치만 설정
-            return;
+            get
+            {
+                var useLocalization = VisualScriptingSettings.UseLocalization;
+
+                return useLocalization ? nameDropdownField.value : nameField.value;
+            }
         }
 
-        // 대화 대상의 이름 등록
-        SetSpeakerName(textNodeData.speakerKey, textNodeData.speaker);
-
-        // 대사 등록
-        SetDialogue(textNodeData.dialogueKey, textNodeData.dialogue);
-    }
-
-    private void SetSpeakerName(string key, string value)
-    {
-        speakerKey = key;
-
-        // 이름이 없는 경우
-        if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(value))
+        public TextNode() : base() { }
+        public TextNode(string guid) : base(guid) { }
+        public TextNode(NodeData data) : base(data)
         {
-            // 드롭다운의 값에만 null 표시
+            // 다운케스팅이 불가능한 경우
+            if (data is not TextNodeData textNodeData)
+            {
+                // 타이틀과 위치만 설정
+                return;
+            }
+
+            // 대화 대상의 이름 등록
+            SetSpeakerName(textNodeData.speakerKey, textNodeData.speaker);
+
+            // 대사 등록
+            SetDialogue(textNodeData.dialogueKey, textNodeData.dialogue);
+        }
+
+        private void SetSpeakerName(string key, string value)
+        {
+            speakerKey = key;
+
+            // 이름이 없는 경우
+            if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(value))
+            {
+                // 드롭다운의 값에만 null 표시
+                nameDropdownField.value = noneLabel;
+                return;
+            }
+
+            // 현재 설정된 테이블 가져오기
+            var state = VisualScriptingGraphState.Instance;
+            var entry = state.nameTable?.GetEntry(key);
+            var useLocalization = VisualScriptingSettings.UseLocalization;
+            var dropdownValue = (entry != null) ? entry.Value : $"Error: key({key}) is not found"; // 키 값에 맞는 값이 없다면 오류를 이름으로 설정
+            var textValue = (useLocalization && entry != null) ? entry.Value : value; // 키 값으로 가져올 이름이 있는 경우에만 해당 이름 사용(그 외엔 저장 당시의 이름 사용)
+
+            // 이름 값 설정
+            nameDropdownField.SetValueWithoutNotify(dropdownValue);
+            nameField.SetValueWithoutNotify(textValue);
+
+            // 오류 여부 수정
+            hasDialogueKeyError = (entry == null);
+        }
+
+        private void SetDialogue(string key, string value)
+        {
+            // 키 값을 통해 대사 받아오기
+            var state = VisualScriptingGraphState.Instance;
+            var entry = state.dialogueTable?.GetEntry(key);
+            var useLocalization = VisualScriptingSettings.UseLocalization;
+            var text = (entry != null) ? entry.Value : $"Error: key({key}) is not found";
+
+            // 대사 값 설정(로컬라이제이션을 사용하지 않는 경우 저장 당시의 값 사용)
+            dialogueField.SetValueWithoutNotify((useLocalization && !string.IsNullOrEmpty(value)) ? text : value);
+        }
+
+        public Line ToLine()
+        {
+            var data = ToData() as TextNodeData;
+
+            var useLocalization = VisualScriptingSettings.UseLocalization;
+            var name = useLocalization ? data.speakerKey : data.speaker;
+            var dialogue = useLocalization ? data.dialogueKey : data.dialogue;
+
+            return new TextLine(data.guid, name, dialogue);
+        }
+
+        public override NodeData ToData()
+        {
+            var data = new TextNodeData();
+
+            data.guid = guid;
+            data.name = nodeName;
+            data.pos = position;
+            data.speakerKey = GetSpeakerKey();
+            data.speaker = speaker == noneLabel ? "" : speaker;
+            data.dialogueKey = GetDialogueKey();
+            data.dialogue = dialogue;
+
+            return data;
+        }
+
+        private string GetSpeakerKey()
+        {
+            var nameTable = VisualScriptingGraphState.Instance.nameTable;
+
+            // 테이블이 설정되어 있지 않는 경우 키 값 X
+            if (nameTable == null) return null;
+
+            return nameTable.Values
+                        .Where(e => e.Value == speaker)
+                        .Select(e => e.Key)
+                        .FirstOrDefault();
+        }
+
+        private string GetDialogueKey()
+        {
+            return $"{VisualScriptingSettings.DialogueKeyPrefix}_{guid}";
+        }
+
+        protected override void OnEnable()
+        {
+            // 전체 설정값이 바뀌는 경우의 이벤트 설정
+            VisualScriptingSettings.OnSettingChanged += UpdateNameFieldType;
+
+            // 현제 파일의 설정값이 바뀌는 경우의 이벤트 설정
+            VisualScriptingGraphState.OnSettingChanged += UpdateNameField;
+            VisualScriptingGraphState.OnSettingChanged += UpdateDialogueField;
+        }
+
+        protected override void OnDisable()
+        {
+            // 이벤트 해제
+            VisualScriptingSettings.OnSettingChanged -= UpdateNameFieldType;
+            VisualScriptingGraphState.OnSettingChanged -= UpdateNameField;
+            VisualScriptingGraphState.OnSettingChanged -= UpdateDialogueField;
+        }
+
+        public override void Draw()
+        {
+            base.Draw();
+
+            var setting = VisualScriptingSettings.Instance;
+
+            // Input 연결 추가
+            var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
+            inputPort.portName = "Prev";
+            inputContainer.Add(inputPort);
+
+            // Output 연결 추가
+            var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+            outputPort.portName = "Next";
+            outputContainer.Add(outputPort);
+
+            // 이름 선택 드롭다운 추가(아래의 업데이트에서 목록 설정)
+            nameDropdownField = new DropdownField("Name", new List<string>(), 0);
             nameDropdownField.value = noneLabel;
-            return;
+            nameDropdownField.RegisterValueChangedCallback(evt =>
+            {
+                speakerKey = GetSpeakerKey();
+                NotifyModified();
+            });
+            nameDropdownField.AddToClassList("line-node__name-dropdown");
+            extensionContainer.Add(nameDropdownField);
+
+            // 로컬라이제이션을 사용하지 않는 경우 이름을 적을 필드 추가
+            nameField = new IMGUI_TextField("Name");
+            nameField.RegisterValueChangedCallback(evt =>
+            {
+                speakerKey = GetSpeakerKey();
+                NotifyModified();
+            });
+            extensionContainer.Add(nameField);
+
+            // 대사 선택 요소 추가(guid를 통해 Localization를 삽입 및 수정하는 방식)
+            dialogueField = new IMGUI_TextField("Dialogue Text");
+            dialogueField.multiline = true;
+            dialogueField.RegisterValueChangedCallback(evt => NotifyModified());
+            dialogueField.AddToClassList("line-node__dialogue-field");
+            extensionContainer.Add(dialogueField);
+
+            // 이름 요소 display 업데이트
+            UpdateNameField();
+
+            RefreshExpandedState();
         }
 
-        // 현재 설정된 테이블 가져오기
-        var state = VisualScriptingGraphState.Instance;
-        var entry = state.nameTable?.GetEntry(key);
-        var useLocalization = VisualScriptingSettings.Instance.UseLocalization;
-        var dropdownValue = (entry != null) ? entry.Value : $"Error: key({key}) is not found"; // 키 값에 맞는 값이 없다면 오류를 이름으로 설정
-        var textValue = (useLocalization && entry != null) ? entry.Value : value; // 키 값으로 가져올 이름이 있는 경우에만 해당 이름 사용(그 외엔 저장 당시의 이름 사용)
-
-        // 이름 값 설정
-        nameDropdownField.SetValueWithoutNotify(dropdownValue);
-        nameField.SetValueWithoutNotify(textValue);
-
-        // 오류 여부 수정
-        hasDialogueKeyError = (entry == null);
-    }
-
-    private void SetDialogue(string key, string value)
-    {
-        // 키 값을 통해 대사 받아오기
-        var state = VisualScriptingGraphState.Instance;
-        var entry = state.dialogueTable?.GetEntry(key);
-        var useLocalization = VisualScriptingSettings.Instance.UseLocalization;
-        var text = (entry != null) ? entry.Value : $"Error: key({key}) is not found";
-
-        // 대사 값 설정(로컬라이제이션을 사용하지 않는 경우 저장 당시의 값 사용)
-        dialogueField.SetValueWithoutNotify((useLocalization && !string.IsNullOrEmpty(value)) ? text : value);
-    }
-
-    public Line ToLine()
-    {
-        return new TextLine((TextNodeData)ToData());
-    }
-
-    public override NodeData ToData()
-    {
-        var data = new TextNodeData();
-
-        data.guid = guid;
-        data.name = nodeName;
-        data.pos = position;
-        data.speakerKey = GetSpeakerKey();
-        data.speaker = speaker == noneLabel ? "" : speaker;
-        data.dialogueKey = GetDialogueKey();
-        data.dialogue = dialogue;
-
-        return data;
-    }
-
-    private string GetSpeakerKey()
-    {
-        var nameTable = VisualScriptingGraphState.Instance.nameTable;
-
-        // 테이블이 설정되어 있지 않는 경우 키 값 X
-        if (nameTable == null) return null;
-
-        return nameTable.Values
-                    .Where(e => e.Value == speaker)
-                    .Select(e => e.Key)
-                    .FirstOrDefault();
-    }
-
-    private string GetDialogueKey()
-    {
-        return $"{VisualScriptingSettings.Instance.DialogueKeyPrefix}_{guid}";
-    }
-
-    protected override void OnEnable()
-    {
-        // 전체 설정값이 바뀌는 경우의 이벤트 설정
-        VisualScriptingSettings.OnSettingChanged += UpdateNameFieldType;
-
-        // 현제 파일의 설정값이 바뀌는 경우의 이벤트 설정
-        VisualScriptingGraphState.OnSettingChanged += UpdateNameField;
-        VisualScriptingGraphState.OnSettingChanged += UpdateDialogueField;
-    }
-
-    protected override void OnDisable()
-    {
-        // 이벤트 해제
-        VisualScriptingSettings.OnSettingChanged -= UpdateNameFieldType;
-        VisualScriptingGraphState.OnSettingChanged -= UpdateNameField;
-        VisualScriptingGraphState.OnSettingChanged -= UpdateDialogueField;
-    }
-
-    public override void Draw()
-    {
-        base.Draw();
-
-        var setting = VisualScriptingSettings.Instance;
-
-        // Input 연결 추가
-        var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
-        inputPort.portName = "Prev";
-        inputContainer.Add(inputPort);
-
-        // Output 연결 추가
-        var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-        outputPort.portName = "Next";
-        outputContainer.Add(outputPort);
-
-        // 이름 선택 드롭다운 추가(아래의 업데이트에서 목록 설정)
-        nameDropdownField = new DropdownField("Name", new List<string>(), 0);
-        nameDropdownField.value = noneLabel;
-        nameDropdownField.RegisterValueChangedCallback(evt =>
+        private void UpdateNameField()
         {
-            speakerKey = GetSpeakerKey();
-            NotifyModified();
-        });
-        nameDropdownField.AddToClassList("line-node__name-dropdown");
-        extensionContainer.Add(nameDropdownField);
+            // 현재 이름 타입을 업데이트
+            UpdateNameFieldType();
 
-        // 로컬라이제이션을 사용하지 않는 경우 이름을 적을 필드 추가
-        nameField = new IMGUI_TextField("Name");
-        nameField.RegisterValueChangedCallback(evt =>
+            // 선택된 이름 업데이트(드롭다운 필드 값에 오류 문구가 있을 수 있으니 텍스트 필드 값으로 설정)
+            SetSpeakerName(speakerKey, nameField.value);
+        }
+
+        private void UpdateNameFieldType()
         {
-            speakerKey = GetSpeakerKey();
-            NotifyModified();
-        });
-        extensionContainer.Add(nameField);
+            var useLocalization = VisualScriptingSettings.UseLocalization;
 
-        // 대사 선택 요소 추가(guid를 통해 Localization를 삽입 및 수정하는 방식)
-        dialogueField = new IMGUI_TextField("Dialogue Text");
-        dialogueField.multiline = true;
-        dialogueField.RegisterValueChangedCallback(evt => NotifyModified());
-        dialogueField.AddToClassList("line-node__dialogue-field");
-        extensionContainer.Add(dialogueField);
+            // 로컬라이제이션 사용 여부에 따라 이름 필드 바꾸기
+            nameDropdownField.style.display = useLocalization ? DisplayStyle.Flex : DisplayStyle.None;
+            nameField.style.display = useLocalization ? DisplayStyle.None : DisplayStyle.Flex;
 
-        // 이름 요소 display 업데이트
-        UpdateNameField();
+            // 이름 선택 드롭다운 목록 재설정(Localization을 통해 이름 목록 불러오기)
+            var nameTable = VisualScriptingGraphState.Instance.nameTable;
+            var nameList = new[] { noneLabel } // 이름 목록 + 이름 없음 포함
+                .Concat(nameTable?.Values.Select(ste => ste.Value) ?? Enumerable.Empty<string>())
+                .ToList();
+            nameDropdownField.choices = nameList;
+        }
 
-        RefreshExpandedState();
-    }
+        private void UpdateDialogueField()
+        {
+            // 오류로 인해 기존 대사를 가져오지 못한 경우에만 다시 불러오기
+            if (!hasDialogueKeyError) return;
 
-    private void UpdateNameField()
-    {
-        // 현재 이름 타입을 업데이트
-        UpdateNameFieldType();
-
-        // 선택된 이름 업데이트(드롭다운 필드 값에 오류 문구가 있을 수 있으니 텍스트 필드 값으로 설정)
-        SetSpeakerName(speakerKey, nameField.value);
-    }
-
-    private void UpdateNameFieldType()
-    {
-        var setting = VisualScriptingSettings.Instance;
-
-        // 로컬라이제이션 사용 여부에 따라 이름 필드 바꾸기
-        nameDropdownField.style.display = setting.UseLocalization ? DisplayStyle.Flex : DisplayStyle.None;
-        nameField.style.display = setting.UseLocalization ? DisplayStyle.None : DisplayStyle.Flex;
-
-        // 이름 선택 드롭다운 목록 재설정(Localization을 통해 이름 목록 불러오기)
-        var nameTable = VisualScriptingGraphState.Instance.nameTable;
-        var nameList = new[] { noneLabel } // 이름 목록 + 이름 없음 포함
-            .Concat(nameTable?.Values.Select(ste => ste.Value) ?? Enumerable.Empty<string>())
-            .ToList();
-        nameDropdownField.choices = nameList;
-    }
-
-    private void UpdateDialogueField()
-    {
-        // 오류로 인해 기존 대사를 가져오지 못한 경우에만 다시 불러오기
-        if (!hasDialogueKeyError) return;
-
-        // 키 값을 통해 대사 다시 불러오기
-        SetDialogue(GetDialogueKey(), "");
+            // 키 값을 통해 대사 다시 불러오기
+            SetDialogue(GetDialogueKey(), "");
+        }
     }
 }

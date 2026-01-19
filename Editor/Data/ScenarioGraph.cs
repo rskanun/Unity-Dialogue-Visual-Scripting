@@ -1,7 +1,6 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
-
+using System.Linq;
 
 #if USE_LOCALIZATION
 using UnityEditor.Localization;
@@ -115,7 +114,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public void SyncLocalizationTable()
         {
             // 로컬라이제이션을 이용하는 경우에만 실행
-            if (!VisualScriptingSettings.Instance.UseLocalization)
+            if (!VisualScriptingSettings.UseLocalization)
             {
                 return;
             }
@@ -150,8 +149,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             if (origin == null) return;
 
-            var setting = VisualScriptingSettings.Instance;
-            var table = newTable.GetTable(setting.ProjectLocale.Identifier) as StringTable;
+            var locale = VisualScriptingSettings.ProjectLocale;
+            var table = newTable.GetTable(locale.Identifier) as StringTable;
 
             // 기존 테이블에 저장된 값은 지우고, 새로운 테이블로 옮기기
             foreach (var (k, v) in entries)

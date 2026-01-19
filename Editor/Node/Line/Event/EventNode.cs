@@ -1,19 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEditor.Experimental.GraphView;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    public enum DialogueEventType
-    {
-        None,
-        Teleport,   // 플레이어의 씬과 위치 이동
-    }
-
+    [NodeMenu("Event")]
     public class EventNode : LineNode, ILineProvider
     {
         private VisualElement eventInfoContainer;
-        private EnumField eventTypeField;
+        private DropdownField eventTypeField;
         private IEventContent currentContent;
 
         public EventNode() : base() { }
@@ -27,10 +25,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            eventTypeField.value = eventNodeData.type;
+            eventTypeField.value = eventNodeData.EventName;
 
             // 새 이벤트 객체 할당
-            currentContent = EventContentFactory.Create(eventNodeData.type);
+            currentContent = EventContentFactory.Create(eventNodeData.EventName);
 
             // Register 작동하지 않으므로 직접 그려주고 데이터 삽입
             currentContent.Draw(eventInfoContainer, NotifyModified);
@@ -54,7 +52,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             data.guid = guid;
             data.name = nodeName;
             data.pos = position;
-            data.type = (DialogueEventType)eventTypeField.value;
 
             return data;
         }
@@ -74,10 +71,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
             outputContainer.Add(outputPort);
 
             // 이벤트 타입
-            eventTypeField = new EnumField("Event Type", DialogueEventType.None);
+            eventTypeField = new DropdownField("Event Type", GetEventOptions(), 0);
             eventTypeField.RegisterValueChangedCallback(evt =>
             {
-                OnEventTypeChanged((DialogueEventType)evt.newValue);
+                OnEventTypeChanged(evt.newValue);
                 NotifyModified();
             });
             extensionContainer.Add(eventTypeField);
@@ -88,7 +85,28 @@ namespace Rskanun.DialogueVisualScripting.Editor
             RefreshExpandedState();
         }
 
-        private void OnEventTypeChanged(DialogueEventType newType)
+        private List<string> GetEventOptions()
+        {
+            var options = new List<string>();
+
+            var baseType = typeof(EventNodeData);
+            var types = Assembly.GetExecutingAssembly().GetTypes()
+                .Where(t => t == baseType || (t.IsSubclassOf(baseType) && !t.IsAbstract));
+
+            foreach (var type in types)
+            {
+                // 타입에 맞는 이벤트 데이터 객체 임시 생성
+                if (Activator.CreateInstance(type) is EventNodeData data)
+                {
+                    // 이벤트 이름을 옵션으로 등록
+                    options.Add(data.EventName);
+                }
+            }
+
+            return options;
+        }
+
+        private void OnEventTypeChanged(string newType)
         {
             eventInfoContainer.Clear();
 

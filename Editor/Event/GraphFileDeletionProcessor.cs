@@ -1,10 +1,7 @@
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-#if UNITY_EDITOR
     public class GraphFileDeletionProcessor : AssetModificationProcessor
     {
         private static AssetDeleteResult OnWillDeleteAsset(string path, RemoveAssetOptions options)
@@ -22,5 +19,4 @@ namespace Rskanun.DialogueVisualScripting.Editor
             return AssetDeleteResult.DidNotDelete;
         }
     }
-#endif
 }

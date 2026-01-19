@@ -2,10 +2,12 @@ using System;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [System.Serializable]
+    [Serializable]
     public class EventNodeData : NodeData
     {
-        public DialogueEventType type;
+        public virtual string EventName => "None";
+        public virtual Type ContentType => typeof(NoneEventContent);
+
         public override Type NodeType => typeof(EventNodeData);
     }
 }
