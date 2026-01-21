@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Text", Order = 1)]
+    [NodeMenu("Text", Order = 10)]
     public class TextNode : LineNode, ILineProvider
     {
         private DropdownField nameDropdownField;

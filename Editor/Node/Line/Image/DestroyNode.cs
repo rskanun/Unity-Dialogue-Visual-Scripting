@@ -3,7 +3,7 @@ using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Image/Destroy", Order = 3)]
+    [NodeMenu("Image/Destroy", Order = 14)]
     public class DestroyNode : LineNode, ILineProvider
     {
         private LineNodeField targetField;

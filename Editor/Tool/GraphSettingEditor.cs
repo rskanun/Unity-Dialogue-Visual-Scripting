@@ -14,9 +14,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
 {
     public class GraphSettingEditor : EditorWindow
     {
+        private Button selectedButton;
+
         public static void ShowWindow()
         {
-            var window = GetWindow<GraphSettingEditor>("Setting");
+            var window = GetWindow<GraphSettingEditor>();
+
+            // 유니티 내장 톱니바퀴 아이콘 가져오기
+            Texture icon = EditorGUIUtility.IconContent("SettingsIcon").image;
+
+            // 제목에 아이콘 넣기
+            window.titleContent = new GUIContent("Settings", icon);
 
             window.minSize = new Vector2(550, 300);
             window.Show();
@@ -24,6 +32,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void CreateGUI()
         {
+            var style = StyleSheetManager.GetStyle("SettingStyle.uss");
+            rootVisualElement.styleSheets.Add(style);
+
             // 화면을 2개로 분할하여 하나엔 메뉴를, 다른 하나엔 내용을 띄우기
             var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
             rootVisualElement.Add(splitView);
@@ -36,18 +47,38 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var menuContainer = new IMGUIContainer();
 
-            var localizationButton = new ToolbarButton() { text = "Localization" };
-            menuContainer.Add(localizationButton);
+            var localButton = DrawMenuButton("Localization");
+            menuContainer.Add(localButton);
 
             splitView.Add(menuContainer);
+        }
+
+        private Button DrawMenuButton(string menuName)
+        {
+            var menuButton = new Button(null);
+            menuButton.text = menuName;
+            menuButton.AddToClassList("settings-editor__menu-item-button");
+            menuButton.clicked += () =>
+            {
+                if (selectedButton != null)
+                    selectedButton.RemoveFromClassList("selected");
+
+                selectedButton = menuButton;
+
+                selectedButton.AddToClassList("selected");
+            };
+
+            return menuButton;
         }
 
         private void DrawContent(TwoPaneSplitView splitView)
         {
             var contentContainer = new IMGUIContainer();
+            contentContainer.AddToClassList("settings-editor__content");
 
             // 제목
             var title = new Label("Localization");
+            title.AddToClassList("settings-editor__content-title");
             contentContainer.Add(title);
 
 #if USE_LOCALIZATION

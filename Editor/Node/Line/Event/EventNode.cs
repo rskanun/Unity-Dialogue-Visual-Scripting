@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Event")]
+    [NodeMenu("Event", Order = 15)]
     public class EventNode : LineNode, ILineProvider
     {
         private VisualElement eventInfoContainer;

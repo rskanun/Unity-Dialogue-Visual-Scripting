@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Select", Order = 2)]
+    [NodeMenu("Select", Order = 11)]
     public class SelectNode : LineNode, ILineProvider
     {
         private Dictionary<Port, IMGUI_TextField> choices = new();

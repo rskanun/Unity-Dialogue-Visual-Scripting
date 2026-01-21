@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Image/Transform", Order = 3)]
+    [NodeMenu("Image/Transform", Order = 13)]
     public class TransformNode : LineNode, ILineProvider
     {
         private LineNodeField targetField;

@@ -5,6 +5,12 @@ using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.IO;
+
+
+
 
 #if USE_LOCALIZATION
 using UnityEditor.Localization;
@@ -44,24 +50,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
             Insert(0, grid);
 
             // 스타일 설정
-            LoadAllStyleSheets();
+            var graphStyle = StyleSheetManager.GetStyle("GraphViewStyle.uss");
+            styleSheets.Add(graphStyle);
+            var nodeStyle = StyleSheetManager.GetStyle("NodeStyle.uss");
+            styleSheets.Add(nodeStyle);
 
             // 그래프 뷰 업데이트 이벤트 등록
             graphViewChanged += OnElementRemoved;
-        }
-
-        private void LoadAllStyleSheets()
-        {
-            // 스타일 시트 폴더 내 모든 스타일 적용
-            var styleDir = VisualScriptingSettings.StyleSheetDirectory;
-            var guids = AssetDatabase.FindAssets("t:StyleSheet", new[] { styleDir });
-
-            foreach (var guid in guids)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var sheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(path);
-                if (sheet != null) styleSheets.Add(sheet);
-            }
         }
 
         private GraphViewChange OnElementRemoved(GraphViewChange graphViewChange)
@@ -129,36 +124,51 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            // 대사 시작 태그 추가
-            evt.menu.AppendAction("Create Line Tag", action => CreateNode<LineTag>(action.eventInfo.mousePosition));
+            // 노드 메뉴에 등록될 어트리뷰트 목록 가져오기
+            var types = TypeCache.GetTypesWithAttribute<NodeMenuAttribute>();
+            var entries = types.Select(t => (type: t, attr: t.GetCustomAttribute<NodeMenuAttribute>()))
+                            .OrderBy(p => p.attr.Order);
 
-            // 구분줄
-            evt.menu.AppendSeparator();
+            // 생성될 메뉴가 없다면 종료
+            if (types.Count <= 0) return;
 
-            // 대사 노드 추가
-            evt.menu.AppendAction("Create Text Line", action => CreateNode<TextNode>(action.eventInfo.mousePosition));
-            // 선택지 노드 추가
-            evt.menu.AppendAction("Create Select Line", action => CreateNode<SelectNode>(action.eventInfo.mousePosition));
-            // 이미지 노드 추가
-            evt.menu.AppendAction("Create Image Line", action => CreateNode<ImageNode>(action.eventInfo.mousePosition));
-            evt.menu.AppendAction("Create Destroy Line", action => CreateNode<DestroyNode>(action.eventInfo.mousePosition));
-            evt.menu.AppendAction("Create Transform Line", action => CreateNode<TransformNode>(action.eventInfo.mousePosition));
-            // 이벤트 노드 추가
-            evt.menu.AppendAction("Create Event Line", action => CreateNode<EventNode>(action.eventInfo.mousePosition));
+            // 메뉴에 추가
+            int prevOrder = entries.FirstOrDefault().attr.Order;
+            foreach (var entry in entries)
+            {
+                // order 10 단위로 구분선 설치
+                if ((prevOrder / 10) != (entry.attr.Order / 10))
+                {
+                    evt.menu.AppendSeparator("Create/");
+                }
+
+                // 이전 순서 저장
+                prevOrder = entry.attr.Order;
+
+                // Create 탭을 통해 생성하려는 객체 보이기
+                var menuName = $"Create/{entry.attr.MenuName}";
+
+                evt.menu.AppendAction(menuName, action => CreateNode(entry.type, action.eventInfo.mousePosition));
+            }
         }
 
         /// <summary>
         /// 마우스 위치에 새로운 노드 생성
         /// </summary>
-        /// <typeparam name="T">생성할 노드 종류</typeparam>
-        /// <param name="mousePosition">마우스 위치</param>
-        private T CreateNode<T>(Vector2 mousePosition) where T : LineNode, new()
+        private LineNode CreateNode(Type nodeType, Vector2 mousePosition)
         {
+            // LineNode가 아닌 것들을 먼저 차단
+            if (nodeType == null || typeof(LineNode).IsAssignableFrom(nodeType))
+            {
+                Debug.LogError("'{nodeType.Name}' does not inherit from LineNode.");
+                throw new ArgumentException();
+            }
+
             // 마우스 위치에 노드 생성
             var pos = contentViewContainer.WorldToLocal(mousePosition);
 
             // 노드 생성
-            var node = new T();
+            var node = Activator.CreateInstance(nodeType) as LineNode;
             node.SetPosition(new Rect(pos, new Vector2(350, 200)));
 
             // 해당 노드에 변경 이벤트 추가

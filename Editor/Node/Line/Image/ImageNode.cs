@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [NodeMenu("Image/Image", Order = 3)]
+    [NodeMenu("Image/Image", Order = 12)]
     public class ImageNode : LineNode, ILineProvider
     {
         private Sprite selectedSprite;
