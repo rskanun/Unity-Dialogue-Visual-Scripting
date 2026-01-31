@@ -89,7 +89,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         [Space(10)]
         [Header("Visual Scripting Setting")]
         [SerializeField]
-        private string _styleSheetDirectory;
+        private string _styleSheetDirectory = "Packages/Unity-Dialogue-Visual-Scripting/Styles";
         public static string StyleSheetDirectory => Instance._styleSheetDirectory;
 
         [SerializeField]
