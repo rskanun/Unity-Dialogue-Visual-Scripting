@@ -57,31 +57,69 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            // 현재 설정된 테이블 가져오기
-            var state = VisualScriptingGraphState.Instance;
-            var entry = state.nameTable?.GetEntry(key);
             var useLocalization = VisualScriptingSettings.UseLocalization;
-            var dropdownValue = (entry != null) ? entry.Value : $"Error: key({key}) is not found"; // 키 값에 맞는 값이 없다면 오류를 이름으로 설정
-            var textValue = (useLocalization && entry != null) ? entry.Value : value; // 키 값으로 가져올 이름이 있는 경우에만 해당 이름 사용(그 외엔 저장 당시의 이름 사용)
+            string entryValue = GetSpeakerEntryValue(key); // 키 값을 통해 찾아온 이름
+            string textValue = (useLocalization && entryValue != null) ? entryValue : value; // 키 값으로 가져올 이름이 있는 경우에만 해당 이름 사용(그 외엔 저장 당시의 이름 사용)
+            string dropdownValue = (entryValue != null) ? entryValue : $"Error: key({key}) is not found"; // 키 값에 맞는 값이 없다면 오류를 이름으로 설정
 
             // 이름 값 설정
             nameDropdownField.SetValueWithoutNotify(dropdownValue);
             nameField.SetValueWithoutNotify(textValue);
 
             // 오류 여부 수정
-            hasDialogueKeyError = (entry == null);
+            hasDialogueKeyError = (entryValue == null);
+        }
+
+        private string GetSpeakerEntryValue(string key)
+        {
+            var useLocalization = VisualScriptingSettings.UseLocalization;
+            if (!useLocalization)
+            {
+                return null;
+            }
+
+#if USE_LOCALIZATION
+            // 현재 설정된 테이블 가져오기
+            var state = VisualScriptingGraphState.Instance;
+            var entry = state.nameTable?.GetEntry(key);
+
+            return (entry != null) ? entry.Value : null;
+#else
+            // 로컬라이제이션을 사용한다고 변수가 선언되었으나, 에셋이 없는 경우 경고
+            Debug.LogWarning("Warning: Localization Setting is enabled, but no asset is assigned");
+            return null;
+#endif
+
         }
 
         private void SetDialogue(string key, string value)
         {
             // 키 값을 통해 대사 받아오기
-            var state = VisualScriptingGraphState.Instance;
-            var entry = state.dialogueTable?.GetEntry(key);
             var useLocalization = VisualScriptingSettings.UseLocalization;
-            var text = (entry != null) ? entry.Value : $"Error: key({key}) is not found";
+            var entryValue = GetDialogueEntryValue(key);
+            var text = (entryValue != null) ? entryValue : $"Error: key({key}) is not found";
 
             // 대사 값 설정(로컬라이제이션을 사용하지 않는 경우 저장 당시의 값 사용)
             dialogueField.SetValueWithoutNotify((useLocalization && !string.IsNullOrEmpty(value)) ? text : value);
+        }
+
+        private string GetDialogueEntryValue(string key)
+        {
+            var useLocalization = VisualScriptingSettings.UseLocalization;
+            if (!useLocalization)
+            {
+                return null;
+            }
+
+#if USE_LOCALIZATION
+            // 현재 설정된 테이블 가져오기
+            var state = VisualScriptingGraphState.Instance;
+            var entry = state.dialogueTable?.GetEntry(key);
+
+            return (entry != null) ? entry.Value : null;
+#else
+            return null;
+#endif
         }
 
         public Line ToLine()
@@ -112,6 +150,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private string GetSpeakerKey()
         {
+#if USE_LOCALIZATION
             var nameTable = VisualScriptingGraphState.Instance.nameTable;
 
             // 테이블이 설정되어 있지 않는 경우 키 값 X
@@ -121,6 +160,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
                         .Where(e => e.Value == speaker)
                         .Select(e => e.Key)
                         .FirstOrDefault();
+#else
+            // 로컬라이제이션 에셋이 없는 경우 빈 값 리턴
+            return null;
+#endif
         }
 
         private string GetDialogueKey()
@@ -212,12 +255,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
             nameDropdownField.style.display = useLocalization ? DisplayStyle.Flex : DisplayStyle.None;
             nameField.style.display = useLocalization ? DisplayStyle.None : DisplayStyle.Flex;
 
+#if USE_LOCALIZATION
             // 이름 선택 드롭다운 목록 재설정(Localization을 통해 이름 목록 불러오기)
             var nameTable = VisualScriptingGraphState.Instance.nameTable;
             var nameList = new[] { noneLabel } // 이름 목록 + 이름 없음 포함
                 .Concat(nameTable?.Values.Select(ste => ste.Value) ?? Enumerable.Empty<string>())
                 .ToList();
             nameDropdownField.choices = nameList;
+#else
+            // 로컬라이제이션 에셋이 없는 경우에도 만약을 위해 이름 없음만 넣기
+            nameDropdownField.choices = new[] {noneLabel};
+#endif
         }
 
         private void UpdateDialogueField()

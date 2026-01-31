@@ -48,10 +48,14 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private string GetOptionName(string key)
         {
+#if USE_LOCALIZATION
             var optionTable = VisualScriptingGraphState.Instance.selectionTable;
             var entry = optionTable?.GetEntry(key);
 
             return entry != null ? entry.Value : $"Error: key({key}) is not found";
+#else
+            return "Error: Localization source missing";
+#endif
         }
 
         public Line ToLine()
