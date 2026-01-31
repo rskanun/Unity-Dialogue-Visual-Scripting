@@ -158,9 +158,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private LineNode CreateNode(Type nodeType, Vector2 mousePosition)
         {
             // LineNode가 아닌 것들을 먼저 차단
-            if (nodeType == null || typeof(LineNode).IsAssignableFrom(nodeType))
+            if (nodeType == null || nodeType.IsAssignableFrom(typeof(LineNode)))
             {
-                Debug.LogError("'{nodeType.Name}' does not inherit from LineNode.");
+                Debug.LogError($"'{nodeType.Name}' does not inherit from LineNode.");
                 throw new ArgumentException();
             }
 
