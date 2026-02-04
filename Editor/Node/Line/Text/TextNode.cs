@@ -80,7 +80,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
 #if USE_LOCALIZATION
             // 현재 설정된 테이블 가져오기
-            var state = VisualScriptingGraphState.Instance;
+            var state = VisualScriptingGraphState.instance;
             var entry = state.nameTable?.GetEntry(key);
 
             return (entry != null) ? entry.Value : null;
@@ -113,7 +113,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
 #if USE_LOCALIZATION
             // 현재 설정된 테이블 가져오기
-            var state = VisualScriptingGraphState.Instance;
+            var state = VisualScriptingGraphState.instance;
             var entry = state.dialogueTable?.GetEntry(key);
 
             return (entry != null) ? entry.Value : null;
@@ -151,7 +151,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private string GetSpeakerKey()
         {
 #if USE_LOCALIZATION
-            var nameTable = VisualScriptingGraphState.Instance.nameTable;
+            var nameTable = VisualScriptingGraphState.instance.nameTable;
 
             // 테이블이 설정되어 있지 않는 경우 키 값 X
             if (nameTable == null) return null;
@@ -193,7 +193,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            var setting = VisualScriptingSettings.Instance;
+            var setting = VisualScriptingSettings.instance;
 
             // Input 연결 추가
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
@@ -257,7 +257,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
 #if USE_LOCALIZATION
             // 이름 선택 드롭다운 목록 재설정(Localization을 통해 이름 목록 불러오기)
-            var nameTable = VisualScriptingGraphState.Instance.nameTable;
+            var nameTable = VisualScriptingGraphState.instance.nameTable;
             var nameList = new[] { noneLabel } // 이름 목록 + 이름 없음 포함
                 .Concat(nameTable?.Values.Select(ste => ste.Value) ?? Enumerable.Empty<string>())
                 .ToList();

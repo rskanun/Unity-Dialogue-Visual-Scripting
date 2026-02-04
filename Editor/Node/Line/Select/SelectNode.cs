@@ -49,7 +49,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private string GetOptionName(string key)
         {
 #if USE_LOCALIZATION
-            var optionTable = VisualScriptingGraphState.Instance.selectionTable;
+            var optionTable = VisualScriptingGraphState.instance.selectionTable;
             var entry = optionTable?.GetEntry(key);
 
             return entry != null ? entry.Value : $"Error: key({key}) is not found";

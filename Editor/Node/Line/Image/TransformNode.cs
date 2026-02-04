@@ -123,7 +123,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private void UpdateTargetNode()
         {
             // 그래프 뷰에서 guid로 바뀐 타겟 찾아오기
-            var graphView = VisualScriptingGraphState.Instance.graphView;
+            var graphView = VisualScriptingGraphState.instance.graphView;
 
             // 대상 노드 설정
             targetNode = graphView.nodes

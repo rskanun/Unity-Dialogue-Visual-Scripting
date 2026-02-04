@@ -10,55 +10,9 @@ using UnityEngine.Localization.Tables;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    public class VisualScriptingGraphState : ScriptableObject
+    [FilePath("ProjectSettings/VisualScriptingGraphState.asset", FilePathAttribute.Location.ProjectFolder)]
+    public class VisualScriptingGraphState : ScriptableSingleton<VisualScriptingGraphState>
     {
-        // 저장 파일 위치
-        private const string FILE_DIRECTORY = "Assets/VisualDialogueScripting";
-        private const string FILE_PATH = "Assets/VisualDialogueScripting/VisualScriptingGraphState.asset";
-
-        private static VisualScriptingGraphState _instance;
-        public static VisualScriptingGraphState Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-
-                // Asset 폴더 탐색
-                string guid = AssetDatabase.FindAssets("t:VisualScriptingGraphState").FirstOrDefault();
-                if (guid != null)
-                {
-                    string path = AssetDatabase.GUIDToAssetPath(guid);
-
-                    _instance = AssetDatabase.LoadAssetAtPath<VisualScriptingGraphState>(path);
-                }
-
-                // Asset 폴더 내에 존재하지 않는 경우
-                if (_instance == null)
-                {
-                    // 파일 경로가 없을 경우 폴더 생성
-                    if (!AssetDatabase.IsValidFolder(FILE_DIRECTORY))
-                    {
-                        string[] folders = FILE_DIRECTORY.Split('/');
-                        string currentPath = folders[0];
-
-                        for (int i = 1; i < folders.Length; i++)
-                        {
-                            if (!AssetDatabase.IsValidFolder(currentPath + "/" + folders[i]))
-                            {
-                                AssetDatabase.CreateFolder(currentPath, folders[i]);
-                            }
-                            currentPath += "/" + folders[i];
-                        }
-                    }
-
-                    // 해당 경로에 생성
-                    _instance = CreateInstance<VisualScriptingGraphState>();
-                    AssetDatabase.CreateAsset(_instance, FILE_PATH);
-                }
-                return _instance;
-            }
-        }
-
         // 설정값(Localization Table 값 등) 변경 이벤트
         public static event Action OnSettingChanged;
 

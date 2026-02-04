@@ -43,7 +43,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.SetValueWithoutNotify(newValue);
 
-            var graphView = VisualScriptingGraphState.Instance.graphView;
+            var graphView = VisualScriptingGraphState.instance.graphView;
             var targetNode = graphView.nodes
                                         .OfType<LineNode>()
                                         .Where(node => node.guid == value)
@@ -60,7 +60,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            var graphView = VisualScriptingGraphState.Instance.graphView;
+            var graphView = VisualScriptingGraphState.instance.graphView;
 
             graphView.ClearSelection(); // 선택 해제
             graphView.AddToSelection(currentTarget); // 목표 노드 선택
@@ -102,7 +102,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             if (currentTarget == null && !string.IsNullOrEmpty(value))
             {
                 // 그래프에서 찾아오기
-                var graphView = VisualScriptingGraphState.Instance.graphView;
+                var graphView = VisualScriptingGraphState.instance.graphView;
                 var targetNode = graphView.nodes
                                             .OfType<LineNode>()
                                             .Where(node => node.guid == value)

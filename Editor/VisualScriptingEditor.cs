@@ -103,7 +103,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             rootVisualElement.Add(graphView);
 
             // 현재 사용 중인 그래프 뷰로 등록
-            VisualScriptingGraphState.Instance.graphView = graphView;
+            VisualScriptingGraphState.instance.graphView = graphView;
 
             // 노드 탐색창 설정
             NodeSearchWindow.Initialize(graphView);
@@ -254,7 +254,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         /// </summary>
         public void Save()
         {
-            var currentFile = VisualScriptingGraphState.Instance.currentFile;
+            var currentFile = VisualScriptingGraphState.instance.currentFile;
 
             // 만약 현재 열린 파일이 없다면, 다른 이름으로 저장
             if (!EditorUtility.IsPersistent(currentFile))
@@ -282,7 +282,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         /// </summary>
         public void SaveAs()
         {
-            var currentData = VisualScriptingGraphState.Instance.currentFile;
+            var currentData = VisualScriptingGraphState.instance.currentFile;
 
             // 저장 위치
             string path = EditorUtility.SaveFilePanelInProject("Save File", "New Scenario", "asset", "Select a file to save the graph data.");
@@ -398,7 +398,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private void SetCurrentFile(ScenarioGraph file)
         {
             // 현재 파일 교체
-            VisualScriptingGraphState.Instance.currentFile = file;
+            VisualScriptingGraphState.instance.currentFile = file;
 
             // 캐시 데이터를 해당 파일의 그래프 데이터로 고쳐쓰기
             RefreshCacheData(file.graphData);

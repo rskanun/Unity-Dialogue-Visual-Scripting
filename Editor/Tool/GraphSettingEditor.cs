@@ -86,7 +86,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var tableMap = LocalizationEditorSettings.GetStringTableCollections().ToDictionary(c => c.TableCollectionName);
 
             // 현재 데이터 파일 가져오기
-            var currentFile = VisualScriptingGraphState.Instance.currentFile;
+            var currentFile = VisualScriptingGraphState.instance.currentFile;
 
             // 이름을 담을 로컬라이제이션 드롭박스
             var nameDropdown = CreateTableDropdown("Name", currentFile.nameTableCollection, tableMap, table => currentFile.nameTableCollection = table);
