@@ -86,7 +86,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             return (entry != null) ? entry.Value : null;
 #else
             // 로컬라이제이션을 사용한다고 변수가 선언되었으나, 에셋이 없는 경우 경고
-            Debug.LogWarning("Warning: Localization Setting is enabled, but no asset is assigned");
+            UnityEngine.Debug.LogWarning("Warning: Localization Setting is enabled, but no asset is assigned");
             return null;
 #endif
 
@@ -264,7 +264,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             nameDropdownField.choices = nameList;
 #else
             // 로컬라이제이션 에셋이 없는 경우에도 만약을 위해 이름 없음만 넣기
-            nameDropdownField.choices = new[] {noneLabel};
+            nameDropdownField.choices = new List<string>() { noneLabel };
 #endif
         }
 
