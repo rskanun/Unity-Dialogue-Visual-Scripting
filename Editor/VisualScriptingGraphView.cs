@@ -50,9 +50,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
             Insert(0, grid);
 
             // 스타일 설정
-            var graphStyle = StyleSheetManager.GetStyle("GraphViewStyle.uss");
+            var graphStyle = StyleSheetManager.GetStyleSheet("GraphViewStyle.uss");
             styleSheets.Add(graphStyle);
-            var nodeStyle = StyleSheetManager.GetStyle("NodeStyle.uss");
+            var nodeStyle = StyleSheetManager.GetStyleSheet("NodeStyle.uss");
             styleSheets.Add(nodeStyle);
 
             // 그래프 뷰 업데이트 이벤트 등록

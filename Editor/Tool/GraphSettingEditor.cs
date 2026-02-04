@@ -32,7 +32,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void CreateGUI()
         {
-            var style = StyleSheetManager.GetStyle("SettingStyle.uss");
+            var style = StyleSheetManager.GetStyleSheet("SettingStyle.uss");
             rootVisualElement.styleSheets.Add(style);
 
             // 화면을 2개로 분할하여 하나엔 메뉴를, 다른 하나엔 내용을 띄우기
