@@ -9,18 +9,25 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         public static StyleSheet GetStyleSheet(string styleName)
         {
+            StyleSheet styleSheet = null;
+
             // 스타일 시트 경로
             var folderPath = VisualScriptingSettings.StyleSheetDirectory;
-            var stylePath = Path.Combine(folderPath, styleName);
 
-            // 스타일시트 가져오기
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(stylePath);
+            // 스타일 시트 경로가 유효한 경우
+            if (!string.IsNullOrEmpty(folderPath))
+            {
+                var stylePath = Path.Combine(folderPath, styleName);
+
+                // 스타일시트 가져오기
+                styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(stylePath);
+            }
 
             // 스타일 시트를 찾을 수 없는 경우
             if (styleSheet == null)
             {
                 // 찾고자 하는 스타일 시트 경로 찾기
-                stylePath = FindStylePath(styleName);
+                var stylePath = FindStylePath(styleName);
 
                 // 다시 찾기
                 styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>(stylePath);
