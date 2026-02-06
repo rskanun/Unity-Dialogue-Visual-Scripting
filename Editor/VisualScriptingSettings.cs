@@ -40,6 +40,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public static event Action OnSettingChanged;
         public static readonly string LastOpenedFileKey = "VisualScripting.LastOpenedFilePath";
 
+        [Header("General Settings")]
         [SerializeField]
         private string _styleSheetDirectory;
         public static string StyleSheetDirectory => instance._styleSheetDirectory;
