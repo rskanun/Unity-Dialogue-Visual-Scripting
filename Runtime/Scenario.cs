@@ -16,7 +16,10 @@ namespace Rskanun.DialogueVisualScripting
         public void OnAfterDeserialize()
         {
             // 직렬화시킨 구조를 Dictionary 형태로 변경
-            scenarios = serializedScenarios.ToDictionary(entry => entry.id, entry => new ScenarioScene(entry.lines));
+            scenarios = serializedScenarios.ToDictionary(
+                entry => entry.id,
+                entry => new ScenarioScene(FindIntroLine(entry.lines))
+            );
 
             // guid로 저장된 연결 라인 값에 실제 값 넣기
             // 빠른 탐색을 위한 Dictionary 타입으로 변경
@@ -35,6 +38,20 @@ namespace Rskanun.DialogueVisualScripting
                     }
                 }
             }
+        }
+
+        private Line FindIntroLine(List<Line> lines)
+        {
+            var unused = lines.ToHashSet();
+            foreach (var line in lines)
+            {
+                foreach (var nextLine in line.nextLines)
+                {
+                    unused.Remove(nextLine);
+                }
+            }
+
+            return unused.FirstOrDefault();
         }
 
 #if UNITY_EDITOR

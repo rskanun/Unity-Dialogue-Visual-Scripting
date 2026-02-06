@@ -1,22 +1,18 @@
-using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 
 namespace Rskanun.DialogueVisualScripting
 {
-    [System.Serializable]
     public class ScenarioScene : IEnumerable<Line>
     {
-        [SerializeField]
-        private List<Line> lines = new();
+        private Line introLine;
 
         // 현재 순회 중인 열거자
         private Stack<LineEnumerator> enumeratorStack = new();
 
-        public ScenarioScene(List<Line> lines)
+        public ScenarioScene(Line introLine)
         {
-            this.lines = lines;
+            this.introLine = introLine;
         }
 
         public void SelectOption(int index)
@@ -37,7 +33,7 @@ namespace Rskanun.DialogueVisualScripting
 
         public IEnumerator<Line> GetEnumerator()
         {
-            enumeratorStack.Push(new LineEnumerator(lines.FirstOrDefault()));
+            enumeratorStack.Push(new LineEnumerator(introLine));
 
             // 가장 나중에 들어온 열거자 리턴
             return enumeratorStack.Peek();
