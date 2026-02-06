@@ -69,8 +69,14 @@ namespace Rskanun.DialogueVisualScripting
         private Line FindIntroLine(List<Line> lines)
         {
             var unused = lines.ToHashSet();
+
+            // 가장 처음 시작되는 라인 찾기
             foreach (var line in lines)
             {
+                // 연결된 라인이 없는 경우 넘기기
+                if (line.nextLines == null) continue;
+
+                // 연결된 라인은 첫 라인이 아니므로 제거
                 foreach (var nextLine in line.nextLines)
                 {
                     unused.Remove(nextLine);
