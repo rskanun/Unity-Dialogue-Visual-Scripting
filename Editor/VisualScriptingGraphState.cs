@@ -30,6 +30,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
             set => _graphView = value;
         }
 
+        public static void NotifySettingChanged()
+        {
+            OnSettingChanged?.Invoke();
+        }
+
 #if USE_LOCALIZATION
         public StringTableCollection nameTableCollection => currentFile.nameTableCollection;
         public StringTable nameTable => GetStringTable(nameTableCollection);
@@ -39,11 +44,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public StringTableCollection selectionTableCollection => currentFile.selectionTableCollection;
         public StringTable selectionTable => GetStringTable(selectionTableCollection);
-
-        public static void NotifySettingChanged()
-        {
-            OnSettingChanged?.Invoke();
-        }
 
         private StringTable GetStringTable(StringTableCollection tableCollection)
         {
