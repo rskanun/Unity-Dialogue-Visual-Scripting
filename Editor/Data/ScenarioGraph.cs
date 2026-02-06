@@ -9,7 +9,6 @@ using UnityEngine.Localization.Tables;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-#if UNITY_EDITOR
     public class ScenarioGraph : Scenario
     {
         // 에디터 전용 그래프 데이터
@@ -22,30 +21,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
 #if USE_LOCALIZATION
-        [SerializeField]
-        private string _nameTable;
-        public string nameTable
-        {
-            get => _nameTable;
-            set => _nameTable = value;
-        }
-
-        [SerializeField]
-        private string _dialogueTable;
-        public string dialogueTable
-        {
-            get => _dialogueTable;
-            set => _dialogueTable = value;
-        }
-
-        [SerializeField]
-        private string _selectionTable;
-        public string selectionTable
-        {
-            get => _selectionTable;
-            set => _selectionTable = value;
-        }
-
         // 설정 데이터
         [SerializeField]
         private StringTableCollection _nameTableCollection;
@@ -57,7 +32,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 if (_nameTableCollection == value) return;
 
                 // 테이블 이름 값 업데이트
-                _nameTable = value?.name;
+                nameTable = value?.name;
 
                 _nameTableCollection = value;
             }
@@ -72,7 +47,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 if (_dialogueTableCollection == value) return;
 
                 // 테이블 이름 값 업데이트
-                _dialogueTable = value?.name;
+                dialogueTable = value?.name;
 
                 // 대사 노드만 뽑아서 업데이트(다른 테이블의 노드 지우기 방지)
                 var entries = _graphData.nodes.OfType<TextNodeData>()
@@ -94,7 +69,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 if (_selectionTableCollection == value) return;
 
                 // 테이블 이름 값 업데이트
-                _selectionTable = value?.name;
+                selectionTable = value?.name;
 
                 // 대사 노드만 뽑아서 업데이트(다른 테이블의 노드 지우기 방지)
                 var entries = _graphData.nodes.OfType<SelectNodeData>()
@@ -161,5 +136,4 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 #endif
     }
-#endif
 }

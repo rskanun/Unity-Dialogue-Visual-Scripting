@@ -12,6 +12,32 @@ namespace Rskanun.DialogueVisualScripting
         [SerializeField]
         private List<ScenarioEntry> serializedScenarios = new();
 
+#if USE_LOCALIZATION
+        [SerializeField]
+        private string _nameTable;
+        public string nameTable
+        {
+            get => _nameTable;
+            set => _nameTable = value;
+        }
+
+        [SerializeField]
+        private string _dialogueTable;
+        public string dialogueTable
+        {
+            get => _dialogueTable;
+            set => _dialogueTable = value;
+        }
+
+        [SerializeField]
+        private string _selectionTable;
+        public string selectionTable
+        {
+            get => _selectionTable;
+            set => _selectionTable = value;
+        }
+#endif
+
         public void OnBeforeSerialize() { }
         public void OnAfterDeserialize()
         {
