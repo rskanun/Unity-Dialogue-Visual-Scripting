@@ -1,7 +1,9 @@
 using UnityEngine;
 using System.IO;
-using Sirenix.OdinInspector;
 
+#if ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,8 +13,8 @@ namespace Rskanun.DialogueVisualScripting
 {
     public class ScenarioSettings : ScriptableObject
     {
-        private const string FILE_DIRECTORY = "Assets/Resources/DVS_Settings";
-        private const string FILE_PATH = "Assets/Resources/DVS_Settings/Scenario Settings.asset";
+        private const string FILE_DIRECTORY = "Assets/Resources";
+        private const string FILE_PATH = "Assets/Resources/Scenario Settings.asset";
 
         private static ScenarioSettings _instance;
         public static ScenarioSettings Instance
@@ -22,7 +24,7 @@ namespace Rskanun.DialogueVisualScripting
                 if (_instance != null) return _instance;
 
                 // 생성 경로 탐색
-                _instance = Resources.Load<ScenarioSettings>("DVS_Settings/Scenario Settings");
+                _instance = Resources.Load<ScenarioSettings>("Scenario Settings");
 
                 if (_instance == null)
                 {
