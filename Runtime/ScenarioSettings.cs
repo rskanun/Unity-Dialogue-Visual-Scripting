@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.IO;
+using Sirenix.OdinInspector;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -67,10 +69,17 @@ namespace Rskanun.DialogueVisualScripting
         }
 
         [SerializeField]
+#if ODIN_INSPECTOR
+        [FolderPath(RequireExistingPath = true)]
+#endif
         private string _scenarioDirectory;
         public static string ScenarioDirectory => Instance._scenarioDirectory;
 
+#if ODIN_INSPECTOR
+        [Title("Addressable Settings")]
+#else
         [Header("Addressable Settings")]
+#endif
         [SerializeField]
         private string _addressableGroupName;
         public static string AddressableGroupName => Instance._addressableGroupName;
