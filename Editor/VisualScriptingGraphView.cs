@@ -6,10 +6,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.IO;
-
-
 
 
 #if USE_LOCALIZATION
@@ -23,21 +19,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         public event Action OnAnyNodeModified;
 
-        private Dictionary<Type, Func<NodeData, LineNode>> lineFactory;
-
         public VisualScriptingGraphView()
         {
-            lineFactory = new()
-            {
-                {typeof(TextNodeData),          data => new TextNode(data)},
-                {typeof(SelectNodeData),        data => new SelectNode(data)},
-                {typeof(ImageNodeData),         data => new ImageNode(data)},
-                {typeof(DestroyNodeData),       data => new DestroyNode(data)},
-                {typeof(TransformNodeData),     data => new TransformNode(data)},
-                {typeof(LineTagData),           data => new LineTag(data)},
-                {typeof(EventNodeData),         data => new EventNode(data)},
-            };
-
             // 뷰포인트 확대 및 축소, 콘텐츠의 이동 및 선택 등의 조작 추가
             this.AddManipulator(new ContentZoomer());
             this.AddManipulator(new ContentDragger());
@@ -316,9 +299,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 // 타입에 맞는 노드 생성
                 var type = data.NodeType;
-                var node = lineFactory[type]?.Invoke(data);
+                var node = Activator.CreateInstance(type) as LineNode;
 
-                // 알맞은 노드 생성 코드가 없다면 스킵
+                // 알맞은 노드를 생성하지 못했다면 스킵
                 if (node == null) continue;
 
                 // 해당 노드에 이벤트 등록
