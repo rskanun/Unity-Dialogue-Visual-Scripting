@@ -4,12 +4,12 @@ using UnityEngine;
 namespace Rskanun.DialogueVisualScripting.Editor
 {
     [Serializable]
-    public class NodeData : IEquatable<NodeData>
+    public abstract class NodeData : IEquatable<NodeData>
     {
         public string guid;
         public string name;
         public Vector2 pos;
-        public virtual Type NodeType => GetType();
+        public abstract Type NodeType { get; }
 
         public override int GetHashCode()
         {

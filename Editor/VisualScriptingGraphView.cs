@@ -299,7 +299,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 // 타입에 맞는 노드 생성
                 var type = data.NodeType;
-                var node = Activator.CreateInstance(type) as LineNode;
+                var node = Activator.CreateInstance(type, data) as LineNode;
 
                 // 알맞은 노드를 생성하지 못했다면 스킵
                 if (node == null) continue;

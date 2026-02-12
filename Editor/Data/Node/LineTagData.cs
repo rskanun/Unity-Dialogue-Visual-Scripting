@@ -1,8 +1,11 @@
+using System;
+
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [System.Serializable]
+    [Serializable]
     public class LineTagData : NodeData
     {
+        public override Type NodeType => typeof(LineTag);
         public int npcID;
     }
 }
