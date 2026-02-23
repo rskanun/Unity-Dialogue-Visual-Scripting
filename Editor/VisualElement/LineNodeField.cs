@@ -44,10 +44,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
             base.SetValueWithoutNotify(newValue);
 
             var graphView = VisualScriptingGraphState.instance.graphView;
-            var targetNode = graphView.nodes
-                                        .OfType<LineNode>()
-                                        .Where(node => node.guid == value)
-                                        .FirstOrDefault();
+            var targetNode = graphView.nodes.OfType<LineNode>()
+                                .FirstOrDefault(node => node.guid == value);
 
             UpdateTargetNode(targetNode);
         }
@@ -103,10 +101,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 // 그래프에서 찾아오기
                 var graphView = VisualScriptingGraphState.instance.graphView;
-                var targetNode = graphView.nodes
-                                            .OfType<LineNode>()
-                                            .Where(node => node.guid == value)
-                                            .FirstOrDefault();
+                var targetNode = graphView.nodes.OfType<LineNode>()
+                                    .FirstOrDefault(node => node.guid == value);
 
                 // 이벤트 등록
                 targetNode.OnNodeModified += UpdateDisplayLabel;

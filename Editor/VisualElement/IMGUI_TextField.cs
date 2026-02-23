@@ -8,6 +8,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         private readonly IMGUIContainer _container;
         private readonly Label _labelElement;
+
+        private string _lastComposition = ""; // 조합 중인 글자 비교용
+        private string _focusValue = ""; // 포커싱 이전 이후 비교용
+
         private bool _multiline;
         public bool multiline
         {
@@ -24,7 +28,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 _container.MarkDirtyRepaint();
             }
         }
-        private string _focusValue = ""; // 포커싱 이전 이후 비교용 string
         private string _value;
         public string value
         {
@@ -42,6 +45,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 }
             }
         }
+
         private bool _isReadOnly;
         public bool isReadOnly
         {
@@ -78,6 +82,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
                 // 타이핑에 따른 내용 변화를 매순간 보이기(한글 전용)
                 SetValueWithoutNotify(value);
+
+                // 모음 또는 자음 삭제 시 변화 내용 캐치
+                SetComposition(Input.compositionString);
             });
 
             // container 스타일 지정
@@ -86,6 +93,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             Add(_container);
 
             // 문장 완성 이벤트 추가
+            RegisterCallback<FocusInEvent>(OnFocusIn);
             RegisterCallback<FocusOutEvent>(OnFocusOut);
         }
 
@@ -106,6 +114,21 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 다음 프레임에 그려지도록 알림
             _container.MarkDirtyRepaint();
+        }
+
+        private void SetComposition(string newValue)
+        {
+            if (_lastComposition == newValue) return;
+
+            _lastComposition = newValue;
+
+            // 다음 프레임에 그려지도록 알림
+            _container.MarkDirtyRepaint();
+        }
+
+        private void OnFocusIn(FocusInEvent evt)
+        {
+            _focusValue = value;
         }
 
         private void OnFocusOut(FocusOutEvent evt)
