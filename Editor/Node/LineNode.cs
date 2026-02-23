@@ -40,19 +40,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public LineNode() : this(Guid.NewGuid().ToString()) { }
         public LineNode(string guid)
         {
-            // °¢ ³ëµå¸¶´Ù °íÀ¯ÇÑ GUID ÇÒ´ç
+            // ê° ë…¸ë“œë§ˆë‹¤ ê³ ìœ í•œ GUID í• ë‹¹
             this.guid = guid;
 
-            // »ı¼º ½Ã, ¿ä¼Ò ±×¸®±â
+            // ìƒì„± ì‹œ, ìš”ì†Œ ê·¸ë¦¬ê¸°
             Draw();
 
-            // »ı¼º È£Ãâ ÇÔ¼ö
+            // ìƒì„± í˜¸ì¶œ í•¨ìˆ˜
             OnEnable();
 
-            // ÆÄ±« È£Ãâ ÇÔ¼ö
+            // íŒŒê´´ í˜¸ì¶œ í•¨ìˆ˜
             RegisterCallback<DetachFromPanelEvent>(evt => OnDisable());
 
-            // ³ëµå ³» ¿ä¼Ò º¯°æ °¨Áö µî·Ï
+            // ë…¸ë“œ ë‚´ ìš”ì†Œ ë³€ê²½ ê°ì§€ ë“±ë¡
             RegisterModifiCallbacks();
         }
         public LineNode(NodeData data) : this(data.guid)
@@ -65,12 +65,12 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             titleButtonContainer.Clear();
 
-            // ÀÌ¸§ ÇÊµå
+            // ì´ë¦„ í•„ë“œ
             nameField = new TextField() { value = "New Line" };
             nameField.RegisterValueChangedCallback(evt => nodeName = evt.newValue);
             titleContainer.Insert(0, nameField);
 
-            // ½ºÅ¸ÀÏ Àû¿ë
+            // ìŠ¤íƒ€ì¼ ì ìš©
             nameField.AddToClassList("line-node__textfield");
             nameField.AddToClassList("line-node__textfield__hidden");
 
@@ -79,7 +79,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void RegisterModifiCallbacks()
         {
-            // ¸ğµç ¿ä¼Ò¿¡ º¯°æ ÀÌº¥Æ® µî·Ï
+            // ëª¨ë“  ìš”ì†Œì— ë³€ê²½ ì´ë²¤íŠ¸ ë“±ë¡
             RegisterCallback<ChangeEvent<string>>(OnFieldChanged);
             RegisterCallback<ChangeEvent<int>>(OnFieldChanged);
             RegisterCallback<ChangeEvent<float>>(OnFieldChanged);
@@ -103,17 +103,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ±×·¡ÇÁ ºäÀÇ ¸ğµç ·Îµå°¡ ³¡³µÀ» ¶§ ½ÇÇàµÉ ÇÔ¼ö
+        /// ê·¸ë˜í”„ ë·°ì˜ ëª¨ë“  ë¡œë“œê°€ ëë‚¬ì„ ë•Œ ì‹¤í–‰ë  í•¨ìˆ˜
         /// </summary>
         public virtual void OnLoadCompleted() { }
 
         /// <summary>
-        /// Node °´Ã¼°¡ »ı¼ºµÉ ¶§ ½ÇÇàµÇ´Â ÇÔ¼ö
+        /// Node ê°ì²´ê°€ ìƒì„±ë  ë•Œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
         /// </summary>
         protected virtual void OnEnable() { }
 
         /// <summary>
-        /// Node °´Ã¼°¡ ÆÄ±«µÉ ¶§ ½ÇÇàµÇ´Â ÇÔ¼ö
+        /// Node ê°ì²´ê°€ íŒŒê´´ë  ë•Œ ì‹¤í–‰ë˜ëŠ” í•¨ìˆ˜
         /// </summary>
         protected virtual void OnDisable() { }
 

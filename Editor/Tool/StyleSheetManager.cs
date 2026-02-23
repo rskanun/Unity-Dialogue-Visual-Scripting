@@ -9,24 +9,24 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         public static StyleSheet GetStyleSheet(string styleName)
         {
-            // Ã£°íÀÚ ÇÏ´Â ½ºÅ¸ÀÏ ½ÃÆ® °æ·Î Ã£±â
+            // ì°¾ê³ ì í•˜ëŠ” ìŠ¤íƒ€ì¼ ì‹œíŠ¸ ê²½ë¡œ ì°¾ê¸°
             var stylePath = FindStylePath(styleName);
 
-            // ½ºÅ¸ÀÏ½ÃÆ® °¡Á®¿À±â
+            // ìŠ¤íƒ€ì¼ì‹œíŠ¸ ê°€ì ¸ì˜¤ê¸°
             return AssetDatabase.LoadAssetAtPath<StyleSheet>(stylePath);
         }
 
         /// <summary>
-        /// ½ºÅ¸ÀÏ ½ÃÆ® °æ·Î ¹İÈ¯
+        /// ìŠ¤íƒ€ì¼ ì‹œíŠ¸ ê²½ë¡œ ë°˜í™˜
         /// </summary>
-        /// <param name="styleName">Ã£°íÀÚ ÇÏ´Â ½ºÅ¸ÀÏ ½ÃÆ®</param>
+        /// <param name="styleName">ì°¾ê³ ì í•˜ëŠ” ìŠ¤íƒ€ì¼ ì‹œíŠ¸</param>
         /// <returns></returns>
         private static string FindStylePath(string styleName)
         {
-            // È®ÀåÀÚ Á¦°Å
+            // í™•ì¥ì ì œê±°
             var searchName = Path.GetFileNameWithoutExtension(styleName);
 
-            // ÇÁ·ÎÁ§Æ® ³»ºÎ Å½»ö
+            // í”„ë¡œì íŠ¸ ë‚´ë¶€ íƒìƒ‰
             var guids = AssetDatabase.FindAssets($"{searchName} t:StyleSheet");
 
             foreach (string guid in guids)

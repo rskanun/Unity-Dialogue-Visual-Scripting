@@ -7,7 +7,7 @@ namespace Rskanun.DialogueVisualScripting
     {
         private Line introLine;
 
-        // ÇöÀç ¼øÈ¸ ÁßÀÎ ¿­°ÅÀÚ
+        // í˜„ì¬ ìˆœíšŒ ì¤‘ì¸ ì—´ê±°ì
         private Stack<LineEnumerator> enumeratorStack = new();
 
         public ScenarioScene(Line introLine)
@@ -17,14 +17,14 @@ namespace Rskanun.DialogueVisualScripting
 
         public void SelectOption(int index)
         {
-            // °¡Àå ÃÖ±Ù »ı¼ºµÈ ¿­°ÅÀÚ°¡ À¯È¿ÇÏÁö ¾Ê´Â °æ¿ì
+            // ê°€ì¥ ìµœê·¼ ìƒì„±ëœ ì—´ê±°ìê°€ ìœ íš¨í•˜ì§€ ì•ŠëŠ” ê²½ìš°
             while (enumeratorStack.Count > 0 && !enumeratorStack.Peek().IsValid())
             {
-                // À¯È¿ÇÑ ¿­°ÅÀÚ°¡ ³ª¿Ã ¶§±îÁö Á¦°Å
+                // ìœ íš¨í•œ ì—´ê±°ìê°€ ë‚˜ì˜¬ ë•Œê¹Œì§€ ì œê±°
                 enumeratorStack.Pop();
             }
 
-            // °¡Àå ÃÖ±Ù »ı¼ºµÈ ¿­°ÅÀÚÀÇ ¼±ÅÃ ¿É¼Ç ¼³Á¤
+            // ê°€ì¥ ìµœê·¼ ìƒì„±ëœ ì—´ê±°ìì˜ ì„ íƒ ì˜µì…˜ ì„¤ì •
             if (enumeratorStack.TryPeek(out var enumerator))
             {
                 enumerator.SelectOption(index);
@@ -35,7 +35,7 @@ namespace Rskanun.DialogueVisualScripting
         {
             enumeratorStack.Push(new LineEnumerator(introLine));
 
-            // °¡Àå ³ªÁß¿¡ µé¾î¿Â ¿­°ÅÀÚ ¸®ÅÏ
+            // ê°€ì¥ ë‚˜ì¤‘ì— ë“¤ì–´ì˜¨ ì—´ê±°ì ë¦¬í„´
             return enumeratorStack.Peek();
         }
 
@@ -47,11 +47,11 @@ namespace Rskanun.DialogueVisualScripting
 
     public class LineEnumerator : IEnumerator<Line>
     {
-        private Line introLine;     // ½ÃÀÛÁ¡ ÀúÀå
-        private Line currentLine;   // ÇöÀç ÁøÇàÁßÀÎ ´ë»ç
-        private int nextIndex;      // ´ÙÀ½À¸·Î ¼±ÅÃÇÒ ¼±ÅÃÁö ÀÎµ¦½º (ÃÊ±â°ª 0)
+        private Line introLine;     // ì‹œì‘ì  ì €ì¥
+        private Line currentLine;   // í˜„ì¬ ì§„í–‰ì¤‘ì¸ ëŒ€ì‚¬
+        private int nextIndex;      // ë‹¤ìŒìœ¼ë¡œ ì„ íƒí•  ì„ íƒì§€ ì¸ë±ìŠ¤ (ì´ˆê¸°ê°’ 0)
 
-        // Ã¹ ¹®Àå ½ÇÇà ¿©ºÎ ÀúÀå °´Ã¼
+        // ì²« ë¬¸ì¥ ì‹¤í–‰ ì—¬ë¶€ ì €ì¥ ê°ì²´
         private bool isReading;
 
         public Line Current => currentLine;
@@ -66,7 +66,7 @@ namespace Rskanun.DialogueVisualScripting
         {
             if (!isReading)
             {
-                // ½ÃÀÛ ¹®ÀåÀÌ ¾ø´Â °æ¿ì Á¾·á
+                // ì‹œì‘ ë¬¸ì¥ì´ ì—†ëŠ” ê²½ìš° ì¢…ë£Œ
                 if (introLine == null) return false;
 
                 currentLine = introLine;
@@ -74,16 +74,16 @@ namespace Rskanun.DialogueVisualScripting
                 return true;
             }
 
-            // ¼±ÅÃ °¡´ÉÇÑ ¹üÀ§¿¡¼­ ¹ş¾î³­ °æ¿ì Á¾·á
+            // ì„ íƒ ê°€ëŠ¥í•œ ë²”ìœ„ì—ì„œ ë²—ì–´ë‚œ ê²½ìš° ì¢…ë£Œ
             if (currentLine.nextLines.Count <= nextIndex)
             {
                 return false;
             }
 
-            // ÀÌ¾îÁø ´ë»ç ºÒ·¯¿À±â
+            // ì´ì–´ì§„ ëŒ€ì‚¬ ë¶ˆëŸ¬ì˜¤ê¸°
             currentLine = currentLine.nextLines[nextIndex];
 
-            // ´ÙÀ½ ´ë»ç ¼±ÅÃ¿¡ ¿µÇâÀ» ³¢Ä¡Áö ¾Ê±â À§ÇØ ÃÊ±âÈ­
+            // ë‹¤ìŒ ëŒ€ì‚¬ ì„ íƒì— ì˜í–¥ì„ ë¼ì¹˜ì§€ ì•Šê¸° ìœ„í•´ ì´ˆê¸°í™”
             nextIndex = 0;
 
             return currentLine != null;
@@ -98,14 +98,14 @@ namespace Rskanun.DialogueVisualScripting
 
         public void Dispose()
         {
-            // break¿Í °°ÀÌ µµÁß¿¡ Á¾·áµÈ °æ¿ì
-            // À¯È¿ÇÏÁö ¾ÊÀ½À» Ç¥½Ã
+            // breakì™€ ê°™ì´ ë„ì¤‘ì— ì¢…ë£Œëœ ê²½ìš°
+            // ìœ íš¨í•˜ì§€ ì•ŠìŒì„ í‘œì‹œ
             currentLine = null;
         }
 
         public void SelectOption(int index)
         {
-            // ¼±ÅÃÁö¿¡ µû¸¥ ´ÙÀ½ ´ë»ç ¼±ÅÃ
+            // ì„ íƒì§€ì— ë”°ë¥¸ ë‹¤ìŒ ëŒ€ì‚¬ ì„ íƒ
             nextIndex = index;
         }
 

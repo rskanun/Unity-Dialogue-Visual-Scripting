@@ -27,37 +27,37 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             EditorGUI.BeginChangeCheck();
 
-            // ·¹ÀÌ¾Æ¿ô ½ÃÀÛ
+            // ë ˆì´ì•„ì›ƒ ì‹œì‘
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Space(7);
 
                 using (new GUILayout.VerticalScope())
                 {
-                    // ¶óº§ ³ĞÀÌ °íÁ¤
+                    // ë¼ë²¨ ë„“ì´ ê³ ì •
                     float originWidth = EditorGUIUtility.labelWidth;
                     EditorGUIUtility.labelWidth = 250f;
 
-                    // ¼¼¼Çº° ±×¸®±â ÇÔ¼ö È£Ãâ
+                    // ì„¸ì…˜ë³„ ê·¸ë¦¬ê¸° í•¨ìˆ˜ í˜¸ì¶œ
                     DrawGeneralSettings(serializedSettings);
                     DrawTextNodeSettings(serializedSettings);
                     DrawSelectNodeSettings(serializedSettings);
 
-                    // ¶óº§ ³Êºñ º¹±¸
+                    // ë¼ë²¨ ë„ˆë¹„ ë³µêµ¬
                     EditorGUIUtility.labelWidth = originWidth;
                 }
             }
 
-            // ÀúÀå ·ÎÁ÷
+            // ì €ì¥ ë¡œì§
             if (EditorGUI.EndChangeCheck())
             {
-                // º¯°æ °ªÀ» ½ÇÁ¦ ÀÎ½ºÅÏ½º¿¡ Àû¿ë
+                // ë³€ê²½ ê°’ì„ ì‹¤ì œ ì¸ìŠ¤í„´ìŠ¤ì— ì ìš©
                 serializedSettings.ApplyModifiedProperties();
 
-                // Áï½Ã ÀúÀå
+                // ì¦‰ì‹œ ì €ì¥
                 settings.Save();
 
-                // º¯°æ»çÇ× ¾Ë¸²
+                // ë³€ê²½ì‚¬í•­ ì•Œë¦¼
                 VisualScriptingGraphState.NotifySettingChanged();
             }
         }
@@ -75,10 +75,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
             bool guiEnabled = true;
 
 #if USE_LOCALIZATION
-            // Locale ¼³Á¤ ¿©ºÎ¿¡ µû¶ó ¼³Á¤
+            // Locale ì„¤ì • ì—¬ë¶€ì— ë”°ë¼ ì„¤ì •
             guiEnabled = VisualScriptingSettings.ProjectLocale != null;
 #else
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¿¡¼ÂÀÌ ¾ø´Ù¸é »ç¿ë ºÒ°¡´ÉÇÏµµ·Ï ¼³Á¤
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì—ì…‹ì´ ì—†ë‹¤ë©´ ì‚¬ìš© ë¶ˆê°€ëŠ¥í•˜ë„ë¡ ì„¤ì •
             guiEnabled = false;
 #endif
 
@@ -87,7 +87,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 DrawBoolField(serializedSettings, "_useLocalization", "Use Localization");
             }
 
-            // °æ°í¹® Ãâ·Â
+            // ê²½ê³ ë¬¸ ì¶œë ¥
             DrawLocalizationWarnings();
         }
 
@@ -107,7 +107,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private static void DrawLocalizationWarnings()
         {
 #if USE_LOCALIZATION
-            // Locale ¼³Á¤ÀÌ µÇ¾îÀÖÁö ¾Ê´Â °æ¿ìÀÇ °æ°í¹®
+            // Locale ì„¤ì •ì´ ë˜ì–´ìˆì§€ ì•ŠëŠ” ê²½ìš°ì˜ ê²½ê³ ë¬¸
             if (VisualScriptingSettings.ProjectLocale == null)
             {
                 EditorGUILayout.HelpBox(
@@ -116,7 +116,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 );
             }
 #else
-            // ÇØ´ç ¿É¼Ç »ç¿ëÀ» À§ÇØ ¿¡¼ÂÀ» ±ò¾Æ¾ß ÇÑ´Ù´Â °æ°í¹®
+            // í•´ë‹¹ ì˜µì…˜ ì‚¬ìš©ì„ ìœ„í•´ ì—ì…‹ì„ ê¹”ì•„ì•¼ í•œë‹¤ëŠ” ê²½ê³ ë¬¸
             EditorGUILayout.HelpBox(
                 "The 'Localization' package is required to use this feature.\n" +
                 "Please install it via the Package Manager.",

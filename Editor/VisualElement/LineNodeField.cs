@@ -10,32 +10,32 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private Label displayName;
         private Button pickerButton;
 
-        // ÇöÀç ¼±ÅÃµÈ Å¸°Ù ³ëµå
+        // í˜„ì¬ ì„ íƒëœ íƒ€ê²Ÿ ë…¸ë“œ
         private LineNode currentTarget;
 
         public LineNodeField(string label = null) : base(label, null)
         {
             AddToClassList(ObjectField.ussClassName);
 
-            // input ÄÁÅ×ÀÌ³Ê °¡Á®¿À±â
+            // input ì»¨í…Œì´ë„ˆ ê°€ì ¸ì˜¤ê¸°
             var inputContainer = this.Q(className: inputUssClassName);
             inputContainer.AddToClassList(className: ObjectField.inputUssClassName);
             inputContainer.AddToClassList("line-node__nodefield");
 
-            // ¼±ÅÃµÈ ³ëµå ÀÌ¸§ Ç¥½Ã ¶óº§
+            // ì„ íƒëœ ë…¸ë“œ ì´ë¦„ í‘œì‹œ ë¼ë²¨
             displayName = new Label("None");
             displayName.RegisterCallback<MouseDownEvent>(OnLabelClicked);
             displayName.ClearClassList();
             displayName.AddToClassList(ObjectField.objectUssClassName);
             inputContainer.Add(displayName);
 
-            // ³ëµå ¼±ÅÃÃ¢ ¶ç¿ì±â ¹öÆ°
+            // ë…¸ë“œ ì„ íƒì°½ ë„ìš°ê¸° ë²„íŠ¼
             pickerButton = new Button();
             pickerButton.ClearClassList();
             pickerButton.AddToClassList(ObjectField.selectorUssClassName);
             inputContainer.Add(pickerButton);
 
-            // ¹öÆ° Å¬¸¯ ÀÌº¥Æ® ¼³Á¤
+            // ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ì„¤ì •
             pickerButton.clicked += OnButtonCkick;
         }
 
@@ -52,7 +52,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnLabelClicked(MouseDownEvent evt)
         {
-            // ÁÂÅ¬¸¯ÀÌ ¾Æ´Ï°Å³ª ¼±ÅÃµÈ ³ëµå°¡ ¾ø´Â °æ¿ì ¹«½Ã
+            // ì¢Œí´ë¦­ì´ ì•„ë‹ˆê±°ë‚˜ ì„ íƒëœ ë…¸ë“œê°€ ì—†ëŠ” ê²½ìš° ë¬´ì‹œ
             if (evt.button != (int)MouseButton.LeftMouse || currentTarget == null)
             {
                 return;
@@ -60,65 +60,65 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             var graphView = VisualScriptingGraphState.instance.graphView;
 
-            graphView.ClearSelection(); // ¼±ÅÃ ÇØÁ¦
-            graphView.AddToSelection(currentTarget); // ¸ñÇ¥ ³ëµå ¼±ÅÃ
-            graphView.FrameSelection(); // ¼±ÅÃµÈ ³ëµå·Î ¿Å±â±â
+            graphView.ClearSelection(); // ì„ íƒ í•´ì œ
+            graphView.AddToSelection(currentTarget); // ëª©í‘œ ë…¸ë“œ ì„ íƒ
+            graphView.FrameSelection(); // ì„ íƒëœ ë…¸ë“œë¡œ ì˜®ê¸°ê¸°
 
-            // ÀÌº¥Æ® ÀüÆÄ ¸·±â
+            // ì´ë²¤íŠ¸ ì „íŒŒ ë§‰ê¸°
             evt.StopPropagation();
         }
 
         private void OnButtonCkick()
         {
-            // ¹öÆ° ÆĞ³Î ÁÂÇ¥¸¦ ½ºÅ©¸° ÁÂÇ¥·Î º¯È¯
+            // ë²„íŠ¼ íŒ¨ë„ ì¢Œí‘œë¥¼ ìŠ¤í¬ë¦° ì¢Œí‘œë¡œ ë³€í™˜
             var screenPoint = GUIUtility.GUIToScreenPoint(pickerButton.worldBound.center);
             screenPoint.x += 120;
 
-            // ÇØ´ç ÁÂÇ¥¿¡ ³ëµå ¼±ÅÃÃ¢ ¿­±â
+            // í•´ë‹¹ ì¢Œí‘œì— ë…¸ë“œ ì„ íƒì°½ ì—´ê¸°
             NodeSearchWindow.Open(screenPoint, (node) => value = node?.guid);
         }
 
         private void UpdateTargetNode(LineNode node)
         {
-            // °ªÀÌ º¯°æµÈ °æ¿ì¿¡¸¸ ¾÷µ¥ÀÌÆ® È£Ãâ
+            // ê°’ì´ ë³€ê²½ëœ ê²½ìš°ì—ë§Œ ì—…ë°ì´íŠ¸ í˜¸ì¶œ
             if (currentTarget == node) return;
 
-            // ÀÌÀü ³ëµå´Â ÀÌº¥Æ®¸¦ Ãë¼ÒÇÏ°í, »õ ³ëµå¿£ ÀÌº¥Æ® µî·Ï
+            // ì´ì „ ë…¸ë“œëŠ” ì´ë²¤íŠ¸ë¥¼ ì·¨ì†Œí•˜ê³ , ìƒˆ ë…¸ë“œì—” ì´ë²¤íŠ¸ ë“±ë¡
             if (currentTarget != null) currentTarget.OnNodeModified -= UpdateDisplayLabel;
             if (node != null) node.OnNodeModified += UpdateDisplayLabel;
 
-            // ÇöÀç ¼±ÅÃµÈ ³ëµå º¯°æ
+            // í˜„ì¬ ì„ íƒëœ ë…¸ë“œ ë³€ê²½
             currentTarget = node;
 
-            // ¶óº§°ª ¾÷µ¥ÀÌÆ®
+            // ë¼ë²¨ê°’ ì—…ë°ì´íŠ¸
             UpdateDisplayLabel();
         }
 
         public void UpdateDisplayLabel()
         {
-            // ÇöÀç °ªÀÌ ÀÖÀ½¿¡µµ ¼±ÅÃµÈ ³ëµå°¡ ¾ø´Â °æ¿ì
+            // í˜„ì¬ ê°’ì´ ìˆìŒì—ë„ ì„ íƒëœ ë…¸ë“œê°€ ì—†ëŠ” ê²½ìš°
             if (currentTarget == null && !string.IsNullOrEmpty(value))
             {
-                // ±×·¡ÇÁ¿¡¼­ Ã£¾Æ¿À±â
+                // ê·¸ë˜í”„ì—ì„œ ì°¾ì•„ì˜¤ê¸°
                 var graphView = VisualScriptingGraphState.instance.graphView;
                 var targetNode = graphView.nodes.OfType<LineNode>()
                                     .FirstOrDefault(node => node.guid == value);
 
-                // ÀÌº¥Æ® µî·Ï
+                // ì´ë²¤íŠ¸ ë“±ë¡
                 targetNode.OnNodeModified += UpdateDisplayLabel;
 
-                // ÇöÀç ¼±ÅÃµÈ ³ëµå·Î ¼³Á¤
+                // í˜„ì¬ ì„ íƒëœ ë…¸ë“œë¡œ ì„¤ì •
                 currentTarget = targetNode;
             }
 
-            // ¼±ÅÃµÈ ³ëµå°¡ ¾ø´Â °æ¿ì
+            // ì„ íƒëœ ë…¸ë“œê°€ ì—†ëŠ” ê²½ìš°
             if (currentTarget == null)
             {
                 displayName.text = "None (Line Node)";
                 return;
             }
 
-            // ¼±ÅÃµÈ ³ëµå°¡ »èÁ¦µÈ(ºÎ¸ğ ¿©ºÎ·Î È®ÀÎ) °æ¿ì
+            // ì„ íƒëœ ë…¸ë“œê°€ ì‚­ì œëœ(ë¶€ëª¨ ì—¬ë¶€ë¡œ í™•ì¸) ê²½ìš°
             if (currentTarget.parent == null)
             {
                 displayName.text = "Missing Node";

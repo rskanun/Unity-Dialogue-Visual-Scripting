@@ -17,7 +17,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private GraphData cacheData;
         private VisualScriptingGraphView graphView;
 
-        // ±×·¡ÇÁ »óÈ²
+        // ê·¸ë˜í”„ ìƒí™©
         private bool isLoading;
         private bool isDirty;
 
@@ -31,16 +31,16 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             isLoading = true;
 
-            // GraphView »ı¼ºÇÏ°í Ã¢¿¡ Ãß°¡
+            // GraphView ìƒì„±í•˜ê³  ì°½ì— ì¶”ê°€
             ConstructGraphView();
 
-            // Åø¹Ù »ı¼º
+            // íˆ´ë°” ìƒì„±
             DrawToolbar();
 
-            // ÀÛ¾÷ ÁßÀÌ´ø µ¥ÀÌÅÍ ´Ù½Ã ºÒ·¯¿À±â
+            // ì‘ì—… ì¤‘ì´ë˜ ë°ì´í„° ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
             await RestoreEditorState();
 
-            // Å°´Ù¿î ÀÌº¥Æ® µî·Ï
+            // í‚¤ë‹¤ìš´ ì´ë²¤íŠ¸ ë“±ë¡
             rootVisualElement.RegisterCallback<KeyDownEvent>(OnKeyDown);
 
             isLoading = false;
@@ -48,39 +48,39 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnDisable()
         {
-            // Ã¢ Á¾·á ½Ã, GraphView Á¦°Å
+            // ì°½ ì¢…ë£Œ ì‹œ, GraphView ì œê±°
             if (graphView != null)
             {
-                // ±×·¡ÇÁ ºä Á¦°Å
+                // ê·¸ë˜í”„ ë·° ì œê±°
                 rootVisualElement.Remove(graphView);
             }
 
-            // ÀÛ¾÷Ã¢ ¸®·Îµå ÀÌº¥Æ® Á¦°Å
+            // ì‘ì—…ì°½ ë¦¬ë¡œë“œ ì´ë²¤íŠ¸ ì œê±°
             AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
 
-            // ±×·¡ÇÁ ¾÷µ¥ÀÌÆ® ÀÌº¥Æ® Á¦°Å
+            // ê·¸ë˜í”„ ì—…ë°ì´íŠ¸ ì´ë²¤íŠ¸ ì œê±°
             graphView.OnAnyNodeModified -= OnNodeModified;
             graphView.graphViewChanged -= OnGraphChanged;
 
-            // Å°´Ù¿î ÀÌº¥Æ® µî·Ï
+            // í‚¤ë‹¤ìš´ ì´ë²¤íŠ¸ ë“±ë¡
             rootVisualElement.UnregisterCallback<KeyDownEvent>(OnKeyDown);
         }
 
         private void OnBeforeAssemblyReload()
         {
-            // ÇÃ·¹ÀÌ ¸ğµå ÁøÀÔ ½Ã¿£ ÀÛµ¿ÇÏÁö ¾Ê°í ³Ñ¾î°¡±â
+            // í”Œë ˆì´ ëª¨ë“œ ì§„ì… ì‹œì—” ì‘ë™í•˜ì§€ ì•Šê³  ë„˜ì–´ê°€ê¸°
             if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            // ÇöÀç ÀÛ¾÷ ³»¿ª ÀÓ½Ã ¼¼ÀÌºê
+            // í˜„ì¬ ì‘ì—… ë‚´ì—­ ì„ì‹œ ì„¸ì´ë¸Œ
             graphView.SaveTempGraph(cacheData);
         }
 
         private void OnKeyDown(KeyDownEvent evt)
         {
-            // ÅØ½ºÆ® ÇÊµå ÀÔ·Â Áß¿£ ¹«½Ã
+            // í…ìŠ¤íŠ¸ í•„ë“œ ì…ë ¥ ì¤‘ì—” ë¬´ì‹œ
             if (evt.target is TextField || evt.target is IMGUIContainer)
             {
                 return;
@@ -89,7 +89,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             bool isPressedControlKey = (evt.modifiers & (EventModifiers.Control | EventModifiers.Command)) != 0;
             if (evt.keyCode == KeyCode.S && isPressedControlKey)
             {
-                // ¿¡µğÅÍ ÀúÀå ½ÇÇà
+                // ì—ë””í„° ì €ì¥ ì‹¤í–‰
                 Save();
             }
         }
@@ -98,28 +98,28 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             graphView = new VisualScriptingGraphView();
 
-            // GraphView »ı¼º
+            // GraphView ìƒì„±
             graphView.StretchToParentSize();
             rootVisualElement.Add(graphView);
 
-            // ÇöÀç »ç¿ë ÁßÀÎ ±×·¡ÇÁ ºä·Î µî·Ï
+            // í˜„ì¬ ì‚¬ìš© ì¤‘ì¸ ê·¸ë˜í”„ ë·°ë¡œ ë“±ë¡
             VisualScriptingGraphState.instance.graphView = graphView;
 
-            // ³ëµå Å½»öÃ¢ ¼³Á¤
+            // ë…¸ë“œ íƒìƒ‰ì°½ ì„¤ì •
             NodeSearchWindow.Initialize(graphView);
 
-            // ±×·¡ÇÁ ¾÷µ¥ÀÌÆ® ÀÌº¥Æ® Ãß°¡
+            // ê·¸ë˜í”„ ì—…ë°ì´íŠ¸ ì´ë²¤íŠ¸ ì¶”ê°€
             graphView.OnAnyNodeModified += OnNodeModified;
             graphView.graphViewChanged += OnGraphChanged;
         }
 
         private void DrawToolbar()
         {
-            // Åø¹Ù »ı¼º
+            // íˆ´ë°” ìƒì„±
             var toolbar = new Toolbar();
             rootVisualElement.Add(toolbar);
 
-            // Åø¹Ù¿¡ ¸Ş´º Ãß°¡
+            // íˆ´ë°”ì— ë©”ë‰´ ì¶”ê°€
             toolbar.Add(DrawFileMenu());
             toolbar.Add(DrawEditManu());
         }
@@ -128,52 +128,52 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             if (cacheData == null)
             {
-                // ¸¶Áö¸·À¸·Î ¿­¾ú´ø ÆÄÀÏ °¡Á®¿À±â
+                // ë§ˆì§€ë§‰ìœ¼ë¡œ ì—´ì—ˆë˜ íŒŒì¼ ê°€ì ¸ì˜¤ê¸°
                 var lastOpenedFile = GetLastOpenedFile();
 
-                // ¸¶Áö¸·À¸·Î ¿¬ ÆÄÀÏÀÌ ¾ø´Â °æ¿ì ÀÓ½Ã ÆÄÀÏ ÇÒ´ç
+                // ë§ˆì§€ë§‰ìœ¼ë¡œ ì—° íŒŒì¼ì´ ì—†ëŠ” ê²½ìš° ì„ì‹œ íŒŒì¼ í• ë‹¹
                 if (lastOpenedFile == null)
                 {
                     lastOpenedFile = CreateNewFile();
                 }
 
-                // ÇöÀç ÆÄÀÏ·Î ¼³Á¤
+                // í˜„ì¬ íŒŒì¼ë¡œ ì„¤ì •
                 SetCurrentFile(lastOpenedFile);
             }
 
 #if USE_LOCALIZATION
             if (VisualScriptingSettings.UseLocalization)
             {
-                // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¼ÂÆÃÀÌ ³¡³¯ ¶§±îÁö Àá½Ã ´ë±â
+                // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì…‹íŒ…ì´ ëë‚  ë•Œê¹Œì§€ ì ì‹œ ëŒ€ê¸°
                 await LocalizationSettings.SelectedLocaleAsync.Task;
             }
 
 #endif
 
-            // ±×·¡ÇÁ ¿­±â
+            // ê·¸ë˜í”„ ì—´ê¸°
             graphView.LoadGraph(cacheData);
 
-            // ÀÛ¾÷Ã¢ ¸®·Îµå ÀÌº¥Æ® Ãß°¡
+            // ì‘ì—…ì°½ ë¦¬ë¡œë“œ ì´ë²¤íŠ¸ ì¶”ê°€
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
         }
 
         /// <summary>
-        /// ÀúÀå ¹× ºÒ·¯¿À±â¿Í °°ÀÌ ÆÄÀÏ°ú °ü·ÃµÈ ¸Ş´º »ı¼º
+        /// ì €ì¥ ë° ë¶ˆëŸ¬ì˜¤ê¸°ì™€ ê°™ì´ íŒŒì¼ê³¼ ê´€ë ¨ëœ ë©”ë‰´ ìƒì„±
         /// </summary>
         /// <returns></returns>
         private ToolbarMenu DrawFileMenu()
         {
-            // ÆÄÀÏ ¸Ş´º(µå·Ó´Ù¿î Çü½Ä) »ı¼º
+            // íŒŒì¼ ë©”ë‰´(ë“œë¡­ë‹¤ìš´ í˜•ì‹) ìƒì„±
             var menu = new ToolbarMenu();
             menu.text = "File";
 
-            // ¸Ş´º¿¡ Æ÷ÇÔµÉ ¾×¼Ç
-            // ÆÄÀÏ »ı¼º
+            // ë©”ë‰´ì— í¬í•¨ë  ì•¡ì…˜
+            // íŒŒì¼ ìƒì„±
             menu.menu.AppendAction("New File", act => OpenNewFile());
             menu.menu.AppendAction("Open File", act => OpenFile());
             menu.menu.AppendSeparator();
 
-            // ÆÄÀÏ ÀúÀå
+            // íŒŒì¼ ì €ì¥
             menu.menu.AppendAction("Save File", act => Save());
             menu.menu.AppendAction("Save As...", act => SaveAs());
 
@@ -181,29 +181,29 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// »õ·Î¿î ÆÄÀÏÀ» ÇöÀç ¿¡µğÅÍ¿¡ ¿­±â
+        /// ìƒˆë¡œìš´ íŒŒì¼ì„ í˜„ì¬ ì—ë””í„°ì— ì—´ê¸°
         /// </summary>
         public void OpenNewFile()
         {
-            // »õ ½Ã³ª¸®¿À ÆÄÀÏ »ı¼º
+            // ìƒˆ ì‹œë‚˜ë¦¬ì˜¤ íŒŒì¼ ìƒì„±
             var newFile = CreateNewFile();
 
-            // »õ ÆÄÀÏÀ» ÇöÀç ÆÄÀÏ·Î ÁöÁ¤
+            // ìƒˆ íŒŒì¼ì„ í˜„ì¬ íŒŒì¼ë¡œ ì§€ì •
             SetCurrentFile(newFile);
 
-            // »õ ÆÄÀÏ ¿­±â
+            // ìƒˆ íŒŒì¼ ì—´ê¸°
             graphView.LoadGraph(newFile.graphData);
 
-            // º¯°æ»çÇ× ¾øÀ½ ¾Ë¸²
+            // ë³€ê²½ì‚¬í•­ ì—†ìŒ ì•Œë¦¼
             MarkAsSaved();
         }
 
         private ScenarioGraph CreateNewFile()
         {
-            // ÀÓ½Ã·Î »ç¿ëµÉ »õ ÆÄÀÏ »ı¼º
+            // ì„ì‹œë¡œ ì‚¬ìš©ë  ìƒˆ íŒŒì¼ ìƒì„±
             var newFile = CreateInstance<ScenarioGraph>();
 
-            // ÆÄÀÏÀÇ ÀÌ¸§°ú ÈÖ¹ßµÇÁö ¾Êµµ·Ï flag ¼³Á¤
+            // íŒŒì¼ì˜ ì´ë¦„ê³¼ íœ˜ë°œë˜ì§€ ì•Šë„ë¡ flag ì„¤ì •
             newFile.name = "New Scenario";
             newFile.hideFlags = HideFlags.HideAndDontSave;
 
@@ -211,129 +211,129 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ¿¡¼Â ÇüÅÂ·Î ¸¸µé¾îµĞ ÆÄÀÏÀ» ¿¡µğÅÍ·Î ºÒ·¯¿À±â
+        /// ì—ì…‹ í˜•íƒœë¡œ ë§Œë“¤ì–´ë‘” íŒŒì¼ì„ ì—ë””í„°ë¡œ ë¶ˆëŸ¬ì˜¤ê¸°
         /// </summary>
         public void OpenFile()
         {
             string path = EditorUtility.OpenFilePanel("Load File", "Assets", "asset");
 
-            // ÆÄÀÏ À¯¹« ÆÄ¾Ç
+            // íŒŒì¼ ìœ ë¬´ íŒŒì•…
             if (string.IsNullOrEmpty(path))
             {
-                // ºÒ·¯¿Ã ÆÄÀÏÀÌ ¾ø´Â °æ¿ì ±×´ë·Î Á¾·á
+                // ë¶ˆëŸ¬ì˜¬ íŒŒì¼ì´ ì—†ëŠ” ê²½ìš° ê·¸ëŒ€ë¡œ ì¢…ë£Œ
                 return;
             }
 
-            // À¯´ÏÆ¼ »ó´ë °æ·Î·Î º¯È¯
+            // ìœ ë‹ˆí‹° ìƒëŒ€ ê²½ë¡œë¡œ ë³€í™˜
             path = path.Substring(path.IndexOf("Assets"));
 
-            // ÆÄÀÏ ºÒ·¯¿À±â
+            // íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°
             var currentFile = AssetDatabase.LoadAssetAtPath<ScenarioGraph>(path);
 
-            // ÇØ´ç ¿¡¼ÂÀÌ Scenario ÀÎÁö È®ÀÎ
+            // í•´ë‹¹ ì—ì…‹ì´ Scenario ì¸ì§€ í™•ì¸
             if (currentFile == null)
             {
-                // Scenario °´Ã¼°¡ ¾Æ´Ñ °æ¿ì ÆÄÀÏ ¿­±â Á¾·á
+                // Scenario ê°ì²´ê°€ ì•„ë‹Œ ê²½ìš° íŒŒì¼ ì—´ê¸° ì¢…ë£Œ
                 Debug.LogError("Unsupported asset type. This editor can only open 'Scenario' assets.");
                 return;
             }
 
-            // ÇöÀç ÀÛ¾÷ ÆÄÀÏÀ» ·ÎµåÇÑ ÆÄÀÏ·Î º¯°æ
+            // í˜„ì¬ ì‘ì—… íŒŒì¼ì„ ë¡œë“œí•œ íŒŒì¼ë¡œ ë³€ê²½
             SetCurrentFile(currentFile);
             EditorPrefs.SetString(VisualScriptingSettings.LastOpenedFileKey, path);
 
-            // ÇöÀç ¿¡µğÅÍ¿¡ ±×·¡ÇÁ ¿­±â
+            // í˜„ì¬ ì—ë””í„°ì— ê·¸ë˜í”„ ì—´ê¸°
             graphView.LoadGraph(currentFile.graphData);
 
-            // º¯°æ»çÇ× ¾øÀ½ ¾Ë¸²
+            // ë³€ê²½ì‚¬í•­ ì—†ìŒ ì•Œë¦¼
             MarkAsSaved();
         }
 
         /// <summary>
-        /// ÇöÀç ¿­¸° ÆÄÀÏ¿¡ µ¥ÀÌÅÍ µ¤¾î¾º¿ì±â
+        /// í˜„ì¬ ì—´ë¦° íŒŒì¼ì— ë°ì´í„° ë®ì–´ì”Œìš°ê¸°
         /// </summary>
         public void Save()
         {
             var currentFile = VisualScriptingGraphState.instance.currentFile;
 
-            // ¸¸¾à ÇöÀç ¿­¸° ÆÄÀÏÀÌ ¾ø´Ù¸é, ´Ù¸¥ ÀÌ¸§À¸·Î ÀúÀå
+            // ë§Œì•½ í˜„ì¬ ì—´ë¦° íŒŒì¼ì´ ì—†ë‹¤ë©´, ë‹¤ë¥¸ ì´ë¦„ìœ¼ë¡œ ì €ì¥
             if (!EditorUtility.IsPersistent(currentFile))
             {
                 SaveAs();
                 return;
             }
 
-            // ÇöÀç »óÈ²À» ¿­·ÁÀÖ´Â ÆÄÀÏ¿¡ ÀúÀå
+            // í˜„ì¬ ìƒí™©ì„ ì—´ë ¤ìˆëŠ” íŒŒì¼ì— ì €ì¥
             graphView.SaveScenario(currentFile);
 
-            // ÀúÀåµÈ ÆÄÀÏÀÇ ³»¿ëÀ» Ä³½Ã µ¥ÀÌÅÍ¿¡µµ º¹»ç
+            // ì €ì¥ëœ íŒŒì¼ì˜ ë‚´ìš©ì„ ìºì‹œ ë°ì´í„°ì—ë„ ë³µì‚¬
             RefreshCacheData(currentFile.graphData);
 
-            // ¿¡¼Â ÆÄÀÏ¿¡ µ¤¾î¾º¿ì±â
+            // ì—ì…‹ íŒŒì¼ì— ë®ì–´ì”Œìš°ê¸°
             EditorUtility.SetDirty(currentFile);
             AssetDatabase.SaveAssets();
 
-            // ÀúÀåµÇ¾úÀ½À» ¾Ë¸²
+            // ì €ì¥ë˜ì—ˆìŒì„ ì•Œë¦¼
             MarkAsSaved();
         }
 
         /// <summary>
-        /// °æ·Î»ó ÆÄÀÏ¿¡ µ¥ÀÌÅÍ¸¦ µ¤¾î¾º¿ì°Å³ª »õ·Î »ı¼ºÇÏ±â
+        /// ê²½ë¡œìƒ íŒŒì¼ì— ë°ì´í„°ë¥¼ ë®ì–´ì”Œìš°ê±°ë‚˜ ìƒˆë¡œ ìƒì„±í•˜ê¸°
         /// </summary>
         public void SaveAs()
         {
             var currentData = VisualScriptingGraphState.instance.currentFile;
 
-            // ÀúÀå À§Ä¡
+            // ì €ì¥ ìœ„ì¹˜
             string path = EditorUtility.SaveFilePanelInProject("Save File", "New Scenario", "asset", "Select a file to save the graph data.");
 
-            // ÀúÀå À§Ä¡ À¯¹« ÆÄ¾Ç
+            // ì €ì¥ ìœ„ì¹˜ ìœ ë¬´ íŒŒì•…
             if (string.IsNullOrEmpty(path))
             {
-                // ÁöÁ¤ÇÏÁö ¾ÊÀº °æ¿ì ±×´ë·Î Á¾·á
+                // ì§€ì •í•˜ì§€ ì•Šì€ ê²½ìš° ê·¸ëŒ€ë¡œ ì¢…ë£Œ
                 return;
             }
 
-            // ÇØ´ç °æ·Î·ÎºÎÅÍ ¿¡¼Â µ¥ÀÌÅÍ °¡Á®¿À±â
+            // í•´ë‹¹ ê²½ë¡œë¡œë¶€í„° ì—ì…‹ ë°ì´í„° ê°€ì ¸ì˜¤ê¸°
             var loadFile = AssetDatabase.LoadAssetAtPath<ScenarioGraph>(path);
 
-            // ¿¡¼Â µ¥ÀÌÅÍ ·Îµå¿¡ ½ÇÆĞÇÑ °æ¿ì
+            // ì—ì…‹ ë°ì´í„° ë¡œë“œì— ì‹¤íŒ¨í•œ ê²½ìš°
             if (loadFile == null)
             {
-                // ÇØ´ç °æ·Î¿¡ ¿¡¼Â ¸¸µé±â
+                // í•´ë‹¹ ê²½ë¡œì— ì—ì…‹ ë§Œë“¤ê¸°
                 loadFile = CreateInstance<ScenarioGraph>();
                 AssetDatabase.CreateAsset(loadFile, path);
             }
 
-            // ·ÎµåÇÑ ¿¡¼Â¿¡ ÇöÀç µ¥ÀÌÅÍ µ¤¾î¾º¿ì±â
+            // ë¡œë“œí•œ ì—ì…‹ì— í˜„ì¬ ë°ì´í„° ë®ì–´ì”Œìš°ê¸°
             EditorUtility.CopySerialized(currentData, loadFile);
 
-            // ÇöÀç »óÅÂ¸¦ ÀúÀåÇÏ·Á´Â µ¥ÀÌÅÍ¿¡ ÀúÀå
+            // í˜„ì¬ ìƒíƒœë¥¼ ì €ì¥í•˜ë ¤ëŠ” ë°ì´í„°ì— ì €ì¥
             graphView.SaveScenario(loadFile);
 
-            // ÆÄÀÏ ÀÌ¸§ ÇÒ´ç
+            // íŒŒì¼ ì´ë¦„ í• ë‹¹
             loadFile.name = Path.GetFileNameWithoutExtension(path);
 
-            // ÇöÀç ÀÛ¾÷ ÆÄÀÏÀ» ÀúÀåÇÑ ÆÄÀÏ·Î º¯°æ
+            // í˜„ì¬ ì‘ì—… íŒŒì¼ì„ ì €ì¥í•œ íŒŒì¼ë¡œ ë³€ê²½
             SetCurrentFile(loadFile);
             EditorPrefs.SetString(VisualScriptingSettings.LastOpenedFileKey, path);
 
-            // º¯°æ »çÇ× ±â·Ï
+            // ë³€ê²½ ì‚¬í•­ ê¸°ë¡
             EditorUtility.SetDirty(loadFile);
             AssetDatabase.SaveAssets();
 
-            // ÀúÀåµÇ¾úÀ½À» ¾Ë¸²
+            // ì €ì¥ë˜ì—ˆìŒì„ ì•Œë¦¼
             MarkAsSaved();
         }
 
         private ToolbarMenu DrawEditManu()
         {
-            //  ¸Ş´º(µå·Ó´Ù¿î Çü½Ä) »ı¼º
+            //  ë©”ë‰´(ë“œë¡­ë‹¤ìš´ í˜•ì‹) ìƒì„±
             var menu = new ToolbarMenu();
             menu.text = "Edit";
 
-            // ¸Ş´º¿¡ Æ÷ÇÔµÉ ¾×¼Ç
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¼¼ÆÃ
+            // ë©”ë‰´ì— í¬í•¨ë  ì•¡ì…˜
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì„¸íŒ…
             menu.menu.AppendAction("Localization Setting", act => GraphSettingEditor.ShowWindow());
 
             return menu;
@@ -341,20 +341,20 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private ScenarioGraph GetLastOpenedFile()
         {
-            // ÇØ´ç ÄÄÇ»ÅÍ¿¡¼­ ¸¶Áö¸·À¸·Î ÀÛ¾÷ÇÑ ÆÄÀÏ À§Ä¡¸¦ EditorPrefs¿¡¼­ °¡Á®¿À±â
+            // í•´ë‹¹ ì»´í“¨í„°ì—ì„œ ë§ˆì§€ë§‰ìœ¼ë¡œ ì‘ì—…í•œ íŒŒì¼ ìœ„ì¹˜ë¥¼ EditorPrefsì—ì„œ ê°€ì ¸ì˜¤ê¸°
             string key = VisualScriptingSettings.LastOpenedFileKey;
             string path = EditorPrefs.GetString(key);
 
-            // ÇØ´ç ÆÄÀÏÀ» Ã£¾Æ ¸®ÅÏ
+            // í•´ë‹¹ íŒŒì¼ì„ ì°¾ì•„ ë¦¬í„´
             return AssetDatabase.LoadAssetAtPath<ScenarioGraph>(path);
         }
 
         private GraphViewChange OnGraphChanged(GraphViewChange graphViewChange)
         {
-            // ·Îµù ÁßÀÌ ¾Æ´Ñ °æ¿ì
+            // ë¡œë”© ì¤‘ì´ ì•„ë‹Œ ê²½ìš°
             if (!isLoading)
             {
-                // º¯°æ»çÇ×ÀÌ ÀÖÀ½À» ¾Ë¸²
+                // ë³€ê²½ì‚¬í•­ì´ ìˆìŒì„ ì•Œë¦¼
                 MarkAsDirty();
             }
 
@@ -363,17 +363,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnNodeModified()
         {
-            // ·Îµù ÁßÀÌ ¾Æ´Ñ °æ¿ì
+            // ë¡œë”© ì¤‘ì´ ì•„ë‹Œ ê²½ìš°
             if (!isLoading)
             {
-                // º¯°æ»çÇ×ÀÌ ÀÖÀ½À» ¾Ë¸²
+                // ë³€ê²½ì‚¬í•­ì´ ìˆìŒì„ ì•Œë¦¼
                 MarkAsDirty();
             }
         }
 
         private void MarkAsDirty()
         {
-            // ÀÌ¹Ì Ç¥½ÄÀÌ ÀÖ´Ù¸é ¹«½Ã
+            // ì´ë¯¸ í‘œì‹ì´ ìˆë‹¤ë©´ ë¬´ì‹œ
             if (isDirty) return;
 
             isDirty = true;
@@ -382,7 +382,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void MarkAsSaved()
         {
-            // ÀÌ¹Ì Ç¥½ÄÀÌ ¾ø´Ù¸é ¹«½Ã
+            // ì´ë¯¸ í‘œì‹ì´ ì—†ë‹¤ë©´ ë¬´ì‹œ
             if (!isDirty) return;
 
             isDirty = false;
@@ -391,19 +391,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void SetCurrentFile(ScenarioGraph file)
         {
-            // ÇöÀç ÆÄÀÏ ±³Ã¼
+            // í˜„ì¬ íŒŒì¼ êµì²´
             VisualScriptingGraphState.instance.currentFile = file;
 
-            // Ä³½Ã µ¥ÀÌÅÍ¸¦ ÇØ´ç ÆÄÀÏÀÇ ±×·¡ÇÁ µ¥ÀÌÅÍ·Î °íÃÄ¾²±â
+            // ìºì‹œ ë°ì´í„°ë¥¼ í•´ë‹¹ íŒŒì¼ì˜ ê·¸ë˜í”„ ë°ì´í„°ë¡œ ê³ ì³ì“°ê¸°
             RefreshCacheData(file.graphData);
         }
 
         private void RefreshCacheData(GraphData data)
         {
-            // ±×·¡ÇÁ µ¥ÀÌÅÍ¸¦ JsonÀ» ÀÌ¿ëÇØ Á÷·ÄÈ­
+            // ê·¸ë˜í”„ ë°ì´í„°ë¥¼ Jsonì„ ì´ìš©í•´ ì§ë ¬í™”
             var json = JsonUtility.ToJson(data);
 
-            // ´Ù½Ã ¿ªÁ÷·ÄÈ­¸¦ »ç¿ëÇÏ¿© ¸ğµç µ¥ÀÌÅÍ¸¦ ±íÀº º¹»çÇØ Ä³½Ã µ¥ÀÌÅÍ¿¡ ºÙ¿©³Ö±â
+            // ë‹¤ì‹œ ì—­ì§ë ¬í™”ë¥¼ ì‚¬ìš©í•˜ì—¬ ëª¨ë“  ë°ì´í„°ë¥¼ ê¹Šì€ ë³µì‚¬í•´ ìºì‹œ ë°ì´í„°ì— ë¶™ì—¬ë„£ê¸°
             cacheData = JsonUtility.FromJson<GraphData>(json);
         }
     }

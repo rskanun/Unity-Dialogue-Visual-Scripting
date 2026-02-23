@@ -12,7 +12,7 @@ namespace Rskanun.DialogueVisualScripting
         public string guid => _guid;
 
         [SerializeField]
-        // ¿¡¼Â ÀúÀå ½Ã °¡Áö°Ô µÉ ¿¬°á ¶óÀÎ guid
+        // ì—ì…‹ ì €ì¥ ì‹œ ê°€ì§€ê²Œ ë  ì—°ê²° ë¼ì¸ guid
         private List<string> _nextLineGuids = new();
         public List<string> nextLineGuids
         {
@@ -21,7 +21,7 @@ namespace Rskanun.DialogueVisualScripting
         }
 
         [NonSerialized]
-        // ¿¬°á ¸®½ºÆ® ÇüÅÂ·Î ¿¬°áµÈ ¶óÀÎ ¼ÒÁö
+        // ì—°ê²° ë¦¬ìŠ¤íŠ¸ í˜•íƒœë¡œ ì—°ê²°ëœ ë¼ì¸ ì†Œì§€
         private List<Line> _nextLines = new();
         public List<Line> nextLines
         {

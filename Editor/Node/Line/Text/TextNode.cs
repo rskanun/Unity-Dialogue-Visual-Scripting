@@ -13,7 +13,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private IMGUI_TextField dialogueField;
 
         private string noneLabel = "None";
-        private string speakerKey; // ¸¶Áö¸·À¸·Î »ç¿ë °¡´ÉÇß´ø ÀÌ¸§ Å°
+        private string speakerKey; // ë§ˆì§€ë§‰ìœ¼ë¡œ ì‚¬ìš© ê°€ëŠ¥í–ˆë˜ ì´ë¦„ í‚¤
         private bool hasDialogueKeyError;
 
         public string dialogue => dialogueField.value;
@@ -31,17 +31,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public TextNode(string guid) : base(guid) { }
         public TextNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not TextNodeData textNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
-            // ´ëÈ­ ´ë»óÀÇ ÀÌ¸§ µî·Ï
+            // ëŒ€í™” ëŒ€ìƒì˜ ì´ë¦„ ë“±ë¡
             SetSpeakerName(textNodeData.speakerKey, textNodeData.speaker);
 
-            // ´ë»ç µî·Ï
+            // ëŒ€ì‚¬ ë“±ë¡
             SetDialogue(textNodeData.dialogueKey, textNodeData.dialogue);
         }
 
@@ -49,24 +49,24 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             speakerKey = key;
 
-            // ÀÌ¸§ÀÌ ¾ø´Â °æ¿ì
+            // ì´ë¦„ì´ ì—†ëŠ” ê²½ìš°
             if (string.IsNullOrEmpty(key) && string.IsNullOrEmpty(value))
             {
-                // µå·Ó´Ù¿îÀÇ °ª¿¡¸¸ null Ç¥½Ã
+                // ë“œë¡­ë‹¤ìš´ì˜ ê°’ì—ë§Œ null í‘œì‹œ
                 nameDropdownField.value = noneLabel;
                 return;
             }
 
             var useLocalization = VisualScriptingSettings.UseLocalization;
-            string entryValue = GetSpeakerEntryValue(key); // Å° °ªÀ» ÅëÇØ Ã£¾Æ¿Â ÀÌ¸§
-            string textValue = (useLocalization && entryValue != null) ? entryValue : value; // Å° °ªÀ¸·Î °¡Á®¿Ã ÀÌ¸§ÀÌ ÀÖ´Â °æ¿ì¿¡¸¸ ÇØ´ç ÀÌ¸§ »ç¿ë(±× ¿Ü¿£ ÀúÀå ´ç½ÃÀÇ ÀÌ¸§ »ç¿ë)
-            string dropdownValue = (entryValue != null) ? entryValue : $"Error: key({key}) is not found"; // Å° °ª¿¡ ¸Â´Â °ªÀÌ ¾ø´Ù¸é ¿À·ù¸¦ ÀÌ¸§À¸·Î ¼³Á¤
+            string entryValue = GetSpeakerEntryValue(key); // í‚¤ ê°’ì„ í†µí•´ ì°¾ì•„ì˜¨ ì´ë¦„
+            string textValue = (useLocalization && entryValue != null) ? entryValue : value; // í‚¤ ê°’ìœ¼ë¡œ ê°€ì ¸ì˜¬ ì´ë¦„ì´ ìˆëŠ” ê²½ìš°ì—ë§Œ í•´ë‹¹ ì´ë¦„ ì‚¬ìš©(ê·¸ ì™¸ì—” ì €ì¥ ë‹¹ì‹œì˜ ì´ë¦„ ì‚¬ìš©)
+            string dropdownValue = (entryValue != null) ? entryValue : $"Error: key({key}) is not found"; // í‚¤ ê°’ì— ë§ëŠ” ê°’ì´ ì—†ë‹¤ë©´ ì˜¤ë¥˜ë¥¼ ì´ë¦„ìœ¼ë¡œ ì„¤ì •
 
-            // ÀÌ¸§ °ª ¼³Á¤
+            // ì´ë¦„ ê°’ ì„¤ì •
             nameDropdownField.SetValueWithoutNotify(dropdownValue);
             nameField.SetValueWithoutNotify(textValue);
 
-            // ¿À·ù ¿©ºÎ ¼öÁ¤
+            // ì˜¤ë¥˜ ì—¬ë¶€ ìˆ˜ì •
             hasDialogueKeyError = (entryValue == null);
         }
 
@@ -79,13 +79,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
             }
 
 #if USE_LOCALIZATION
-            // ÇöÀç ¼³Á¤µÈ Å×ÀÌºí °¡Á®¿À±â
+            // í˜„ì¬ ì„¤ì •ëœ í…Œì´ë¸” ê°€ì ¸ì˜¤ê¸°
             var state = VisualScriptingGraphState.instance;
             var entry = state.nameTable?.GetEntry(key);
 
             return (entry != null) ? entry.Value : null;
 #else
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÑ´Ù°í º¯¼ö°¡ ¼±¾ğµÇ¾úÀ¸³ª, ¿¡¼ÂÀÌ ¾ø´Â °æ¿ì °æ°í
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•œë‹¤ê³  ë³€ìˆ˜ê°€ ì„ ì–¸ë˜ì—ˆìœ¼ë‚˜, ì—ì…‹ì´ ì—†ëŠ” ê²½ìš° ê²½ê³ 
             UnityEngine.Debug.LogWarning("Warning: Localization Setting is enabled, but no asset is assigned");
             return null;
 #endif
@@ -94,12 +94,12 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void SetDialogue(string key, string value)
         {
-            // Å° °ªÀ» ÅëÇØ ´ë»ç ¹Ş¾Æ¿À±â
+            // í‚¤ ê°’ì„ í†µí•´ ëŒ€ì‚¬ ë°›ì•„ì˜¤ê¸°
             var useLocalization = VisualScriptingSettings.UseLocalization;
             var entryValue = GetDialogueEntryValue(key);
             var text = (entryValue != null) ? entryValue : $"Error: key({key}) is not found";
 
-            // ´ë»ç °ª ¼³Á¤(·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö ¾Ê´Â °æ¿ì ÀúÀå ´ç½ÃÀÇ °ª »ç¿ë)
+            // ëŒ€ì‚¬ ê°’ ì„¤ì •(ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê²½ìš° ì €ì¥ ë‹¹ì‹œì˜ ê°’ ì‚¬ìš©)
             dialogueField.SetValueWithoutNotify((useLocalization && !string.IsNullOrEmpty(value)) ? text : value);
         }
 
@@ -112,7 +112,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             }
 
 #if USE_LOCALIZATION
-            // ÇöÀç ¼³Á¤µÈ Å×ÀÌºí °¡Á®¿À±â
+            // í˜„ì¬ ì„¤ì •ëœ í…Œì´ë¸” ê°€ì ¸ì˜¤ê¸°
             var state = VisualScriptingGraphState.instance;
             var entry = state.dialogueTable?.GetEntry(key);
 
@@ -153,7 +153,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 #if USE_LOCALIZATION
             var nameTable = VisualScriptingGraphState.instance.nameTable;
 
-            // Å×ÀÌºíÀÌ ¼³Á¤µÇ¾î ÀÖÁö ¾Ê´Â °æ¿ì Å° °ª X
+            // í…Œì´ë¸”ì´ ì„¤ì •ë˜ì–´ ìˆì§€ ì•ŠëŠ” ê²½ìš° í‚¤ ê°’ X
             if (nameTable == null) return null;
 
             return nameTable.Values
@@ -161,7 +161,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                         .Select(e => e.Key)
                         .FirstOrDefault();
 #else
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¿¡¼ÂÀÌ ¾ø´Â °æ¿ì ºó °ª ¸®ÅÏ
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì—ì…‹ì´ ì—†ëŠ” ê²½ìš° ë¹ˆ ê°’ ë¦¬í„´
             return null;
 #endif
         }
@@ -173,17 +173,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         protected override void OnEnable()
         {
-            // ÀüÃ¼ ¼³Á¤°ªÀÌ ¹Ù²î´Â °æ¿ìÀÇ ÀÌº¥Æ® ¼³Á¤
+            // ì „ì²´ ì„¤ì •ê°’ì´ ë°”ë€ŒëŠ” ê²½ìš°ì˜ ì´ë²¤íŠ¸ ì„¤ì •
             VisualScriptingSettings.OnSettingChanged += UpdateNameFieldType;
 
-            // ÇöÁ¦ ÆÄÀÏÀÇ ¼³Á¤°ªÀÌ ¹Ù²î´Â °æ¿ìÀÇ ÀÌº¥Æ® ¼³Á¤
+            // í˜„ì œ íŒŒì¼ì˜ ì„¤ì •ê°’ì´ ë°”ë€ŒëŠ” ê²½ìš°ì˜ ì´ë²¤íŠ¸ ì„¤ì •
             VisualScriptingGraphState.OnSettingChanged += UpdateNameField;
             VisualScriptingGraphState.OnSettingChanged += UpdateDialogueField;
         }
 
         protected override void OnDisable()
         {
-            // ÀÌº¥Æ® ÇØÁ¦
+            // ì´ë²¤íŠ¸ í•´ì œ
             VisualScriptingSettings.OnSettingChanged -= UpdateNameFieldType;
             VisualScriptingGraphState.OnSettingChanged -= UpdateNameField;
             VisualScriptingGraphState.OnSettingChanged -= UpdateDialogueField;
@@ -195,35 +195,35 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             var setting = VisualScriptingSettings.instance;
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // ÀÌ¸§ ¼±ÅÃ µå·Ó´Ù¿î Ãß°¡(¾Æ·¡ÀÇ ¾÷µ¥ÀÌÆ®¿¡¼­ ¸ñ·Ï ¼³Á¤)
+            // ì´ë¦„ ì„ íƒ ë“œë¡­ë‹¤ìš´ ì¶”ê°€(ì•„ë˜ì˜ ì—…ë°ì´íŠ¸ì—ì„œ ëª©ë¡ ì„¤ì •)
             nameDropdownField = new DropdownField("Name", new List<string>(), 0);
             nameDropdownField.value = noneLabel;
             nameDropdownField.RegisterValueChangedCallback(evt => speakerKey = GetSpeakerKey());
             nameDropdownField.AddToClassList("line-node__name-dropdown");
             extensionContainer.Add(nameDropdownField);
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö ¾Ê´Â °æ¿ì ÀÌ¸§À» ÀûÀ» ÇÊµå Ãß°¡
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê²½ìš° ì´ë¦„ì„ ì ì„ í•„ë“œ ì¶”ê°€
             nameField = new IMGUI_TextField("Name");
             nameField.RegisterValueChangedCallback(evt => speakerKey = GetSpeakerKey());
             extensionContainer.Add(nameField);
 
-            // ´ë»ç ¼±ÅÃ ¿ä¼Ò Ãß°¡(guid¸¦ ÅëÇØ Localization¸¦ »ğÀÔ ¹× ¼öÁ¤ÇÏ´Â ¹æ½Ä)
+            // ëŒ€ì‚¬ ì„ íƒ ìš”ì†Œ ì¶”ê°€(guidë¥¼ í†µí•´ Localizationë¥¼ ì‚½ì… ë° ìˆ˜ì •í•˜ëŠ” ë°©ì‹)
             dialogueField = new IMGUI_TextField("Dialogue Text");
             dialogueField.multiline = true;
             dialogueField.AddToClassList("line-node__dialogue-field");
             extensionContainer.Add(dialogueField);
 
-            // ÀÌ¸§ ¿ä¼Ò display ¾÷µ¥ÀÌÆ®
+            // ì´ë¦„ ìš”ì†Œ display ì—…ë°ì´íŠ¸
             UpdateNameField();
 
             RefreshExpandedState();
@@ -231,10 +231,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void UpdateNameField()
         {
-            // ÇöÀç ÀÌ¸§ Å¸ÀÔÀ» ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ì´ë¦„ íƒ€ì…ì„ ì—…ë°ì´íŠ¸
             UpdateNameFieldType();
 
-            // ¼±ÅÃµÈ ÀÌ¸§ ¾÷µ¥ÀÌÆ®(µå·Ó´Ù¿î ÇÊµå °ª¿¡ ¿À·ù ¹®±¸°¡ ÀÖÀ» ¼ö ÀÖÀ¸´Ï ÅØ½ºÆ® ÇÊµå °ªÀ¸·Î ¼³Á¤)
+            // ì„ íƒëœ ì´ë¦„ ì—…ë°ì´íŠ¸(ë“œë¡­ë‹¤ìš´ í•„ë“œ ê°’ì— ì˜¤ë¥˜ ë¬¸êµ¬ê°€ ìˆì„ ìˆ˜ ìˆìœ¼ë‹ˆ í…ìŠ¤íŠ¸ í•„ë“œ ê°’ìœ¼ë¡œ ì„¤ì •)
             SetSpeakerName(speakerKey, nameField.value);
         }
 
@@ -242,29 +242,29 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var useLocalization = VisualScriptingSettings.UseLocalization;
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç »ç¿ë ¿©ºÎ¿¡ µû¶ó ÀÌ¸§ ÇÊµå ¹Ù²Ù±â
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì‚¬ìš© ì—¬ë¶€ì— ë”°ë¼ ì´ë¦„ í•„ë“œ ë°”ê¾¸ê¸°
             nameDropdownField.style.display = useLocalization ? DisplayStyle.Flex : DisplayStyle.None;
             nameField.style.display = useLocalization ? DisplayStyle.None : DisplayStyle.Flex;
 
 #if USE_LOCALIZATION
-            // ÀÌ¸§ ¼±ÅÃ µå·Ó´Ù¿î ¸ñ·Ï Àç¼³Á¤(LocalizationÀ» ÅëÇØ ÀÌ¸§ ¸ñ·Ï ºÒ·¯¿À±â)
+            // ì´ë¦„ ì„ íƒ ë“œë¡­ë‹¤ìš´ ëª©ë¡ ì¬ì„¤ì •(Localizationì„ í†µí•´ ì´ë¦„ ëª©ë¡ ë¶ˆëŸ¬ì˜¤ê¸°)
             var nameTable = VisualScriptingGraphState.instance.nameTable;
-            var nameList = new[] { noneLabel } // ÀÌ¸§ ¸ñ·Ï + ÀÌ¸§ ¾øÀ½ Æ÷ÇÔ
+            var nameList = new[] { noneLabel } // ì´ë¦„ ëª©ë¡ + ì´ë¦„ ì—†ìŒ í¬í•¨
                 .Concat(nameTable?.Values.Select(ste => ste.Value) ?? Enumerable.Empty<string>())
                 .ToList();
             nameDropdownField.choices = nameList;
 #else
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¿¡¼ÂÀÌ ¾ø´Â °æ¿ì¿¡µµ ¸¸¾àÀ» À§ÇØ ÀÌ¸§ ¾øÀ½¸¸ ³Ö±â
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì—ì…‹ì´ ì—†ëŠ” ê²½ìš°ì—ë„ ë§Œì•½ì„ ìœ„í•´ ì´ë¦„ ì—†ìŒë§Œ ë„£ê¸°
             nameDropdownField.choices = new List<string>() { noneLabel };
 #endif
         }
 
         private void UpdateDialogueField()
         {
-            // ¿À·ù·Î ÀÎÇØ ±âÁ¸ ´ë»ç¸¦ °¡Á®¿ÀÁö ¸øÇÑ °æ¿ì¿¡¸¸ ´Ù½Ã ºÒ·¯¿À±â
+            // ì˜¤ë¥˜ë¡œ ì¸í•´ ê¸°ì¡´ ëŒ€ì‚¬ë¥¼ ê°€ì ¸ì˜¤ì§€ ëª»í•œ ê²½ìš°ì—ë§Œ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
             if (!hasDialogueKeyError) return;
 
-            // Å° °ªÀ» ÅëÇØ ´ë»ç ´Ù½Ã ºÒ·¯¿À±â
+            // í‚¤ ê°’ì„ í†µí•´ ëŒ€ì‚¬ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
             SetDialogue(GetDialogueKey(), "");
         }
     }

@@ -13,7 +13,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
     [FilePath("ProjectSettings/VisualScriptingGraphState.asset", FilePathAttribute.Location.ProjectFolder)]
     public class VisualScriptingGraphState : ScriptableSingleton<VisualScriptingGraphState>
     {
-        // ¼³Á¤°ª(Localization Table °ª µî) º¯°æ ÀÌº¥Æ®
+        // ì„¤ì •ê°’(Localization Table ê°’ ë“±) ë³€ê²½ ì´ë²¤íŠ¸
         public static event Action OnSettingChanged;
 
         private ScenarioGraph _currentFile;
@@ -47,7 +47,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private StringTable GetStringTable(StringTableCollection tableCollection)
         {
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö ¾Ê´Â °æ¿ì null ¸®ÅÏ
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê²½ìš° null ë¦¬í„´
             if (!VisualScriptingSettings.UseLocalization)
             {
                 return null;
@@ -61,7 +61,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return null;
             }
 
-            // ´ëÇ¥ ¾ğ¾î¸¦ ±â¹İÀ¸·Î StringTable ¸®ÅÏ
+            // ëŒ€í‘œ ì–¸ì–´ë¥¼ ê¸°ë°˜ìœ¼ë¡œ StringTable ë¦¬í„´
             return tableCollection?.GetTable(locale.Identifier) as StringTable;
         }
 #endif

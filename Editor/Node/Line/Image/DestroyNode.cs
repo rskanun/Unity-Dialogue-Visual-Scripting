@@ -1,5 +1,4 @@
 using UnityEditor.Experimental.GraphView;
-using UnityEngine.UIElements;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
@@ -12,10 +11,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public DestroyNode(string guid) : base(guid) { }
         public DestroyNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not DestroyNodeData destroyNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
@@ -43,8 +42,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public override void OnLoadCompleted()
         {
-            // ±×·¡ÇÁ ·Îµå°¡ ³¡³­ ½ÃÁ¡¿¡¼­ Å¸°Ù ¼³Á¤ ÇÊµå ´Ù½Ã ºÒ·¯¿À±â
-            // (Å¸°Ùº¸´Ù ÇØ´ç ³ëµå°¡ ¸ÕÀú ·ÎµåµÈ ½ÃÁ¡¿¡¼­ ¸ø Ã£´Â ¿À·ù°¡ ¹ß»ıÇÒ ¼ö ÀÖÀ½)
+            // ê·¸ë˜í”„ ë¡œë“œê°€ ëë‚œ ì‹œì ì—ì„œ íƒ€ê²Ÿ ì„¤ì • í•„ë“œ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
+            // (íƒ€ê²Ÿë³´ë‹¤ í•´ë‹¹ ë…¸ë“œê°€ ë¨¼ì € ë¡œë“œëœ ì‹œì ì—ì„œ ëª» ì°¾ëŠ” ì˜¤ë¥˜ê°€ ë°œìƒí•  ìˆ˜ ìˆìŒ)
             targetField.UpdateDisplayLabel();
         }
 
@@ -52,17 +51,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // ÆÄ±«ÇÒ ¿ÀºêÁ§Æ® ¼±ÅÃ
+            // íŒŒê´´í•  ì˜¤ë¸Œì íŠ¸ ì„ íƒ
             targetField = new LineNodeField("Destroy Object");
             extensionContainer.Add(targetField);
 

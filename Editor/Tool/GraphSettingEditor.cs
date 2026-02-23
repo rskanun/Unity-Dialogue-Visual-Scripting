@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,10 +19,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var window = GetWindow<GraphSettingEditor>();
 
-            // À¯´ÏÆ¼ ³»Àå Åé´Ï¹ÙÄû ¾ÆÀÌÄÜ °¡Á®¿À±â
+            // ìœ ë‹ˆí‹° ë‚´ì¥ í†±ë‹ˆë°”í€´ ì•„ì´ì½˜ ê°€ì ¸ì˜¤ê¸°
             Texture icon = EditorGUIUtility.IconContent("SettingsIcon").image;
 
-            // Á¦¸ñ¿¡ ¾ÆÀÌÄÜ ³Ö±â
+            // ì œëª©ì— ì•„ì´ì½˜ ë„£ê¸°
             window.titleContent = new GUIContent("Settings", icon);
 
             window.minSize = new Vector2(550, 300);
@@ -35,7 +34,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var style = StyleSheetManager.GetStyleSheet("SettingStyle.uss");
             rootVisualElement.styleSheets.Add(style);
 
-            // È­¸éÀ» 2°³·Î ºĞÇÒÇÏ¿© ÇÏ³ª¿£ ¸Ş´º¸¦, ´Ù¸¥ ÇÏ³ª¿£ ³»¿ëÀ» ¶ç¿ì±â
+            // í™”ë©´ì„ 2ê°œë¡œ ë¶„í• í•˜ì—¬ í•˜ë‚˜ì—” ë©”ë‰´ë¥¼, ë‹¤ë¥¸ í•˜ë‚˜ì—” ë‚´ìš©ì„ ë„ìš°ê¸°
             var splitView = new TwoPaneSplitView(0, 200, TwoPaneSplitViewOrientation.Horizontal);
             rootVisualElement.Add(splitView);
 
@@ -76,34 +75,34 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var contentContainer = new IMGUIContainer();
             contentContainer.AddToClassList("settings-editor__content");
 
-            // Á¦¸ñ
+            // ì œëª©
             var title = new Label("Localization");
             title.AddToClassList("settings-editor__content-title");
             contentContainer.Add(title);
 
 #if USE_LOCALIZATION
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¸ñ·Ï
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ëª©ë¡
             var tableMap = LocalizationEditorSettings.GetStringTableCollections().ToDictionary(c => c.TableCollectionName);
 
-            // ÇöÀç µ¥ÀÌÅÍ ÆÄÀÏ °¡Á®¿À±â
+            // í˜„ì¬ ë°ì´í„° íŒŒì¼ ê°€ì ¸ì˜¤ê¸°
             var currentFile = VisualScriptingGraphState.instance.currentFile;
 
-            // ÀÌ¸§À» ´ãÀ» ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç µå·Ó¹Ú½º
+            // ì´ë¦„ì„ ë‹´ì„ ë¡œì»¬ë¼ì´ì œì´ì…˜ ë“œë¡­ë°•ìŠ¤
             var nameDropdown = CreateTableDropdown("Name", currentFile.nameTableCollection, tableMap, table => currentFile.nameTableCollection = table);
             contentContainer.Add(nameDropdown);
 
-            // ´ë»ç¸¦ ´ãÀ» ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç µå·Ó¹Ú½º
+            // ëŒ€ì‚¬ë¥¼ ë‹´ì„ ë¡œì»¬ë¼ì´ì œì´ì…˜ ë“œë¡­ë°•ìŠ¤
             var textDropdown = CreateTableDropdown("Text", currentFile.dialogueTableCollection, tableMap, table => currentFile.dialogueTableCollection = table);
             contentContainer.Add(textDropdown);
 
-            // ¼±ÅÃÁö ´ãÀ» ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç µå·Ó¹Ú½º
+            // ì„ íƒì§€ ë‹´ì„ ë¡œì»¬ë¼ì´ì œì´ì…˜ ë“œë¡­ë°•ìŠ¤
             var selectionDropdown = CreateTableDropdown("Selection", currentFile.selectionTableCollection, tableMap, table => currentFile.selectionTableCollection = table);
             contentContainer.Add(selectionDropdown);
 #else
-            // ###########¿©±â ¼öÁ¤#############
-            var disabledLabel = new Label("Localization ±â´ÉÀÌ ºñÈ°¼ºÈ­ »óÅÂÀÔ´Ï´Ù.");
-            disabledLabel.style.color = UnityEngine.Color.gray;
-            contentContainer.Add(disabledLabel);
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì´ ê¹”ë ¤ìˆì§€ ì•Šì€ ìƒíƒœì—ì„œì˜ ê²½ê³ ë¬¸
+            string warningMessage = "The Localization feature is currently disabled. Please install the Unity Localization package.";
+            var helpBox = new HelpBox(warningMessage, HelpBoxMessageType.Warning);
+            contentContainer.Add(helpBox);
 #endif
 
             splitView.Add(contentContainer);
@@ -116,29 +115,29 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var noValueText = "No Localization";
 
             var useLocalization = VisualScriptingSettings.UseLocalization;
-            var selectValue = useLocalization == false ? noValueText : selectedTable?.TableCollectionName; // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö ¾ÊÀ» ¶§ÀÇ ¹®±¸ µû·Î Ÿé¼º
-            selectValue ??= errorText; // Å×ÀÌºíÀ» ÀĞ¾î¿Ã ¼ö ¾ø´Â °æ¿ì ¿¡·¯ ¹®±¸ ³Ö±â
+            var selectValue = useLocalization == false ? noValueText : selectedTable?.TableCollectionName; // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•Šì„ ë•Œì˜ ë¬¸êµ¬ ë”°ë¡œ ì“ì„±
+            selectValue ??= errorText; // í…Œì´ë¸”ì„ ì½ì–´ì˜¬ ìˆ˜ ì—†ëŠ” ê²½ìš° ì—ëŸ¬ ë¬¸êµ¬ ë„£ê¸°
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¸ñ·ÏÀ» mapÀ¸·ÎºÎÅÍ °¡Á®¿À±â
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ëª©ë¡ì„ mapìœ¼ë¡œë¶€í„° ê°€ì ¸ì˜¤ê¸°
             var list = tableMap.Keys.ToList();
 
-            // µå·Ó´Ù¿î »ı¼º
+            // ë“œë¡­ë‹¤ìš´ ìƒì„±
             var dropdown = new DropdownField(label, list, selectValue);
 
-            // µå·Ó´Ù¿î ÀÌº¥Æ® µî·Ï
+            // ë“œë¡­ë‹¤ìš´ ì´ë²¤íŠ¸ ë“±ë¡
             dropdown.RegisterValueChangedCallback(evt =>
             {
-                // map¿¡¼­ Å×ÀÌºí Ã£±â
+                // mapì—ì„œ í…Œì´ë¸” ì°¾ê¸°
                 tableMap.TryGetValue(evt.newValue, out var table);
 
-                // ÇØ´ç Å×ÀÌºí µî·Ï
+                // í•´ë‹¹ í…Œì´ë¸” ë“±ë¡
                 setter(table);
 
-                // ¼³Á¤ ¾÷µ¥ÀÌÆ® ¾Ë¸²
+                // ì„¤ì • ì—…ë°ì´íŠ¸ ì•Œë¦¼
                 VisualScriptingGraphState.NotifySettingChanged();
             });
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö ¾Ê´Â °æ¿ì ÀĞ±â Àü¿ëÀ¸·Î ¼³Á¤
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ ì•ŠëŠ” ê²½ìš° ì½ê¸° ì „ìš©ìœ¼ë¡œ ì„¤ì •
             dropdown.SetEnabled(useLocalization);
 
             return dropdown;

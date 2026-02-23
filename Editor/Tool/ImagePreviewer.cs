@@ -12,27 +12,27 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private Color currentColor;
         private Action<Vector2> onPosUpdateHandler;
 
-        // ÇØ»óµµ Á¤º¸
+        // í•´ìƒë„ ì •ë³´
         private string[] resolutionLabels = { "1920x1080 (16:9)" };
         private Vector2[] resolutions = { new Vector2(1920, 1080) };
         private int resolutionIndex;
 
-        // ¸¶¿ì½º »óÅÂ
+        // ë§ˆìš°ìŠ¤ ìƒíƒœ
         private bool isDragging;
         private Vector2 dragOffset;
 
         public static void ShowWindow(Sprite sprite, Vector2 initPos, Color initColor, Action<Vector2> handler)
         {
-            // ÀÌ¹ÌÁö ¼³Á¤¿ë Ã¢À» »õ·Î »ı¼º
+            // ì´ë¯¸ì§€ ì„¤ì •ìš© ì°½ì„ ìƒˆë¡œ ìƒì„±
             var window = GetWindow<ImagePreviewer>("Image Previewer");
 
-            // ³ëµå·ÎºÎÅÍ µ¥ÀÌÅÍ ¹Ş¾Æ¿À±â
+            // ë…¸ë“œë¡œë¶€í„° ë°ì´í„° ë°›ì•„ì˜¤ê¸°
             window.sprite = sprite;
             window.currentColor = initColor;
             window.currentPos = initPos;
             window.onPosUpdateHandler = handler;
 
-            // Ã¢ ¼³Á¤ ¹× ¿­±â
+            // ì°½ ì„¤ì • ë° ì—´ê¸°
             window.minSize = new Vector2(550, 400);
             window.Show();
         }
@@ -41,25 +41,25 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             if (sprite == null)
             {
-                Debug.LogError("ImageNode¿¡¼­ Sprite¸¦ ¸ÕÀú ¼±ÅÃÇØÁÖ¼¼¿ä.");
+                Debug.LogError("Please assign a Sprite to the ImageNode first.");
                 return;
             }
 
-            // Åø¹Ù ¿µ¿ª ¼³Á¤
+            // íˆ´ë°” ì˜ì—­ ì„¤ì •
             var toolbarRect = new Rect(0, 0, position.width, EditorStyles.toolbar.fixedHeight);
             GUI.Box(toolbarRect, "", EditorStyles.toolbar);
 
-            // Åø¹Ù ÇüÅÂÀÇ ¿ä¼Ò ±×¸®±â
+            // íˆ´ë°” í˜•íƒœì˜ ìš”ì†Œ ê·¸ë¦¬ê¸°
             EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
             resolutionIndex = EditorGUILayout.Popup(resolutionIndex, resolutionLabels, EditorStyles.toolbarPopup, GUILayout.Width(150));
             GUILayout.FlexibleSpace();
             EditorGUILayout.EndHorizontal();
 
-            // Åø¹Ù Á¦¿Ü ½Ç »ç¿ë °¡´ÉÇÑ ¿µ¿ª
+            // íˆ´ë°” ì œì™¸ ì‹¤ ì‚¬ìš© ê°€ëŠ¥í•œ ì˜ì—­
             var availableHeight = position.height - toolbarRect.height;
             var availableWidth = position.width;
 
-            // ÇØ»óµµ¿¡ µû¸¥ ÄÜÅÙÃ÷ ¿µ¿ª ¼³Á¤
+            // í•´ìƒë„ì— ë”°ë¥¸ ì½˜í…ì¸  ì˜ì—­ ì„¤ì •
             var radio = resolutions[resolutionIndex].y / resolutions[resolutionIndex].x;
             var contentWidth = (position.width * radio > availableHeight) ? availableHeight / radio : availableWidth;
             var contentHeight = contentWidth * radio;
@@ -68,11 +68,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var contentRect = new Rect(contentX, contentY, contentWidth, contentHeight);
             GUI.BeginClip(contentRect);
 
-            // °¡ÀÌµå ¿µ¿ª ¼³Á¤
+            // ê°€ì´ë“œ ì˜ì—­ ì„¤ì •
             var placementRect = new Rect(0, 0, contentRect.width, contentRect.height);
             EditorGUI.DrawRect(placementRect, new Color(0.3f, 0.3f, 0.3f));
 
-            // ½ºÇÁ¶óÀÌÆ® Å©±â ¹× À§Ä¡ °è»ê(È­¸é Áß¾ÓÀÌ pivotÀÌ µÇµµ·Ï)
+            // ìŠ¤í”„ë¼ì´íŠ¸ í¬ê¸° ë° ìœ„ì¹˜ ê³„ì‚°(í™”ë©´ ì¤‘ì•™ì´ pivotì´ ë˜ë„ë¡)
             scale = contentWidth / resolutions[resolutionIndex].x;
             float width = sprite.rect.width * scale;
             float height = sprite.rect.height * scale;
@@ -80,20 +80,20 @@ namespace Rskanun.DialogueVisualScripting.Editor
             float y = placementRect.y - currentPos.y * scale - height / 2 + placementRect.height / 2;
             Rect rect = new Rect(x, y, width, height);
 
-            // ½ºÇÁ¶óÀÌÆ® »ö ÁöÁ¤
+            // ìŠ¤í”„ë¼ì´íŠ¸ ìƒ‰ ì§€ì •
             var originColor = GUI.color;
             GUI.color = currentColor;
 
-            // ½ºÇÁ¶óÀÌÆ® ±×¸®±â
+            // ìŠ¤í”„ë¼ì´íŠ¸ ê·¸ë¦¬ê¸°
             GUI.DrawTexture(rect, sprite.texture);
 
-            // ÀÌÀü »öÀ¸·Î µÇµ¹¸®±â
+            // ì´ì „ ìƒ‰ìœ¼ë¡œ ë˜ëŒë¦¬ê¸°
             GUI.color = originColor;
 
-            // ¸¶¿ì½º ÀÌº¥Æ® Ã³¸®
+            // ë§ˆìš°ìŠ¤ ì´ë²¤íŠ¸ ì²˜ë¦¬
             HandleMouseEvent(placementRect);
 
-            // Å¬¸®ÇÎ Á¾·á
+            // í´ë¦¬í•‘ ì¢…ë£Œ
             GUI.EndClip();
         }
 
@@ -101,7 +101,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             Event e = Event.current;
 
-            // ¸¶¿ì½º Å¬¸¯ÀÌ ÀÏ¾î³­ °æ¿ì
+            // ë§ˆìš°ìŠ¤ í´ë¦­ì´ ì¼ì–´ë‚œ ê²½ìš°
             if (e.type == EventType.MouseDown && e.button == 0 && bounds.Contains(e.mousePosition))
             {
                 isDragging = true;
@@ -111,26 +111,26 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
                 dragOffset = new Vector2(mouseX, mouseY) - currentPos;
 
-                // ´Ù¸¥ UI°¡ ÀÌ ÀÌº¥Æ®¸¦ »ç¿ëÇÏÁö ¸øÇÏµµ·Ï ¸·±â
+                // ë‹¤ë¥¸ UIê°€ ì´ ì´ë²¤íŠ¸ë¥¼ ì‚¬ìš©í•˜ì§€ ëª»í•˜ë„ë¡ ë§‰ê¸°
                 e.Use();
             }
-            // ¸¶¿ì½º µå·¡±×¸¦ ÇÏ´Â °æ¿ì
+            // ë§ˆìš°ìŠ¤ ë“œë˜ê·¸ë¥¼ í•˜ëŠ” ê²½ìš°
             else if (e.type == EventType.MouseDrag && isDragging)
             {
                 float mouseY = (bounds.height / 2 - e.mousePosition.y) / scale;
                 float mouseX = (e.mousePosition.x - bounds.width / 2) / scale;
 
-                // Ã³À½ Å¬¸¯ÇÑ ÁöÁ¡À» ±âÁ¡À¸·Î ÀÌµ¿ À§Ä¡ °è»ê
+                // ì²˜ìŒ í´ë¦­í•œ ì§€ì ì„ ê¸°ì ìœ¼ë¡œ ì´ë™ ìœ„ì¹˜ ê³„ì‚°
                 currentPos = new Vector2(mouseX, mouseY) - dragOffset;
 
-                // ½Ç½Ã°£À¸·Î À§Ä¡ °ª ¾÷µ¥ÀÌÆ®
+                // ì‹¤ì‹œê°„ìœ¼ë¡œ ìœ„ì¹˜ ê°’ ì—…ë°ì´íŠ¸
                 onPosUpdateHandler?.Invoke(currentPos);
 
-                // Ã¢ ´Ù½Ã ±×¸®±â
+                // ì°½ ë‹¤ì‹œ ê·¸ë¦¬ê¸°
                 Repaint();
                 e.Use();
             }
-            // ¸¶¿ì½º Å¬¸¯¿¡¼­ ¼ÕÀ» ¶¾ °æ¿ì
+            // ë§ˆìš°ìŠ¤ í´ë¦­ì—ì„œ ì†ì„ ë—€ ê²½ìš°
             else if (e.type == EventType.MouseUp && e.button == 0)
             {
                 isDragging = false;
@@ -139,19 +139,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public void SetColor(Color color)
         {
-            // ÇöÀç ½ºÇÁ¶óÀÌÆ®ÀÇ »ö ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ìŠ¤í”„ë¼ì´íŠ¸ì˜ ìƒ‰ ì—…ë°ì´íŠ¸
             currentColor = color;
 
-            // ¾÷µ¥ÀÌÆ®µÈ »ö¿¡ ¸ÂÃç ½ºÇÁ¶óÀÌÆ® ´Ù½Ã ±×¸®±â
+            // ì—…ë°ì´íŠ¸ëœ ìƒ‰ì— ë§ì¶° ìŠ¤í”„ë¼ì´íŠ¸ ë‹¤ì‹œ ê·¸ë¦¬ê¸°
             Repaint();
         }
 
         public void SetPosition(Vector2 pos)
         {
-            // ÇöÀç À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í˜„ì¬ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             currentPos = pos;
 
-            // ¾÷µ¥ÀÌÆ®µÈ À§Ä¡¿¡ ¸ÂÃç Ã¢ ´Ù½Ã ±×¸®±â
+            // ì—…ë°ì´íŠ¸ëœ ìœ„ì¹˜ì— ë§ì¶° ì°½ ë‹¤ì‹œ ê·¸ë¦¬ê¸°
             Repaint();
         }
     }

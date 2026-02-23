@@ -9,15 +9,15 @@ namespace Rskanun.DialogueVisualScripting.Editor
 #if USE_LOCALIZATION
             var delFile = AssetDatabase.LoadAssetAtPath<ScenarioGraph>(path);
 
-            // »èÁ¦µÇ´Â ¿¡¼ÂÀÌ GraphFileÀÎ °æ¿ì
+            // ì‚­ì œë˜ëŠ” ì—ì…‹ì´ GraphFileì¸ ê²½ìš°
             if (delFile != null)
             {
-                // »èÁ¦ Àü ÇÁ·Î¼¼½º ÁøÇà
+                // ì‚­ì œ ì „ í”„ë¡œì„¸ìŠ¤ ì§„í–‰
                 delFile.SyncLocalizationTable();
             }
 #endif
 
-            // »èÁ¦ °è¼Ó ÁøÇà
+            // ì‚­ì œ ê³„ì† ì§„í–‰
             return AssetDeleteResult.DidNotDelete;
         }
     }

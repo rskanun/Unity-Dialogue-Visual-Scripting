@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -20,21 +19,21 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public ImageNode(string guid) : base(guid) { }
         public ImageNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not ImageNodeData imageNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
-            // ÀÌ¹ÌÁö ½ºÇÁ¶óÀÌÆ® µî·Ï
+            // ì´ë¯¸ì§€ ìŠ¤í”„ë¼ì´íŠ¸ ë“±ë¡
             spriteField.SetValueWithoutNotify(imageNodeData.sprite);
             selectedSprite = imageNodeData.sprite;
 
-            // ÀÌ¹ÌÁö »ö µî·Ï
+            // ì´ë¯¸ì§€ ìƒ‰ ë“±ë¡
             colorField.SetValueWithoutNotify(imageNodeData.color);
 
-            // ½ºÇÁ¶óÀÌÆ® À§Ä¡ µî·Ï
+            // ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ë“±ë¡
             posField.SetValueWithoutNotify(imageNodeData.spritePos);
         }
 
@@ -63,35 +62,35 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // ½ºÇÁ¶óÀÌÆ® ¿¡¼Â ¼±ÅÃ
+            // ìŠ¤í”„ë¼ì´íŠ¸ ì—ì…‹ ì„ íƒ
             spriteField = new ObjectField("Sprite");
             spriteField.objectType = typeof(Sprite);
             spriteField.RegisterValueChangedCallback(evt => selectedSprite = evt.newValue as Sprite);
             extensionContainer.Add(spriteField);
 
-            // »ö ¿µ¿ª
+            // ìƒ‰ ì˜ì—­
             colorField = new ColorField("Color");
             colorField.value = Color.white;
             colorField.RegisterValueChangedCallback(evt => OnColorFieldChanged(evt));
             extensionContainer.Add(colorField);
 
-            // ÀÌ¹ÌÁö À§Ä¡
+            // ì´ë¯¸ì§€ ìœ„ì¹˜
             posField = new Vector2Field("Position");
             posField.AddToClassList("line-node__image-vectorfield");
             posField.RegisterValueChangedCallback(evt => OnPositionFieldChanged(evt));
             extensionContainer.Add(posField);
 
-            // ÀÌ¹ÌÁö À§Ä¡ ¼³Á¤ ¹öÆ°
+            // ì´ë¯¸ì§€ ìœ„ì¹˜ ì„¤ì • ë²„íŠ¼
             var sizePreviewButton = new Button(() => OnClickPreviewButton(selectedSprite));
             sizePreviewButton.text = "Image Preview";
             extensionContainer.Add(sizePreviewButton);
@@ -101,39 +100,39 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnColorFieldChanged(ChangeEvent<Color> evt)
         {
-            // ÇöÀç ¿­·ÁÀÖ´Â ÇÁ¸®ºä¾î Ã¢ °¡Á®¿À±â
+            // í˜„ì¬ ì—´ë ¤ìˆëŠ” í”„ë¦¬ë·°ì–´ ì°½ ê°€ì ¸ì˜¤ê¸°
             var window = Resources.FindObjectsOfTypeAll<ImagePreviewer>().FirstOrDefault();
 
-            // ¾ø´Â °æ¿ì ¹«½Ã
+            // ì—†ëŠ” ê²½ìš° ë¬´ì‹œ
             if (window == null) return;
 
-            // ÇØ´ç Ã¢¿¡ ¶ç¿öÁø ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í•´ë‹¹ ì°½ì— ë„ì›Œì§„ ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             window.SetColor(evt.newValue);
 
         }
 
         private void OnPositionFieldChanged(ChangeEvent<Vector2> evt)
         {
-            // ÇöÀç ¿­·ÁÀÖ´Â ÇÁ¸®ºä¾î Ã¢ °¡Á®¿À±â
+            // í˜„ì¬ ì—´ë ¤ìˆëŠ” í”„ë¦¬ë·°ì–´ ì°½ ê°€ì ¸ì˜¤ê¸°
             var window = Resources.FindObjectsOfTypeAll<ImagePreviewer>().FirstOrDefault();
 
-            // ¾ø´Â °æ¿ì ¹«½Ã
+            // ì—†ëŠ” ê²½ìš° ë¬´ì‹œ
             if (window == null) return;
 
-            // ÇØ´ç Ã¢¿¡ ¶ç¿öÁø ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í•´ë‹¹ ì°½ì— ë„ì›Œì§„ ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             window.SetPosition(evt.newValue);
         }
 
         private void OnClickPreviewButton(Sprite previewSprite)
         {
-            // ¼±ÅÃµÈ ÀÌ¹ÌÁö°¡ ¾øÀ¸¸é ¹«½Ã
+            // ì„ íƒëœ ì´ë¯¸ì§€ê°€ ì—†ìœ¼ë©´ ë¬´ì‹œ
             if (previewSprite == null)
             {
-                EditorGUILayout.LabelField("Sprite¸¦ ¸ÕÀú ¼±ÅÃÇØÁÖ¼¼¿ä.");
+                EditorGUILayout.LabelField("Spriteë¥¼ ë¨¼ì € ì„ íƒí•´ì£¼ì„¸ìš”.");
                 return;
             }
 
-            // ÀÌ¹ÌÁö ÇÁ¸®ºä¾î ¶ç¿ì±â
+            // ì´ë¯¸ì§€ í”„ë¦¬ë·°ì–´ ë„ìš°ê¸°
             ImagePreviewer.ShowWindow(previewSprite, posField.value, colorField.value, OnMovePreviewerSprite);
         }
 

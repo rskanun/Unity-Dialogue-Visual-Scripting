@@ -12,19 +12,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         public int callbackOrder => 0;
 
-        // InitializeOnLoad¿¡ ÀÇÇØ ÄÑÁú ¶§ ÇÑ ¹ø È£Ãâ
+        // InitializeOnLoadì— ì˜í•´ ì¼œì§ˆ ë•Œ í•œ ë²ˆ í˜¸ì¶œ
         static AddressableProcessor()
         {
-            // »óÅÂ º¯°æ ÀÌº¥Æ® ±¸µ¶
+            // ìƒíƒœ ë³€ê²½ ì´ë²¤íŠ¸ êµ¬ë…
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
 
         /// <summary>
-        /// ¿¡µğÅÍ ³» ÇÃ·¹ÀÌ ¸ğµå º¯°æ ½Ã È£Ãâ
+        /// ì—ë””í„° ë‚´ í”Œë ˆì´ ëª¨ë“œ ë³€ê²½ ì‹œ í˜¸ì¶œ
         /// </summary>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
-            // ÇÃ·¹ÀÌ ¸ğµå Á÷Àü ½ÇÇà
+            // í”Œë ˆì´ ëª¨ë“œ ì§ì „ ì‹¤í–‰
             if (state == PlayModeStateChange.ExitingEditMode)
             {
                 UpdateAddressableGroup();
@@ -32,7 +32,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// °ÔÀÓ ºôµå ½Ã È£Ãâ
+        /// ê²Œì„ ë¹Œë“œ ì‹œ í˜¸ì¶œ
         /// </summary>
         public void OnPreprocessBuild(BuildReport report)
         {
@@ -43,28 +43,28 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var scenarioDir = ScenarioSettings.ScenarioDirectory;
 
-            // °æ·Î »ó¿¡ Æú´õ°¡ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì
+            // ê²½ë¡œ ìƒì— í´ë”ê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê²½ìš°
             if (string.IsNullOrEmpty(scenarioDir) || !Directory.Exists(scenarioDir))
             {
-                // ½ÇÇàÇÏÁö ¾Ê°í Á¾·á
+                // ì‹¤í–‰í•˜ì§€ ì•Šê³  ì¢…ë£Œ
                 return;
             }
 
-            // Addressable ¼ÂÆÃ°ú ±×·ì Ã£¾Æ¿À±â
+            // Addressable ì…‹íŒ…ê³¼ ê·¸ë£¹ ì°¾ì•„ì˜¤ê¸°
             var settings = AddressableAssetSettingsDefaultObject.Settings;
             var group = settings.FindGroup(ScenarioSettings.AddressableGroupName);
 
-            // ±×·ìÀÌ ¾ø´Â °æ¿ì
+            // ê·¸ë£¹ì´ ì—†ëŠ” ê²½ìš°
             if (group == null)
             {
-                // »õ·Î ¸¸µé±â
+                // ìƒˆë¡œ ë§Œë“¤ê¸°
                 group = settings.CreateGroup(ScenarioSettings.AddressableGroupName, false, false, true, null);
             }
 
-            // ÃÖ»óÀ§ Æú´õ ³» ½Ã³ª¸®¿À Å½»ö
+            // ìµœìƒìœ„ í´ë” ë‚´ ì‹œë‚˜ë¦¬ì˜¤ íƒìƒ‰
             SetAddressableEntries(group, scenarioDir);
 
-            // ÇÏÀ§ ½Ã³ª¸®¿À Æú´õ Å½»ö
+            // í•˜ìœ„ ì‹œë‚˜ë¦¬ì˜¤ í´ë” íƒìƒ‰
             foreach (var path in Directory.GetDirectories(scenarioDir))
             {
                 var folderName = Path.GetFileName(path);
@@ -73,7 +73,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 SetAddressableEntries(group, path, label);
             }
 
-            // º¯°æ»çÇ× ÀúÀå
+            // ë³€ê²½ì‚¬í•­ ì €ì¥
             EditorUtility.SetDirty(settings);
         }
 
@@ -84,20 +84,20 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             foreach (var guid in guids)
             {
-                // ¿¡¼ÂÀ» ±×·ì¿¡ µî·Ï
+                // ì—ì…‹ì„ ê·¸ë£¹ì— ë“±ë¡
                 var entry = settings.CreateOrMoveEntry(guid, group);
 
                 if (entry == null) continue;
 
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
-                // ÀÌ¸§ ¼³Á¤
+                // ì´ë¦„ ì„¤ì •
                 entry.address = Path.GetFileNameWithoutExtension(assetPath);
 
-                // ·¹ÀÌºíÀÌ ÀÖ´Â °æ¿ì
+                // ë ˆì´ë¸”ì´ ìˆëŠ” ê²½ìš°
                 if (!string.IsNullOrEmpty(label))
                 {
-                    // ±×·ì ³» ·¹ÀÌºí µî·Ï
+                    // ê·¸ë£¹ ë‚´ ë ˆì´ë¸” ë“±ë¡
                     settings.AddLabel(label);
                     entry.SetLabel(label, true, true);
                 }

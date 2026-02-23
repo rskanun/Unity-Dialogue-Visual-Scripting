@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [System.Serializable]
+    [Serializable]
     public class SelectNodeData : NodeData
     {
         public override Type NodeType => typeof(SelectNode);
 
-        // ╥ндц╤Сюла╕юл╪г©║ ╣Н╥о╣х ╪╠ецаЖ е╟ ╟╙
+        // К║°Л╩╛К²╪Л²╢Л═°Л²╢Л┘≤Л≈░ К⌠╠К║²К░° Л└═М┐²Л╖─ М┌╓ Й╟▓
         public List<string> optionKeys = new();
 
-        // ╥ндц╤Сюла╕юл╪гю╩ ╩Г©КгоаЖ ╬й╢б ╟Ф©Л ╩Г©К╣и ╪╠ецаЖ
+        // К║°Л╩╛К²╪Л²╢Л═°Л²╢Л┘≤Л²└ Л┌╛Л ╘М∙≤Л╖─ Л∙┼К┼■ Й╡╫Л ╟ Л┌╛Л ╘К░═ Л└═М┐²Л╖─
         public List<string> options = new();
     }
 }

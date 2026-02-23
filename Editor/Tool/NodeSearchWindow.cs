@@ -10,17 +10,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
         private static NodeSearchWindow instance;
 
-        private VisualScriptingGraphView graphView; // ÇöÀç ¿­¸° ±×·¡ÇÁ Ã¢
-        private Action<LineNode> onNodeSelectedCallback; // ³ëµå ¼±ÅÃ ½Ã ½ÇÇàµÉ Äİ¹é ÇÔ¼ö
+        private VisualScriptingGraphView graphView; // í˜„ì¬ ì—´ë¦° ê·¸ë˜í”„ ì°½
+        private Action<LineNode> onNodeSelectedCallback; // ë…¸ë“œ ì„ íƒ ì‹œ ì‹¤í–‰ë  ì½œë°± í•¨ìˆ˜
         private Texture2D icon;
 
         public static void Initialize(VisualScriptingGraphView graphView)
         {
-            // ÇÒ´çµÈ Ã¢ÀÌ ¾ø´Â °æ·ç »õ·Î¿î Ã¢ »ı¼º
+            // í• ë‹¹ëœ ì°½ì´ ì—†ëŠ” ê²½ë£¨ ìƒˆë¡œìš´ ì°½ ìƒì„±
             if (instance == null)
                 instance = CreateInstance<NodeSearchWindow>();
 
-            // ±×·¡ÇÁ ¼³Á¤
+            // ê·¸ë˜í”„ ì„¤ì •
             instance.graphView = graphView;
 
             instance.icon = new Texture2D(1, 1);
@@ -30,17 +30,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public static void Open(Vector2 position, Action<LineNode> onNodeSelectedCallback)
         {
-            // ÇÒ´çµÈ Ã¢ÀÌ ¾ø´Â °æ¿ì °æ°í¹®À» ÁÖ°í µ¹¾Æ°¡±â
+            // í• ë‹¹ëœ ì°½ì´ ì—†ëŠ” ê²½ìš° ê²½ê³ ë¬¸ì„ ì£¼ê³  ëŒì•„ê°€ê¸°
             if (instance == null)
             {
                 Debug.LogError("Failed to open window: Initialize settings must be configured first.");
                 return;
             }
 
-            // °á°ú°ªÀ» ¹Ş±â ¿øÇÏ´Â ³ëµå ¼³Á¤
+            // ê²°ê³¼ê°’ì„ ë°›ê¸° ì›í•˜ëŠ” ë…¸ë“œ ì„¤ì •
             instance.onNodeSelectedCallback = onNodeSelectedCallback;
 
-            // ¼±ÅÃÃ¢ ¿­±â
+            // ì„ íƒì°½ ì—´ê¸°
             SearchWindow.Open(new SearchWindowContext(position), instance);
         }
 
@@ -51,8 +51,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
             new SearchTreeGroupEntry(new GUIContent("Select Target"))
         };
 
-            // Å¸°ÙÀ¸·Î »ï´Â ³ëµå°¡ ÇöÀç ÀÌ¹ÌÁö ³ëµå ÇÏ³ª »ÓÀÌ¹Ç·Î,
-            // ÀÌ¹ÌÁö ³ëµå¸¸ ºÒ·¯¿À±â
+            // íƒ€ê²Ÿìœ¼ë¡œ ì‚¼ëŠ” ë…¸ë“œê°€ í˜„ì¬ ì´ë¯¸ì§€ ë…¸ë“œ í•˜ë‚˜ ë¿ì´ë¯€ë¡œ,
+            // ì´ë¯¸ì§€ ë…¸ë“œë§Œ ë¶ˆëŸ¬ì˜¤ê¸°
             var nodes = graphView.nodes.OfType<ImageNode>();
             foreach (var node in nodes)
             {
@@ -68,16 +68,16 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public bool OnSelectEntry(SearchTreeEntry entry, SearchWindowContext context)
         {
-            // ¼±ÅÃÇÑ ¿£Æ®¸®°¡ ImageNodeÀÎ °æ¿ì¿¡¸¸ ¸®ÅÏ
+            // ì„ íƒí•œ ì—”íŠ¸ë¦¬ê°€ ImageNodeì¸ ê²½ìš°ì—ë§Œ ë¦¬í„´
             if (entry.userData is not ImageNode node)
             {
                 return false;
             }
 
-            // Äİ¹é ÇÔ¼ö ½ÇÇà
+            // ì½œë°± í•¨ìˆ˜ ì‹¤í–‰
             onNodeSelectedCallback?.Invoke(node);
 
-            // Äİ¹é ÇÔ¼ö ÃÊ±âÈ­
+            // ì½œë°± í•¨ìˆ˜ ì´ˆê¸°í™”
             onNodeSelectedCallback = null;
 
             return true;

@@ -11,7 +11,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 {
     public class ScenarioGraph : Scenario
     {
-        // ¿¡µğÅÍ Àü¿ë ±×·¡ÇÁ µ¥ÀÌÅÍ
+        // ì—ë””í„° ì „ìš© ê·¸ë˜í”„ ë°ì´í„°
         [SerializeField]
         private GraphData _graphData = new GraphData();
         public GraphData graphData
@@ -21,7 +21,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
 #if USE_LOCALIZATION
-        // ¼³Á¤ µ¥ÀÌÅÍ
+        // ì„¤ì • ë°ì´í„°
         [SerializeField]
         private StringTableCollection _nameTableCollection;
         public StringTableCollection nameTableCollection
@@ -31,7 +31,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 if (_nameTableCollection == value) return;
 
-                // Å×ÀÌºí ÀÌ¸§ °ª ¾÷µ¥ÀÌÆ®
+                // í…Œì´ë¸” ì´ë¦„ ê°’ ì—…ë°ì´íŠ¸
                 nameTable = value?.name;
 
                 _nameTableCollection = value;
@@ -46,14 +46,14 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 if (_dialogueTableCollection == value) return;
 
-                // Å×ÀÌºí ÀÌ¸§ °ª ¾÷µ¥ÀÌÆ®
+                // í…Œì´ë¸” ì´ë¦„ ê°’ ì—…ë°ì´íŠ¸
                 dialogueTable = value?.name;
 
-                // ´ë»ç ³ëµå¸¸ »Ì¾Æ¼­ ¾÷µ¥ÀÌÆ®(´Ù¸¥ Å×ÀÌºíÀÇ ³ëµå Áö¿ì±â ¹æÁö)
+                // ëŒ€ì‚¬ ë…¸ë“œë§Œ ë½‘ì•„ì„œ ì—…ë°ì´íŠ¸(ë‹¤ë¥¸ í…Œì´ë¸”ì˜ ë…¸ë“œ ì§€ìš°ê¸° ë°©ì§€)
                 var entries = _graphData.nodes.OfType<TextNodeData>()
                     .ToDictionary(data => data.dialogueKey, data => data.dialogue);
 
-                // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¾÷µ¥ÀÌÆ®
+                // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ì—…ë°ì´íŠ¸
                 OnTableChanged(_dialogueTableCollection, value, entries);
 
                 _dialogueTableCollection = value;
@@ -68,15 +68,15 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 if (_selectionTableCollection == value) return;
 
-                // Å×ÀÌºí ÀÌ¸§ °ª ¾÷µ¥ÀÌÆ®
+                // í…Œì´ë¸” ì´ë¦„ ê°’ ì—…ë°ì´íŠ¸
                 selectionTable = value?.name;
 
-                // ´ë»ç ³ëµå¸¸ »Ì¾Æ¼­ ¾÷µ¥ÀÌÆ®(´Ù¸¥ Å×ÀÌºíÀÇ ³ëµå Áö¿ì±â ¹æÁö)
+                // ëŒ€ì‚¬ ë…¸ë“œë§Œ ë½‘ì•„ì„œ ì—…ë°ì´íŠ¸(ë‹¤ë¥¸ í…Œì´ë¸”ì˜ ë…¸ë“œ ì§€ìš°ê¸° ë°©ì§€)
                 var entries = _graphData.nodes.OfType<SelectNodeData>()
                     .SelectMany(data => data.optionKeys.Zip(data.options, (k, v) => new { k, v }))
                     .ToDictionary(pair => pair.k, pair => pair.v);
 
-                // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¾÷µ¥ÀÌÆ®
+                // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ì—…ë°ì´íŠ¸
                 OnTableChanged(_selectionTableCollection, value, entries);
 
                 _selectionTableCollection = value;
@@ -84,23 +84,23 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ÇØ´ç ¿¡¼ÂÀÌ »èÁ¦µÉ ¶§, ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí¿¡ µî·ÏµÈ °ªµé »èÁ¦
+        /// í•´ë‹¹ ì—ì…‹ì´ ì‚­ì œë  ë•Œ, ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸”ì— ë“±ë¡ëœ ê°’ë“¤ ì‚­ì œ
         /// </summary>
         public void SyncLocalizationTable()
         {
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» ÀÌ¿ëÇÏ´Â °æ¿ì¿¡¸¸ ½ÇÇà
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì´ìš©í•˜ëŠ” ê²½ìš°ì—ë§Œ ì‹¤í–‰
             if (!VisualScriptingSettings.UseLocalization)
             {
                 return;
             }
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏÁö¸¸ Å×ÀÌºíÀÌ ¾ø´Â °æ¿ì¿¡µµ ½ÇÇà X
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ì§€ë§Œ í…Œì´ë¸”ì´ ì—†ëŠ” ê²½ìš°ì—ë„ ì‹¤í–‰ X
             if (dialogueTableCollection == null || selectionTableCollection == null)
             {
                 return;
             }
 
-            // ÇöÀç ³ëµå·Î ÀÎÇØ »ı¼ºµÈ ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí Å° »èÁ¦
+            // í˜„ì¬ ë…¸ë“œë¡œ ì¸í•´ ìƒì„±ëœ ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” í‚¤ ì‚­ì œ
             foreach (var node in _graphData.nodes)
             {
                 if (node is TextNodeData textNode)
@@ -118,7 +118,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// »ç¿ëµÇ´Â Å×ÀÌºí °ªÀÌ ¹Ù²ï °æ¿ì µ¥ÀÌÅÍ ÀÌÀü
+        /// ì‚¬ìš©ë˜ëŠ” í…Œì´ë¸” ê°’ì´ ë°”ë€ ê²½ìš° ë°ì´í„° ì´ì „
         /// </summary>
         private void OnTableChanged(StringTableCollection origin, StringTableCollection newTable, Dictionary<string, string> entries)
         {
@@ -127,7 +127,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var locale = VisualScriptingSettings.ProjectLocale;
             var table = newTable.GetTable(locale.Identifier) as StringTable;
 
-            // ±âÁ¸ Å×ÀÌºí¿¡ ÀúÀåµÈ °ªÀº Áö¿ì°í, »õ·Î¿î Å×ÀÌºí·Î ¿Å±â±â
+            // ê¸°ì¡´ í…Œì´ë¸”ì— ì €ì¥ëœ ê°’ì€ ì§€ìš°ê³ , ìƒˆë¡œìš´ í…Œì´ë¸”ë¡œ ì˜®ê¸°ê¸°
             foreach (var (k, v) in entries)
             {
                 origin.SharedData.RemoveKey(k);

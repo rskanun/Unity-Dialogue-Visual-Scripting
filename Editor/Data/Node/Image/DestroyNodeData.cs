@@ -2,7 +2,7 @@ using System;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [System.Serializable]
+    [Serializable]
     public class DestroyNodeData : NodeData
     {
         public override Type NodeType => typeof(DestroyNode);

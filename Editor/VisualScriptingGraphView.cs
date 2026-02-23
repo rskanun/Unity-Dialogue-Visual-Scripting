@@ -21,30 +21,30 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public VisualScriptingGraphView()
         {
-            // ºäÆ÷ÀÎÆ® È®´ë ¹× Ãà¼Ò, ÄÜÅÙÃ÷ÀÇ ÀÌµ¿ ¹× ¼±ÅÃ µîÀÇ Á¶ÀÛ Ãß°¡
+            // ë·°í¬ì¸íŠ¸ í™•ëŒ€ ë° ì¶•ì†Œ, ì½˜í…ì¸ ì˜ ì´ë™ ë° ì„ íƒ ë“±ì˜ ì¡°ì‘ ì¶”ê°€
             this.AddManipulator(new ContentZoomer());
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
 
-            // ¹è°æ¿¡ ±×¸®µå »ı¼º
+            // ë°°ê²½ì— ê·¸ë¦¬ë“œ ìƒì„±
             var grid = new GridBackground();
             grid.StretchToParentSize();
             Insert(0, grid);
 
-            // ½ºÅ¸ÀÏ ¼³Á¤
+            // ìŠ¤íƒ€ì¼ ì„¤ì •
             var graphStyle = StyleSheetManager.GetStyleSheet("GraphViewStyle.uss");
             styleSheets.Add(graphStyle);
             var nodeStyle = StyleSheetManager.GetStyleSheet("NodeStyle.uss");
             styleSheets.Add(nodeStyle);
 
-            // ±×·¡ÇÁ ºä ¾÷µ¥ÀÌÆ® ÀÌº¥Æ® µî·Ï
+            // ê·¸ë˜í”„ ë·° ì—…ë°ì´íŠ¸ ì´ë²¤íŠ¸ ë“±ë¡
             graphViewChanged += OnElementRemoved;
         }
 
         private GraphViewChange OnElementRemoved(GraphViewChange graphViewChange)
         {
-            // »èÁ¦µÈ ¿ä¼Ò°¡ ÀÖ´Â °æ¿ì¿¡¸¸ ¹ßµ¿
+            // ì‚­ì œëœ ìš”ì†Œê°€ ìˆëŠ” ê²½ìš°ì—ë§Œ ë°œë™
             if (graphViewChange.elementsToRemove != null)
             {
                 var lineNodes = graphViewChange.elementsToRemove.OfType<LineNode>();
@@ -73,12 +73,12 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             foreach (var port in ports)
             {
-                // ¿ì·Îº¸·Î½º Â÷´Ü
+                // ìš°ë¡œë³´ë¡œìŠ¤ ì°¨ë‹¨
                 if (startPort == port) continue;
                 if (startPort.node == port.node) continue;
                 if (startPort.direction == port.direction) continue;
 
-                // extension³¢¸® ¿¬°áµÇ°Ô ¼³Á¤
+                // extensionë¼ë¦¬ ì—°ê²°ë˜ê²Œ ì„¤ì •
                 if (isInExtension(startPort) != isInExtension(port)) continue;
 
                 compatiblePorts.Add(port);
@@ -88,7 +88,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ¿ìÅ¬¸¯ ¸Ş´º Ç×¸ñ °ü¸®
+        /// ìš°í´ë¦­ ë©”ë‰´ í•­ëª© ê´€ë¦¬
         /// </summary>
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
@@ -97,38 +97,38 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ±×·¡ÇÁ ³»¿¡¼­ »ç¿ëµÇ´Â ¸Ş´º
+        /// ê·¸ë˜í”„ ë‚´ì—ì„œ ì‚¬ìš©ë˜ëŠ” ë©”ë‰´
         /// </summary>
         private void GraphContextMenu(ContextualMenuPopulateEvent evt)
         {
-            // ¹è°æÈ­¸é(?)¿¡¼­¸¸ ÇØ´ç ¸Ş´º°¡ ¿­¸®µµ·Ï ¼³Á¤
+            // ë°°ê²½í™”ë©´(?)ì—ì„œë§Œ í•´ë‹¹ ë©”ë‰´ê°€ ì—´ë¦¬ë„ë¡ ì„¤ì •
             if (evt.target is not GraphView)
             {
                 return;
             }
 
-            // ³ëµå ¸Ş´º¿¡ µî·ÏµÉ ¾îÆ®¸®ºäÆ® ¸ñ·Ï °¡Á®¿À±â
+            // ë…¸ë“œ ë©”ë‰´ì— ë“±ë¡ë  ì–´íŠ¸ë¦¬ë·°íŠ¸ ëª©ë¡ ê°€ì ¸ì˜¤ê¸°
             var types = TypeCache.GetTypesWithAttribute<NodeMenuAttribute>();
             var entries = types.Select(t => (type: t, attr: t.GetCustomAttribute<NodeMenuAttribute>()))
                             .OrderBy(p => p.attr.Order);
 
-            // »ı¼ºµÉ ¸Ş´º°¡ ¾ø´Ù¸é Á¾·á
+            // ìƒì„±ë  ë©”ë‰´ê°€ ì—†ë‹¤ë©´ ì¢…ë£Œ
             if (types.Count <= 0) return;
 
-            // ¸Ş´º¿¡ Ãß°¡
+            // ë©”ë‰´ì— ì¶”ê°€
             int prevOrder = entries.FirstOrDefault().attr.Order;
             foreach (var entry in entries)
             {
-                // order 10 ´ÜÀ§·Î ±¸ºĞ¼± ¼³Ä¡
+                // order 10 ë‹¨ìœ„ë¡œ êµ¬ë¶„ì„  ì„¤ì¹˜
                 if ((prevOrder / 10) != (entry.attr.Order / 10))
                 {
                     evt.menu.AppendSeparator("Create/");
                 }
 
-                // ÀÌÀü ¼ø¼­ ÀúÀå
+                // ì´ì „ ìˆœì„œ ì €ì¥
                 prevOrder = entry.attr.Order;
 
-                // Create ÅÇÀ» ÅëÇØ »ı¼ºÇÏ·Á´Â °´Ã¼ º¸ÀÌ±â
+                // Create íƒ­ì„ í†µí•´ ìƒì„±í•˜ë ¤ëŠ” ê°ì²´ ë³´ì´ê¸°
                 var menuName = $"Create/{entry.attr.MenuName}";
 
                 evt.menu.AppendAction(menuName, action => CreateNode(entry.type, action.eventInfo.mousePosition));
@@ -136,48 +136,48 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ¸¶¿ì½º À§Ä¡¿¡ »õ·Î¿î ³ëµå »ı¼º
+        /// ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì— ìƒˆë¡œìš´ ë…¸ë“œ ìƒì„±
         /// </summary>
         private LineNode CreateNode(Type nodeType, Vector2 mousePosition)
         {
-            // LineNode°¡ ¾Æ´Ñ °ÍµéÀ» ¸ÕÀú Â÷´Ü
+            // LineNodeê°€ ì•„ë‹Œ ê²ƒë“¤ì„ ë¨¼ì € ì°¨ë‹¨
             if (nodeType == null || nodeType.IsAssignableFrom(typeof(LineNode)))
             {
                 Debug.LogError($"'{nodeType.Name}' does not inherit from LineNode.");
                 throw new ArgumentException();
             }
 
-            // ¸¶¿ì½º À§Ä¡¿¡ ³ëµå »ı¼º
+            // ë§ˆìš°ìŠ¤ ìœ„ì¹˜ì— ë…¸ë“œ ìƒì„±
             var pos = contentViewContainer.WorldToLocal(mousePosition);
 
-            // ³ëµå »ı¼º
+            // ë…¸ë“œ ìƒì„±
             var node = Activator.CreateInstance(nodeType) as LineNode;
             node.SetPosition(new Rect(pos, new Vector2(350, 200)));
 
-            // ÇØ´ç ³ëµå¿¡ º¯°æ ÀÌº¥Æ® Ãß°¡
+            // í•´ë‹¹ ë…¸ë“œì— ë³€ê²½ ì´ë²¤íŠ¸ ì¶”ê°€
             node.OnNodeModified += NotifyAnyNodeModified;
 
-            // ³ëµå Ãß°¡
+            // ë…¸ë“œ ì¶”ê°€
             AddElement(node);
 
-            // ³ëµå »ı¼º ¾Ë¸²
+            // ë…¸ë“œ ìƒì„± ì•Œë¦¼
             OnAnyNodeModified?.Invoke();
 
             return node;
         }
 
         /// <summary>
-        /// ±×·¡ÇÁ ³»ÀÇ ¿ä¼Ò(ex: Node, Edge)¿¡¼­ »ç¿ëµÇ´Â ¸Ş´º
+        /// ê·¸ë˜í”„ ë‚´ì˜ ìš”ì†Œ(ex: Node, Edge)ì—ì„œ ì‚¬ìš©ë˜ëŠ” ë©”ë‰´
         /// </summary>
         private void ElementContextMenu(ContextualMenuPopulateEvent evt)
         {
-            // Node³ª Edge¿¡ ´ëÇØ¼­¸¸ ÇØ´ç ¸Ş´º°¡ ¿­¸®µµ·Ï ¼³Á¤
+            // Nodeë‚˜ Edgeì— ëŒ€í•´ì„œë§Œ í•´ë‹¹ ë©”ë‰´ê°€ ì—´ë¦¬ë„ë¡ ì„¤ì •
             if (evt.target is not Node && evt.target is not Edge)
             {
                 return;
             }
 
-            // ÇØ´ç ¿ä¼Ò »èÁ¦
+            // í•´ë‹¹ ìš”ì†Œ ì‚­ì œ
             evt.menu.AppendAction("Delete", action => DeleteSelection());
         }
 
@@ -185,76 +185,76 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var graphData = graph.graphData;
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí µ¿±âÈ­¸¦ À§ÇÑ ÀÌÀü ³ëµå ÀúÀå
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ë™ê¸°í™”ë¥¼ ìœ„í•œ ì´ì „ ë…¸ë“œ ì €ì¥
             var oldNodes = new List<NodeData>(graph.graphData.nodes);
 
-            // ½Ã³ª¸®¿À º¯È¯À» À§ÇØ ±×·¡ÇÁ ÀúÀå
+            // ì‹œë‚˜ë¦¬ì˜¤ ë³€í™˜ì„ ìœ„í•´ ê·¸ë˜í”„ ì €ì¥
             SaveGraph(graphData);
 
-            // ÀÎ°ÔÀÓ¿¡ ¾²ÀÏ ¼ö ÀÖ´Â ½Ã³ª¸®¿À ÆÄÀÏ·Î º¯È¯
+            // ì¸ê²Œì„ì— ì“°ì¼ ìˆ˜ ìˆëŠ” ì‹œë‚˜ë¦¬ì˜¤ íŒŒì¼ë¡œ ë³€í™˜
             BuildScenario(graph);
 
 #if USE_LOCALIZATION
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ì—…ë°ì´íŠ¸
             SyncDialogueTable(graph.dialogueTableCollection, graphData.nodes, oldNodes);
             SyncSelectionTable(graph.selectionTableCollection, graphData.nodes, oldNodes);
 #endif
         }
 
         /// <summary>
-        /// GraphFile¿¡ ÇöÀç ±×·¡ÇÁ Á¤º¸ ÀúÀå
+        /// GraphFileì— í˜„ì¬ ê·¸ë˜í”„ ì •ë³´ ì €ì¥
         /// </summary>
-        /// <param name="graphData">ÀúÀåµÉ ÆÄÀÏ ¿¡¼Â</param>
+        /// <param name="graphData">ì €ì¥ë  íŒŒì¼ ì—ì…‹</param>
         public void SaveGraph(GraphData graphData)
         {
-            // ±×·¡ÇÁ ºä ÀúÀå
+            // ê·¸ë˜í”„ ë·° ì €ì¥
             graphData.viewScale = viewTransform.scale;
             graphData.viewPosition = viewTransform.position;
 
-            // ³ëµå ¹× ¿§Áö Á¤º¸ ÀúÀå
+            // ë…¸ë“œ ë° ì—£ì§€ ì •ë³´ ì €ì¥
             SaveNode(graphData);
             SaveEdge(graphData);
         }
 
         /// <summary>
-        /// ¸®·Îµå µÇ±â Àü ÀÓ½Ã·Î µ¥ÀÌÅÍ ÀúÀå
+        /// ë¦¬ë¡œë“œ ë˜ê¸° ì „ ì„ì‹œë¡œ ë°ì´í„° ì €ì¥
         /// </summary>
         public void SaveTempGraph(GraphData graphData)
         {
-            // ±×·¡ÇÁ ºä ÀúÀå
+            // ê·¸ë˜í”„ ë·° ì €ì¥
             graphData.viewScale = viewTransform.scale;
             graphData.viewPosition = viewTransform.position;
 
-            // ÇöÀç ³ëµå¿Í ¿§Áö »óÈ²À» ÀÓ½ÃÀûÀ¸·Î ÀúÀå
+            // í˜„ì¬ ë…¸ë“œì™€ ì—£ì§€ ìƒí™©ì„ ì„ì‹œì ìœ¼ë¡œ ì €ì¥
             SaveNode(graphData);
             SaveEdge(graphData);
         }
 
         private void SaveNode(GraphData graphData)
         {
-            // ±âÁ¸ µ¥ÀÌÅÍ ÃÊ±âÈ­
+            // ê¸°ì¡´ ë°ì´í„° ì´ˆê¸°í™”
             graphData.nodes.Clear();
 
-            // ±×·¡ÇÁ¿¡ ÀÖ´Â ³ëµå µ¥ÀÌÅÍÈ­
+            // ê·¸ë˜í”„ì— ìˆëŠ” ë…¸ë“œ ë°ì´í„°í™”
             foreach (var node in nodes)
             {
-                // LineNode¿¡ ´ëÇØ¼­¸¸ ÀúÀå
+                // LineNodeì— ëŒ€í•´ì„œë§Œ ì €ì¥
                 if (node is not LineNode lineNode)
                 {
                     continue;
                 }
 
-                // Node ³»ºÎ¿¡¼­ ÀÚÃ¼ÀûÀ¸·Î µ¥ÀÌÅÍÈ­ ½ÃÅ°±â
+                // Node ë‚´ë¶€ì—ì„œ ìì²´ì ìœ¼ë¡œ ë°ì´í„°í™” ì‹œí‚¤ê¸°
                 graphData.nodes.Add(lineNode.ToData());
             }
         }
 
         private void SaveEdge(GraphData graphData)
         {
-            // ±âÁ¸ µ¥ÀÌÅÍ ÃÊ±âÈ­
+            // ê¸°ì¡´ ë°ì´í„° ì´ˆê¸°í™”
             graphData.edges.Clear();
 
-            // ±×·¡ÇÁ¿¡ ÀÖ´Â ¿§Áö µ¥ÀÌÅÍÈ­
+            // ê·¸ë˜í”„ì— ìˆëŠ” ì—£ì§€ ë°ì´í„°í™”
             foreach (var edge in edges)
             {
                 var outputNode = edge.output.node as LineNode;
@@ -275,18 +275,18 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public void LoadGraph(GraphData file)
         {
-            // ÇöÀç ±×·¡ÇÁ¿¡ ÀÖ´Â ¸ğµç ¿ä¼Ò »èÁ¦
+            // í˜„ì¬ ê·¸ë˜í”„ì— ìˆëŠ” ëª¨ë“  ìš”ì†Œ ì‚­ì œ
             DeleteElements(graphElements);
 
-            // ±×·¡ÇÁ ºä µÇµ¹¸®±â
+            // ê·¸ë˜í”„ ë·° ë˜ëŒë¦¬ê¸°
             viewTransform.scale = file.viewScale;
             viewTransform.position = file.viewPosition;
 
-            // µ¥ÀÌÅÍ ±â¹İ ³ëµå ¹× ¿§Áö »ı¼º
+            // ë°ì´í„° ê¸°ë°˜ ë…¸ë“œ ë° ì—£ì§€ ìƒì„±
             LoadNode(file);
             LoadEdge(file);
 
-            // ¸ğµç ±×·¡ÇÁ ºä ·Îµå¸¦ ³¡¸¶ÃÆ´Ù¸é ³ëµå¿¡ ¾Ë¸²
+            // ëª¨ë“  ê·¸ë˜í”„ ë·° ë¡œë“œë¥¼ ëë§ˆì³¤ë‹¤ë©´ ë…¸ë“œì— ì•Œë¦¼
             foreach (var node in nodes.OfType<LineNode>())
             {
                 node.OnLoadCompleted();
@@ -297,17 +297,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             foreach (var data in file.nodes)
             {
-                // Å¸ÀÔ¿¡ ¸Â´Â ³ëµå »ı¼º
+                // íƒ€ì…ì— ë§ëŠ” ë…¸ë“œ ìƒì„±
                 var type = data.NodeType;
                 var node = Activator.CreateInstance(type, data) as LineNode;
 
-                // ¾Ë¸ÂÀº ³ëµå¸¦ »ı¼ºÇÏÁö ¸øÇß´Ù¸é ½ºÅµ
+                // ì•Œë§ì€ ë…¸ë“œë¥¼ ìƒì„±í•˜ì§€ ëª»í–ˆë‹¤ë©´ ìŠ¤í‚µ
                 if (node == null) continue;
 
-                // ÇØ´ç ³ëµå¿¡ ÀÌº¥Æ® µî·Ï
+                // í•´ë‹¹ ë…¸ë“œì— ì´ë²¤íŠ¸ ë“±ë¡
                 node.OnNodeModified += NotifyAnyNodeModified;
 
-                // ³ëµå Ãß°¡
+                // ë…¸ë“œ ì¶”ê°€
                 AddElement(node);
             }
         }
@@ -316,61 +316,61 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             foreach (var data in file.edges)
             {
-                // guid°¡ ÀÏÄ¡ÇÏ´Â ³ëµå °¡Á®¿À±â
+                // guidê°€ ì¼ì¹˜í•˜ëŠ” ë…¸ë“œ ê°€ì ¸ì˜¤ê¸°
                 var outputNode = nodes.Where(n => (n as LineNode).guid == data.outputNodeGuid).FirstOrDefault();
                 var inputNode = nodes.Where(n => (n as LineNode).guid == data.inputNodeGuid).FirstOrDefault();
 
-                // Æ÷Æ® °¡Á®¿À±â
+                // í¬íŠ¸ ê°€ì ¸ì˜¤ê¸°
                 var outputPort = outputNode.outputContainer[data.outputIndex] as Port;
                 var inputPort = inputNode.inputContainer[data.inputIndex] as Port;
 
-                // Åõ Æ÷Æ®¸¦ ¿¬°áÇÏ´Â ¿§Áö »ı¼º
+                // íˆ¬ í¬íŠ¸ë¥¼ ì—°ê²°í•˜ëŠ” ì—£ì§€ ìƒì„±
                 AddElement(outputPort.ConnectTo(inputPort));
             }
         }
 
         private void BuildScenario(Scenario scenario)
         {
-            // ÀÌÀü ½Ã³ª¸®¿À ´ë»ç ÃÊ±âÈ­
+            // ì´ì „ ì‹œë‚˜ë¦¬ì˜¤ ëŒ€ì‚¬ ì´ˆê¸°í™”
             scenario.LineClear();
 
-            // ½Ã³ª¸®¿ÀÀÇ ½ÃÀÛÀÎ ÅÂ±×·ÎºÎÅÍ ½Ã³ª¸®¿À ºôµå
+            // ì‹œë‚˜ë¦¬ì˜¤ì˜ ì‹œì‘ì¸ íƒœê·¸ë¡œë¶€í„° ì‹œë‚˜ë¦¬ì˜¤ ë¹Œë“œ
             var tagNodes = nodes.OfType<LineTag>();
 
             foreach (var tag in tagNodes)
             {
-                // ½Ã³ª¸®¿À ³» ´ëº» ±¸º° ¹øÈ£
+                // ì‹œë‚˜ë¦¬ì˜¤ ë‚´ ëŒ€ë³¸ êµ¬ë³„ ë²ˆí˜¸
                 int num = tag.ID;
 
-                // dfs Å½»ö ÁøÇà
+                // dfs íƒìƒ‰ ì§„í–‰
                 var stack = new Stack<LineNode>();
                 stack.Push(tag);
 
-                // Å½»öÀ» ÁøÇàÇÏ¸ç ¶óÀÎ °´Ã¼ ºôµå ¹× ¿¬°á
+                // íƒìƒ‰ì„ ì§„í–‰í•˜ë©° ë¼ì¸ ê°ì²´ ë¹Œë“œ ë° ì—°ê²°
                 while (stack.Count > 0)
                 {
                     var node = stack.Pop();
 
-                    // ÇØ´ç ³ëµåÀÇ Ãâ·Â Æ÷Æ®¿Í ¿¬°áµÈ ³ëµå Å½»ö
+                    // í•´ë‹¹ ë…¸ë“œì˜ ì¶œë ¥ í¬íŠ¸ì™€ ì—°ê²°ëœ ë…¸ë“œ íƒìƒ‰
                     var ports = node.outputContainer.Query<Port>().ToList();
                     var nextNodes = ports.SelectMany(p => p.connections)
                                     .Select(e => e.input.node)
                                     .OfType<LineNode>();
 
-                    // ÇöÀç ³ëµå°¡ ¶óÀÎ °´Ã¼·Î Ç¥ÇöÇÒ ¼ö ÀÖ´Â °æ¿ì
+                    // í˜„ì¬ ë…¸ë“œê°€ ë¼ì¸ ê°ì²´ë¡œ í‘œí˜„í•  ìˆ˜ ìˆëŠ” ê²½ìš°
                     if (node is ILineProvider provider)
                     {
-                        // ³ëµå Á¤º¸¸¦ Åä´ë·Î ¶óÀÎ °´Ã¼ »ı¼º
+                        // ë…¸ë“œ ì •ë³´ë¥¼ í† ëŒ€ë¡œ ë¼ì¸ ê°ì²´ ìƒì„±
                         var line = provider.ToLine();
 
-                        // ÀÌ¾îÁø ´ÙÀ½ ³ëµå¿Í ¿¬°á
+                        // ì´ì–´ì§„ ë‹¤ìŒ ë…¸ë“œì™€ ì—°ê²°
                         line.nextLineGuids = nextNodes.Select(node => node.guid).ToList();
 
-                        // ½Ã³ª¸®¿À¿¡ Ãß°¡
+                        // ì‹œë‚˜ë¦¬ì˜¤ì— ì¶”ê°€
                         scenario.AddLine(num, line);
                     }
 
-                    // ´ÙÀ½ Å½»ö ³ëµå ³Ö±â
+                    // ë‹¤ìŒ íƒìƒ‰ ë…¸ë“œ ë„£ê¸°
                     foreach (var next in nextNodes)
                     {
                         stack.Push(next);
@@ -382,20 +382,20 @@ namespace Rskanun.DialogueVisualScripting.Editor
 #if USE_LOCALIZATION
         private void SyncDialogueTable(StringTableCollection collection, List<NodeData> nodes, List<NodeData> oldNodes)
         {
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç¿¡ Ãß°¡µÇ°Å³ª ¾÷µ¥ÀÌÆ®µÉ ¿£Æ®¸®
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì— ì¶”ê°€ë˜ê±°ë‚˜ ì—…ë°ì´íŠ¸ë  ì—”íŠ¸ë¦¬
             var entries = nodes.OfType<TextNodeData>()
                 .ToDictionary(data => data.dialogueKey, data => data.dialogue);
             var delKeys = oldNodes.Except(nodes)
                 .OfType<TextNodeData>()
                 .Select(d => d.dialogueKey);
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¾÷µ¥ÀÌÆ®
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ì—…ë°ì´íŠ¸
             SyncTable(collection, entries, delKeys);
         }
 
         private void SyncSelectionTable(StringTableCollection collection, List<NodeData> nodes, List<NodeData> oldNodes)
         {
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç¿¡ Ãß°¡µÇ°Å³ª ¾÷µ¥ÀÌÆ®µÉ ¿£Æ®¸®
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ì— ì¶”ê°€ë˜ê±°ë‚˜ ì—…ë°ì´íŠ¸ë  ì—”íŠ¸ë¦¬
             var entries = nodes.OfType<SelectNodeData>()
                 .SelectMany(data => data.optionKeys.Zip(data.options, (k, v) => new { k, v }))
                 .ToDictionary(pair => pair.k, pair => pair.v);
@@ -403,7 +403,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 .OfType<SelectNodeData>()
                 .SelectMany(d => d.optionKeys);
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí ¾÷µ¥ÀÌÆ®
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ì—…ë°ì´íŠ¸
             SyncTable(collection, entries, delKeys);
         }
 
@@ -416,19 +416,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             if (table == null || collection.SharedData == null) return;
 
-            // °¢ ³ëµå¿¡ ´ëÇÑ ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç Å×ÀÌºí Ãß°¡ ¹× ¼öÁ¤
+            // ê° ë…¸ë“œì— ëŒ€í•œ ë¡œì»¬ë¼ì´ì œì´ì…˜ í…Œì´ë¸” ì¶”ê°€ ë° ìˆ˜ì •
             foreach (var (k, v) in entries)
             {
                 table.AddEntry(k, v);
             }
 
-            // ´õ ÀÌ»ó ¾È ¾²ÀÌ´Â Å° Á¦°Å
+            // ë” ì´ìƒ ì•ˆ ì“°ì´ëŠ” í‚¤ ì œê±°
             foreach (var key in delKeys)
             {
                 table.SharedData.RemoveKey(key);
             }
 
-            // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç º¯°æ »çÇ× ÀúÀå
+            // ë¡œì»¬ë¼ì´ì œì´ì…˜ ë³€ê²½ ì‚¬í•­ ì €ì¥
             EditorUtility.SetDirty(table);
             EditorUtility.SetDirty(table.SharedData);
         }

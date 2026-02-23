@@ -6,11 +6,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
     [System.Serializable]
     public class GraphData
     {
-        // ±×·¡ÇÁ ºä ¼³Á¤
+        // ê·¸ë˜í”„ ë·° ì„¤ì •
         public Vector3 viewScale = Vector3.one;
         public Vector3 viewPosition = Vector3.zero;
 
-        // ³»¿ë µ¥ÀÌÅÍ
+        // ë‚´ìš© ë°ì´í„°
         [SerializeReference]
         public List<NodeData> nodes = new();
         public List<EdgeData> edges = new();

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
-    [System.Serializable]
+    [Serializable]
     public class TransformNodeData : NodeData
     {
         public override Type NodeType => typeof(TransformNode);

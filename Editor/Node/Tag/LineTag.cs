@@ -12,17 +12,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public int ID
         {
             get => idField.value;
-            private set => idField.value = value; // ¹üÀ§ ÁöÁ¤À» À§ÇØ ¼³Á¤°ú µ¿½Ã¿¡ ¾Ë¸²
+            private set => idField.value = value; // ë²”ìœ„ ì§€ì •ì„ ìœ„í•´ ì„¤ì •ê³¼ ë™ì‹œì— ì•Œë¦¼
         }
 
         public LineTag() : base() { }
         public LineTag(string guid) : base(guid) { }
         public LineTag(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not LineTagData tagData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
@@ -45,22 +45,22 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Input ¿¬°á ´õ¹Ì·Î Ãß°¡
+            // Input ì—°ê²° ë”ë¯¸ë¡œ ì¶”ê°€
             var dummyElement = new VisualElement();
             inputContainer.Add(dummyElement);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // ´ë»ç Á¤º¸
+            // ëŒ€ì‚¬ ì •ë³´
             idField = new IntegerField("ID");
             idField.value = 1;
             idField.AddToClassList("line-node__integerfield");
             idField.RegisterValueChangedCallback(evt =>
             {
-                // ID °ªÀÌ 7ÀÚ¸®°¡ ³ÑÁö ¾Ê´Â ÀÚ¿¬¼ö°¡ µÇµµ·Ï Á¶Á¤
+                // ID ê°’ì´ 7ìë¦¬ê°€ ë„˜ì§€ ì•ŠëŠ” ìì—°ìˆ˜ê°€ ë˜ë„ë¡ ì¡°ì •
                 idField.value = Mathf.Clamp(evt.newValue, 1, 9999999);
             });
             extensionContainer.Add(idField);

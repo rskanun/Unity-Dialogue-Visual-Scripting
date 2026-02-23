@@ -16,13 +16,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
     {
 #if USE_LOCALIZATION
         /// <summary>
-        /// ÇöÀç ÇÁ·ÎÁ§Æ®¿¡ ¼³Á¤µÇ¾îÀÖ´Â ´ëÇ¥ ¾ğ¾î
+        /// í˜„ì¬ í”„ë¡œì íŠ¸ì— ì„¤ì •ë˜ì–´ìˆëŠ” ëŒ€í‘œ ì–¸ì–´
         /// </summary>
         public static Locale ProjectLocale
         {
             get
             {
-                // ¼³Á¤µÈ ÃÊ±â °ªÀÌ ÀÖ´Â °æ¿ì ÇØ´ç ¾ğ¾î¸¦ ¸®ÅÏ
+                // ì„¤ì •ëœ ì´ˆê¸° ê°’ì´ ìˆëŠ” ê²½ìš° í•´ë‹¹ ì–¸ì–´ë¥¼ ë¦¬í„´
                 if (LocalizationSettings.ProjectLocale != null)
                 {
                     return LocalizationSettings.ProjectLocale;
@@ -31,7 +31,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 var settings = LocalizationEditorSettings.ActiveLocalizationSettings;
                 if (settings == null) return null;
 
-                // ¾ø´Â °æ¿ì °¡Àå Ã¹¹øÂ°¿¡ ÀÖ´Â ¾ğ¾î ¸®ÅÏ
+                // ì—†ëŠ” ê²½ìš° ê°€ì¥ ì²«ë²ˆì§¸ì— ìˆëŠ” ì–¸ì–´ ë¦¬í„´
                 return settings.GetAvailableLocales().Locales.FirstOrDefault();
             }
         }
@@ -68,7 +68,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             OnSettingChanged?.Invoke();
         }
 
-        // º¯°æ»çÇ× ÀúÀå
+        // ë³€ê²½ì‚¬í•­ ì €ì¥
         public void Save()
         {
             Save(true);

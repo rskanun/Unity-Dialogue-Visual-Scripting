@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -20,17 +19,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public TransformNode(string guid) : base(guid) { }
         public TransformNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not TransformNodeData transformNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
-            // ´ë»ó guid µî·Ï
+            // ëŒ€ìƒ guid ë“±ë¡
             targetField.value = transformNodeData.targetGuid;
 
-            // º¯ÇüµÉ »ö°ú À§Ä¡°ª µî·Ï
+            // ë³€í˜•ë  ìƒ‰ê³¼ ìœ„ì¹˜ê°’ ë“±ë¡
             colorField.SetValueWithoutNotify(transformNodeData.transColor);
             posField.SetValueWithoutNotify(transformNodeData.transPos);
         }
@@ -58,8 +57,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public override void OnLoadCompleted()
         {
-            // ±×·¡ÇÁ ·Îµå°¡ ³¡³­ ½ÃÁ¡¿¡¼­ Å¸°Ù ¼³Á¤ ÇÊµå ´Ù½Ã ºÒ·¯¿À±â
-            // (Å¸°Ùº¸´Ù ÇØ´ç ³ëµå°¡ ¸ÕÀú ·ÎµåµÈ ½ÃÁ¡¿¡¼­ ¸ø Ã£´Â ¿À·ù°¡ ¹ß»ıÇÒ ¼ö ÀÖÀ½)
+            // ê·¸ë˜í”„ ë¡œë“œê°€ ëë‚œ ì‹œì ì—ì„œ íƒ€ê²Ÿ ì„¤ì • í•„ë“œ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
+            // (íƒ€ê²Ÿë³´ë‹¤ í•´ë‹¹ ë…¸ë“œê°€ ë¨¼ì € ë¡œë“œëœ ì‹œì ì—ì„œ ëª» ì°¾ëŠ” ì˜¤ë¥˜ê°€ ë°œìƒí•  ìˆ˜ ìˆìŒ)
             targetField.UpdateDisplayLabel();
         }
 
@@ -67,34 +66,34 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // º¯°æÇÒ ¿ÀºêÁ§Æ® ¼±ÅÃ
+            // ë³€ê²½í•  ì˜¤ë¸Œì íŠ¸ ì„ íƒ
             targetField = new LineNodeField("Transform Object");
             targetField.RegisterValueChangedCallback(evt => OnTargetChanged(evt));
             extensionContainer.Add(targetField);
 
-            // º¯°æµÉ »ö
+            // ë³€ê²½ë  ìƒ‰
             colorField = new ColorField("Transform Color");
             colorField.value = Color.white;
             colorField.RegisterValueChangedCallback(evt => OnColorFieldChanged(evt));
             extensionContainer.Add(colorField);
 
-            // ÀÌµ¿µÉ À§Ä¡
+            // ì´ë™ë  ìœ„ì¹˜
             posField = new Vector2Field("Transform Position");
             posField.AddToClassList("line-node__image-vectorfield");
             posField.RegisterValueChangedCallback(evt => OnPositionFieldChanged(evt));
             extensionContainer.Add(posField);
 
-            // ÀÌ¹ÌÁö À§Ä¡ ¼³Á¤ ¹öÆ°
+            // ì´ë¯¸ì§€ ìœ„ì¹˜ ì„¤ì • ë²„íŠ¼
             var sizePreviewButton = new Button(OnClickPreviewButton);
             sizePreviewButton.text = "Image Preview";
             extensionContainer.Add(sizePreviewButton);
@@ -104,64 +103,64 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnTargetChanged(ChangeEvent<string> evt)
         {
-            // Å¸°Ù ³ëµå Ã£¾Æ¿À±â
+            // íƒ€ê²Ÿ ë…¸ë“œ ì°¾ì•„ì˜¤ê¸°
             UpdateTargetNode();
         }
 
         private void UpdateTargetNode()
         {
-            // ±×·¡ÇÁ ºä¿¡¼­ guid·Î ¹Ù²ï Å¸°Ù Ã£¾Æ¿À±â
+            // ê·¸ë˜í”„ ë·°ì—ì„œ guidë¡œ ë°”ë€ íƒ€ê²Ÿ ì°¾ì•„ì˜¤ê¸°
             var graphView = VisualScriptingGraphState.instance.graphView;
 
-            // ´ë»ó ³ëµå ¼³Á¤
+            // ëŒ€ìƒ ë…¸ë“œ ì„¤ì •
             targetNode = graphView.nodes.OfType<ImageNode>()
                             .FirstOrDefault(node => node.guid == targetField.value);
         }
 
         private void OnColorFieldChanged(ChangeEvent<Color> evt)
         {
-            // ÇöÀç ¿­·ÁÀÖ´Â ÇÁ¸®ºä¾î Ã¢ °¡Á®¿À±â
+            // í˜„ì¬ ì—´ë ¤ìˆëŠ” í”„ë¦¬ë·°ì–´ ì°½ ê°€ì ¸ì˜¤ê¸°
             var window = Resources.FindObjectsOfTypeAll<ImagePreviewer>().FirstOrDefault();
 
-            // ¾ø´Â °æ¿ì ¹«½Ã
+            // ì—†ëŠ” ê²½ìš° ë¬´ì‹œ
             if (window == null) return;
 
-            // ÇØ´ç Ã¢¿¡ ¶ç¿öÁø ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í•´ë‹¹ ì°½ì— ë„ì›Œì§„ ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             window.SetColor(evt.newValue);
 
         }
 
         private void OnPositionFieldChanged(ChangeEvent<Vector2> evt)
         {
-            // ÇöÀç ¿­·ÁÀÖ´Â ÇÁ¸®ºä¾î Ã¢ °¡Á®¿À±â
+            // í˜„ì¬ ì—´ë ¤ìˆëŠ” í”„ë¦¬ë·°ì–´ ì°½ ê°€ì ¸ì˜¤ê¸°
             var window = Resources.FindObjectsOfTypeAll<ImagePreviewer>().FirstOrDefault();
 
-            // ¾ø´Â °æ¿ì ¹«½Ã
+            // ì—†ëŠ” ê²½ìš° ë¬´ì‹œ
             if (window == null) return;
 
-            // ÇØ´ç Ã¢¿¡ ¶ç¿öÁø ½ºÇÁ¶óÀÌÆ® À§Ä¡ ¾÷µ¥ÀÌÆ®
+            // í•´ë‹¹ ì°½ì— ë„ì›Œì§„ ìŠ¤í”„ë¼ì´íŠ¸ ìœ„ì¹˜ ì—…ë°ì´íŠ¸
             window.SetPosition(evt.newValue);
         }
 
         private void OnClickPreviewButton()
         {
-            // ¼±ÅÃÇÑ Å¸°ÙÀÌ ¾ø´Â °æ¿ì ´Ù½Ã ºÒ·¯¿À±â
+            // ì„ íƒí•œ íƒ€ê²Ÿì´ ì—†ëŠ” ê²½ìš° ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¤ê¸°
             if (targetNode == null)
             {
                 UpdateTargetNode();
             }
 
-            // ºÒ·¯¿Ã Å¸°ÙÀÌ ¾ø´Â °æ¿ì¿£ ¹«½Ã 
+            // ë¶ˆëŸ¬ì˜¬ íƒ€ê²Ÿì´ ì—†ëŠ” ê²½ìš°ì—” ë¬´ì‹œ 
             if (targetNode == null)
             {
                 return;
             }
 
-            // ½ºÇÁ¶óÀÌÆ® °ª °¡Á®¿À±â
+            // ìŠ¤í”„ë¼ì´íŠ¸ ê°’ ê°€ì ¸ì˜¤ê¸°
             var data = targetNode.ToData() as ImageNodeData;
             var sprite = data?.sprite;
 
-            // ÀÌ¹ÌÁö ÇÁ¸®ºä¾î ¶ç¿ì±â
+            // ì´ë¯¸ì§€ í”„ë¦¬ë·°ì–´ ë„ìš°ê¸°
             ImagePreviewer.ShowWindow(sprite, posField.value, colorField.value, OnMovePreviewerSprite);
         }
 

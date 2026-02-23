@@ -18,10 +18,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             foreach (var type in types)
             {
-                // Å¸ÀÔ¿¡ ¸Â´Â ÀÌº¥Æ® µ¥ÀÌÅÍ °´Ã¼ ÀÓ½Ã »ı¼º
+                // íƒ€ì…ì— ë§ëŠ” ì´ë²¤íŠ¸ ë°ì´í„° ê°ì²´ ì„ì‹œ ìƒì„±
                 if (Activator.CreateInstance(type) is EventNodeData data)
                 {
-                    // ÀÌº¥Æ® ÀÌ¸§¿¡ ¸Â´Â Content Type ¼³Á¤
+                    // ì´ë²¤íŠ¸ ì´ë¦„ì— ë§ëŠ” Content Type ì„¤ì •
                     contentLookup[data.EventName] = data.ContentType;
                 }
             }

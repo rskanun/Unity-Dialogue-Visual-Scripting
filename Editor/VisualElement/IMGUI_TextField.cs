@@ -9,8 +9,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private readonly IMGUIContainer _container;
         private readonly Label _labelElement;
 
-        private string _lastComposition = ""; // Á¶ÇÕ ÁßÀÎ ±ÛÀÚ ºñ±³¿ë
-        private string _focusValue = ""; // Æ÷Ä¿½Ì ÀÌÀü ÀÌÈÄ ºñ±³¿ë
+        private string _lastComposition = ""; // ì¡°í•© ì¤‘ì¸ ê¸€ì ë¹„êµìš©
+        private string _focusValue = ""; // í¬ì»¤ì‹± ì´ì „ ì´í›„ ë¹„êµìš©
 
         private bool _multiline;
         public bool multiline
@@ -18,13 +18,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
             get => _multiline;
             set
             {
-                // °ªÀÌ ¹Ù²ğ ¶§¿¡¸¸ ÀÛµ¿
+                // ê°’ì´ ë°”ë€” ë•Œì—ë§Œ ì‘ë™
                 if (_multiline == value) return;
 
-                // ÁÙ¹Ù²Ş ¿©ºÎ °»½Å
+                // ì¤„ë°”ê¿ˆ ì—¬ë¶€ ê°±ì‹ 
                 _multiline = value;
 
-                // IMGUIContainer UI °»½Å
+                // IMGUIContainer UI ê°±ì‹ 
                 _container.MarkDirtyRepaint();
             }
         }
@@ -36,7 +36,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 if (_value == value) return;
 
-                // °ª º¯°æ ½Ã ChangeEvent ¼ö½Å (UI Toolkit Ç¥ÁØ ¹æ½Ä Ã³¸®)
+                // ê°’ ë³€ê²½ ì‹œ ChangeEvent ìˆ˜ì‹  (UI Toolkit í‘œì¤€ ë°©ì‹ ì²˜ë¦¬)
                 using (ChangeEvent<string> evt = ChangeEvent<string>.GetPooled(_value, value))
                 {
                     evt.target = this;
@@ -52,12 +52,12 @@ namespace Rskanun.DialogueVisualScripting.Editor
             get => _isReadOnly;
             set
             {
-                // °ªÀÌ ¹Ù²ğ ¶§¿¡¸¸ ÀÛµ¿
+                // ê°’ì´ ë°”ë€” ë•Œì—ë§Œ ì‘ë™
                 if (_isReadOnly == value) return;
 
                 _isReadOnly = value;
 
-                // »óÅÂ º¯°æ¿¡ µû¸¥ UI °»½Å
+                // ìƒíƒœ ë³€ê²½ì— ë”°ë¥¸ UI ê°±ì‹ 
                 _container.MarkDirtyRepaint();
             }
         }
@@ -66,40 +66,40 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             _value = "";
 
-            // TextFieldÀÇ ±âÁ¸ ½ºÅ¸ÀÏ Àû¿ë
+            // TextFieldì˜ ê¸°ì¡´ ìŠ¤íƒ€ì¼ ì ìš©
             AddToClassList("unity-base-field");
             AddToClassList("unity-base-text-field");
             AddToClassList("line-node__IMGUI-textfield");
 
-            // IMGUIContainer »ı¼º ¹× ³»ºÎ¿¡ IMGUI TextField ±×¸®±â
+            // IMGUIContainer ìƒì„± ë° ë‚´ë¶€ì— IMGUI TextField ê·¸ë¦¬ê¸°
             _container = new IMGUIContainer(() =>
             {
-                // ÀĞ±â Àü¿ë ¼³Á¤
+                // ì½ê¸° ì „ìš© ì„¤ì •
                 GUI.enabled = !isReadOnly;
 
-                // multiline ¿©ºÎ¿¡ µû¸¥ ÁÙ¹Ù²Ş ¼³Á¤
+                // multiline ì—¬ë¶€ì— ë”°ë¥¸ ì¤„ë°”ê¿ˆ ì„¤ì •
                 string value = multiline ? EditorGUILayout.TextArea(_value, GUILayout.Height(80)) : EditorGUILayout.TextField(_value);
 
-                // Å¸ÀÌÇÎ¿¡ µû¸¥ ³»¿ë º¯È­¸¦ ¸Å¼ø°£ º¸ÀÌ±â(ÇÑ±Û Àü¿ë)
+                // íƒ€ì´í•‘ì— ë”°ë¥¸ ë‚´ìš© ë³€í™”ë¥¼ ë§¤ìˆœê°„ ë³´ì´ê¸°(í•œê¸€ ì „ìš©)
                 SetValueWithoutNotify(value);
 
-                // ¸ğÀ½ ¶Ç´Â ÀÚÀ½ »èÁ¦ ½Ã º¯È­ ³»¿ë Ä³Ä¡
+                // ëª¨ìŒ ë˜ëŠ” ììŒ ì‚­ì œ ì‹œ ë³€í™” ë‚´ìš© ìºì¹˜
                 SetComposition(Input.compositionString);
             });
 
-            // container ½ºÅ¸ÀÏ ÁöÁ¤
+            // container ìŠ¤íƒ€ì¼ ì§€ì •
             _container.AddToClassList("line-node__IMGUI-container");
 
             Add(_container);
 
-            // ¹®Àå ¿Ï¼º ÀÌº¥Æ® Ãß°¡
+            // ë¬¸ì¥ ì™„ì„± ì´ë²¤íŠ¸ ì¶”ê°€
             RegisterCallback<FocusInEvent>(OnFocusIn);
             RegisterCallback<FocusOutEvent>(OnFocusOut);
         }
 
         public IMGUI_TextField(string labelText) : this()
         {
-            // ¶óº§ÀÌ ÀÖ´Â °æ¿ì ¶óº§ °´Ã¼ Ãß°¡
+            // ë¼ë²¨ì´ ìˆëŠ” ê²½ìš° ë¼ë²¨ ê°ì²´ ì¶”ê°€
             _labelElement = new Label(labelText);
             _labelElement.AddToClassList(BaseField<string>.labelUssClassName);
 
@@ -112,7 +112,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             _value = newValue;
 
-            // ´ÙÀ½ ÇÁ·¹ÀÓ¿¡ ±×·ÁÁöµµ·Ï ¾Ë¸²
+            // ë‹¤ìŒ í”„ë ˆì„ì— ê·¸ë ¤ì§€ë„ë¡ ì•Œë¦¼
             _container.MarkDirtyRepaint();
         }
 
@@ -122,7 +122,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             _lastComposition = newValue;
 
-            // ´ÙÀ½ ÇÁ·¹ÀÓ¿¡ ±×·ÁÁöµµ·Ï ¾Ë¸²
+            // ë‹¤ìŒ í”„ë ˆì„ì— ê·¸ë ¤ì§€ë„ë¡ ì•Œë¦¼
             _container.MarkDirtyRepaint();
         }
 
@@ -133,7 +133,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnFocusOut(FocusOutEvent evt)
         {
-            // ¿Ï¼ºµÈ ¹®ÀåÀÌ Æ÷Ä¿½Ì ÀÌÀü°ú °°Àº °æ¿ì ÀÌº¥Æ® X
+            // ì™„ì„±ëœ ë¬¸ì¥ì´ í¬ì»¤ì‹± ì´ì „ê³¼ ê°™ì€ ê²½ìš° ì´ë²¤íŠ¸ X
             if (value == _focusValue) return;
 
             using (ChangeEvent<string> cevt = ChangeEvent<string>.GetPooled(_focusValue, value))

@@ -23,17 +23,17 @@ namespace Rskanun.DialogueVisualScripting
             {
                 if (_instance != null) return _instance;
 
-                // »ı¼º °æ·Î Å½»ö
+                // ìƒì„± ê²½ë¡œ íƒìƒ‰
                 _instance = Resources.Load<ScenarioSettings>("Scenario Settings");
 
                 if (_instance == null)
                 {
-                    // Resource ÀüÃ¼ Å½»ö
+                    // Resource ì „ì²´ íƒìƒ‰
                     var assets = Resources.LoadAll<ScenarioSettings>("");
 
                     if (assets != null && assets.Length > 0)
                     {
-                        // °¡Àå Ã³À½ ¹ß°ßÇÑ ¿¡¼Â »ç¿ë
+                        // ê°€ì¥ ì²˜ìŒ ë°œê²¬í•œ ì—ì…‹ ì‚¬ìš©
                         return _instance = assets[0];
                     }
                 }
@@ -41,25 +41,25 @@ namespace Rskanun.DialogueVisualScripting
 #if UNITY_EDITOR
                 if (_instance == null)
                 {
-                    // ÆÄÀÏ °æ·Î°¡ ¾øÀ» °æ¿ì Æú´õ »ı¼º
+                    // íŒŒì¼ ê²½ë¡œê°€ ì—†ì„ ê²½ìš° í´ë” ìƒì„±
                     if (!AssetDatabase.IsValidFolder(FILE_DIRECTORY))
                     {
                         Directory.CreateDirectory(FILE_DIRECTORY);
 
-                        // À¯´ÏÆ¼¿¡°Ô ÀÎ½Ä
+                        // ìœ ë‹ˆí‹°ì—ê²Œ ì¸ì‹
                         AssetDatabase.ImportAsset(FILE_DIRECTORY);
                     }
 
-                    // Resource.Load°¡ ½ÇÆĞÇßÀ» °æ¿ì
+                    // Resource.Loadê°€ ì‹¤íŒ¨í–ˆì„ ê²½ìš°
                     _instance = AssetDatabase.LoadAssetAtPath<ScenarioSettings>(FILE_PATH);
 
                     if (_instance == null)
                     {
-                        // ¿¡¼Â »ı¼º
+                        // ì—ì…‹ ìƒì„±
                         _instance = CreateInstance<ScenarioSettings>();
                         AssetDatabase.CreateAsset(_instance, FILE_PATH);
 
-                        // º¯°æ »çÇ× ÀúÀå ¹× »õ·Î°íÄ§
+                        // ë³€ê²½ ì‚¬í•­ ì €ì¥ ë° ìƒˆë¡œê³ ì¹¨
                         AssetDatabase.SaveAssets();
                         AssetDatabase.Refresh();
                     }

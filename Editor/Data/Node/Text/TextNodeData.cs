@@ -6,9 +6,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
     public class TextNodeData : NodeData
     {
         public override Type NodeType => typeof(TextNode);
-        public string speakerKey; // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç¿¡ µî·ÏµÈ ÀÌ¸§ Å° °ª
-        public string speaker; // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» ¾²Áö ¾Ê´Â °æ¿ì ÀúÀåµÉ ÀÌ¸§
-        public string dialogueKey; // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼Ç¿¡ µî·ÏµÈ ´ë»ç Å° °ª
-        public string dialogue; // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» ¾²Áö ¾Ê´Â °æ¿ì ÀúÀåµÉ ´ë»ç
+        public string speakerKey; // ë¡œì»¬ë¼ì´ì œì´ì…˜ì— ë“±ë¡ëœ ì´ë¦„ í‚¤ ê°’
+        public string speaker; // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì“°ì§€ ì•ŠëŠ” ê²½ìš° ì €ì¥ë  ì´ë¦„
+        public string dialogueKey; // ë¡œì»¬ë¼ì´ì œì´ì…˜ì— ë“±ë¡ëœ ëŒ€ì‚¬ í‚¤ ê°’
+        public string dialogue; // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì“°ì§€ ì•ŠëŠ” ê²½ìš° ì €ì¥ë  ëŒ€ì‚¬
     }
 }

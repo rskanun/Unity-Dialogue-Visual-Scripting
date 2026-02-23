@@ -15,33 +15,33 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public SelectNode(string guid) : base(guid) { }
         public SelectNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not SelectNodeData selectNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
-            // ÇöÀç ÀÖ´Â ¸ğµç Ãâ·Â Æ÷Æ® Á¦°Å
+            // í˜„ì¬ ìˆëŠ” ëª¨ë“  ì¶œë ¥ í¬íŠ¸ ì œê±°
             foreach (var port in choices.Keys)
             {
                 outputContainer.Remove(port);
             }
 
-            // ¸®½ºÆ® ÃÊ±âÈ­
+            // ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
             choices.Clear();
 
-            // µ¥ÀÌÅÍ¿¡ ÀúÀåµÈ Æ÷Æ® Ãß°¡
+            // ë°ì´í„°ì— ì €ì¥ëœ í¬íŠ¸ ì¶”ê°€
             var useLocalization = VisualScriptingSettings.UseLocalization;
             for (int i = 0; i < selectNodeData.options.Count; i++)
             {
                 var key = selectNodeData.optionKeys[i];
                 var name = selectNodeData.options[i];
 
-                // ·ÎÄÃ¶óÀÌÁ¦ÀÌ¼ÇÀ» »ç¿ëÇÏ¸é Å° °ªÀ» ÅëÇØ °¡Á®¿À°í, ¾Æ´Ï¶ó¸é ±âÁ¸ ÀÔ·Â°ª »ç¿ë
+                // ë¡œì»¬ë¼ì´ì œì´ì…˜ì„ ì‚¬ìš©í•˜ë©´ í‚¤ ê°’ì„ í†µí•´ ê°€ì ¸ì˜¤ê³ , ì•„ë‹ˆë¼ë©´ ê¸°ì¡´ ì…ë ¥ê°’ ì‚¬ìš©
                 string nameValue = useLocalization ? GetOptionName(key) : name;
 
-                // ÇØ´ç ³»¿ëÀ» Åä´ë·Î ¿É¼Ç Ãâ·Â Æ÷Æ® Ãß°¡
+                // í•´ë‹¹ ë‚´ìš©ì„ í† ëŒ€ë¡œ ì˜µì…˜ ì¶œë ¥ í¬íŠ¸ ì¶”ê°€
                 AddOption(nameValue);
             }
         }
@@ -92,17 +92,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Output Ãß°¡ ¹öÆ°
+            // Output ì¶”ê°€ ë²„íŠ¼
             addOptionButton = new Button(() => AddOption("Option Name"));
             addOptionButton.text = "Add Options";
             mainContainer.Insert(1, addOptionButton);
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // ÃÊ±â ¼±ÅÃÁö ÇÏ³ª Ãß°¡
+            // ì´ˆê¸° ì„ íƒì§€ í•˜ë‚˜ ì¶”ê°€
             AddOption("Option Name");
 
             RefreshExpandedState();
@@ -110,54 +110,54 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void AddOption(string option)
         {
-            // ¸¸µé ¼ö ÀÖ´Â ÃÖ´ë ¼±ÅÃÁö °³¼ö È®ÀÎ
+            // ë§Œë“¤ ìˆ˜ ìˆëŠ” ìµœëŒ€ ì„ íƒì§€ ê°œìˆ˜ í™•ì¸
             if (choices.Count >= VisualScriptingSettings.MaxChoice)
             {
-                // ¿À¹öµÇ¸é ¸¸µé±â X
+                // ì˜¤ë²„ë˜ë©´ ë§Œë“¤ê¸° X
                 return;
             }
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "";
 
-            // OutputÀÇ ÀÌ¸§À» ¼±ÅÃÁöÀÇ ÀÌ¸§À¸·Î ¼³Á¤
+            // Outputì˜ ì´ë¦„ì„ ì„ íƒì§€ì˜ ì´ë¦„ìœ¼ë¡œ ì„¤ì •
             var outputTextField = new IMGUI_TextField();
             outputTextField.value = option;
             outputTextField.AddToClassList("line-node__select-textfield");
             outputPort.Add(outputTextField);
 
-            // ¿É¼Ç Á¦°Å ¹öÆ°
+            // ì˜µì…˜ ì œê±° ë²„íŠ¼
             var removeButton = new Button(() => RemoveOption(outputPort));
             removeButton.text = "X";
             outputPort.Add(removeButton);
 
-            // ¿Ï¼ºµÈ Output Æ÷Æ® UI¿¡ Ãß°¡
+            // ì™„ì„±ëœ Output í¬íŠ¸ UIì— ì¶”ê°€
             outputContainer.Add(outputPort);
 
-            // ¸®½ºÆ®¿¡ Ãß°¡
+            // ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
             choices.Add(outputPort, outputTextField);
 
-            // ÃÊ±â ¿É¼Ç »ı¼ºÀÌ ¾Æ´Ñ Ãß°¡ÀûÀÎ ¿É¼ÇÀ» »ı¼ºÇÑ °æ¿ì
+            // ì´ˆê¸° ì˜µì…˜ ìƒì„±ì´ ì•„ë‹Œ ì¶”ê°€ì ì¸ ì˜µì…˜ì„ ìƒì„±í•œ ê²½ìš°
             if (choices.Count > 1)
             {
-                // ³ëµå º¯°æ ¾Ë¸²
+                // ë…¸ë“œ ë³€ê²½ ì•Œë¦¼
                 NotifyModified();
             }
         }
 
         private void RemoveOption(Port outputPort)
         {
-            // ¿É¼ÇÀÌ ÃÖ¼Ò ÇÏ³ªÀÇ °ªÀ» °¡Áöµµ·Ï 1°³ ÀÌÇÏ¸é ¹«½Ã
+            // ì˜µì…˜ì´ ìµœì†Œ í•˜ë‚˜ì˜ ê°’ì„ ê°€ì§€ë„ë¡ 1ê°œ ì´í•˜ë©´ ë¬´ì‹œ
             if (choices.Count <= 1) return;
 
-            // ¸®½ºÆ® ³»¿¡¼­ ¹ß°ßÇÏÁö ¸øÇÑ °æ¿ì ¹«½Ã
+            // ë¦¬ìŠ¤íŠ¸ ë‚´ì—ì„œ ë°œê²¬í•˜ì§€ ëª»í•œ ê²½ìš° ë¬´ì‹œ
             if (!choices.Remove(outputPort)) return;
 
-            // UI »ó¿¡¼­ Æ÷Æ® Á¦°Å
+            // UI ìƒì—ì„œ í¬íŠ¸ ì œê±°
             outputContainer.Remove(outputPort);
 
-            // ³ëµå º¯°æ ¾Ë¸²
+            // ë…¸ë“œ ë³€ê²½ ì•Œë¦¼
             NotifyModified();
         }
     }

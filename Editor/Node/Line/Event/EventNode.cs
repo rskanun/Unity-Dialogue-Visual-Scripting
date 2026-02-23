@@ -18,19 +18,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public EventNode(string guid) : base(guid) { }
         public EventNode(NodeData data) : base(data)
         {
-            // ´Ù¿îÄÉ½ºÆÃÀÌ ºÒ°¡´ÉÇÑ °æ¿ì
+            // ë‹¤ìš´ì¼€ìŠ¤íŒ…ì´ ë¶ˆê°€ëŠ¥í•œ ê²½ìš°
             if (data is not EventNodeData eventNodeData)
             {
-                // Å¸ÀÌÆ²°ú À§Ä¡¸¸ ¼³Á¤
+                // íƒ€ì´í‹€ê³¼ ìœ„ì¹˜ë§Œ ì„¤ì •
                 return;
             }
 
             eventTypeField.value = eventNodeData.EventName;
 
-            // »õ ÀÌº¥Æ® °´Ã¼ ÇÒ´ç
+            // ìƒˆ ì´ë²¤íŠ¸ ê°ì²´ í• ë‹¹
             currentContent = EventContentFactory.Create(eventNodeData.EventName);
 
-            // Register ÀÛµ¿ÇÏÁö ¾ÊÀ¸¹Ç·Î Á÷Á¢ ±×·ÁÁÖ°í µ¥ÀÌÅÍ »ğÀÔ
+            // Register ì‘ë™í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ ì§ì ‘ ê·¸ë ¤ì£¼ê³  ë°ì´í„° ì‚½ì…
             currentContent.Draw(eventInfoContainer);
             currentContent.RestoreData(eventNodeData);
         }
@@ -45,10 +45,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public override NodeData ToData()
         {
-            // ÀÌº¥Æ® Å¸ÀÔ º° µ¥ÀÌÅÍ °´Ã¼ »ı¼º
+            // ì´ë²¤íŠ¸ íƒ€ì… ë³„ ë°ì´í„° ê°ì²´ ìƒì„±
             var data = currentContent.ToData();
 
-            // °øÅë µ¥ÀÌÅÍ ´ã±â 
+            // ê³µí†µ ë°ì´í„° ë‹´ê¸° 
             data.guid = guid;
             data.name = nodeName;
             data.pos = position;
@@ -60,17 +60,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             base.Draw();
 
-            // Input ¿¬°á Ãß°¡
+            // Input ì—°ê²° ì¶”ê°€
             var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
             inputPort.portName = "Prev";
             inputContainer.Add(inputPort);
 
-            // Output ¿¬°á Ãß°¡
+            // Output ì—°ê²° ì¶”ê°€
             var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             outputPort.portName = "Next";
             outputContainer.Add(outputPort);
 
-            // ÀÌº¥Æ® Å¸ÀÔ
+            // ì´ë²¤íŠ¸ íƒ€ì…
             eventTypeField = new DropdownField("Event Type", GetEventOptions(), 0);
             eventTypeField.RegisterValueChangedCallback(evt => OnEventTypeChanged(evt.newValue));
             extensionContainer.Add(eventTypeField);
@@ -91,10 +91,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             foreach (var type in types)
             {
-                // Å¸ÀÔ¿¡ ¸Â´Â ÀÌº¥Æ® µ¥ÀÌÅÍ °´Ã¼ ÀÓ½Ã »ı¼º
+                // íƒ€ì…ì— ë§ëŠ” ì´ë²¤íŠ¸ ë°ì´í„° ê°ì²´ ì„ì‹œ ìƒì„±
                 if (Activator.CreateInstance(type) is EventNodeData data)
                 {
-                    // ÀÌº¥Æ® ÀÌ¸§À» ¿É¼ÇÀ¸·Î µî·Ï
+                    // ì´ë²¤íŠ¸ ì´ë¦„ì„ ì˜µì…˜ìœ¼ë¡œ ë“±ë¡
                     options.Add(data.EventName);
                 }
             }
@@ -106,10 +106,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             eventInfoContainer.Clear();
 
-            // »õ ÀÌº¥Æ® ³»¿ëÀ¸·Î º¯°æ 
+            // ìƒˆ ì´ë²¤íŠ¸ ë‚´ìš©ìœ¼ë¡œ ë³€ê²½ 
             currentContent = EventContentFactory.Create(newType);
 
-            // º¯°æµÈ ³»¿ëÀÇ ÀÌº¥Æ® Á¤º¸ ³ëµå ±×¸®±â
+            // ë³€ê²½ëœ ë‚´ìš©ì˜ ì´ë²¤íŠ¸ ì •ë³´ ë…¸ë“œ ê·¸ë¦¬ê¸°
             currentContent.Draw(eventInfoContainer);
         }
     }
