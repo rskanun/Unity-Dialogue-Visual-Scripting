@@ -79,31 +79,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 변경할 오브젝트 선택
             targetField = new LineNodeField("Transform Object");
-            targetField.RegisterValueChangedCallback(evt =>
-            {
-                OnTargetChanged(evt);
-                NotifyModified();
-            });
+            targetField.RegisterValueChangedCallback(evt => OnTargetChanged(evt));
             extensionContainer.Add(targetField);
 
             // 변경될 색
             colorField = new ColorField("Transform Color");
             colorField.value = Color.white;
-            colorField.RegisterValueChangedCallback(evt =>
-            {
-                OnColorFieldChanged(evt);
-                NotifyModified();
-            });
+            colorField.RegisterValueChangedCallback(evt => OnColorFieldChanged(evt));
             extensionContainer.Add(colorField);
 
             // 이동될 위치
             posField = new Vector2Field("Transform Position");
             posField.AddToClassList("line-node__image-vectorfield");
-            posField.RegisterValueChangedCallback(evt =>
-            {
-                OnPositionFieldChanged(evt);
-                NotifyModified();
-            });
+            posField.RegisterValueChangedCallback(evt => OnPositionFieldChanged(evt));
             extensionContainer.Add(posField);
 
             // 이미지 위치 설정 버튼
@@ -126,10 +114,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var graphView = VisualScriptingGraphState.instance.graphView;
 
             // 대상 노드 설정
-            targetNode = graphView.nodes
-                                .OfType<ImageNode>()
-                                .Where(node => node.guid == targetField.value)
-                                .FirstOrDefault();
+            targetNode = graphView.nodes.OfType<ImageNode>()
+                            .FirstOrDefault(node => node.guid == targetField.value);
         }
 
         private void OnColorFieldChanged(ChangeEvent<Color> evt)
@@ -175,14 +161,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var data = targetNode.ToData() as ImageNodeData;
             var sprite = data?.sprite;
 
-            Action<Vector2> onMovePreviewerSprite = newPos =>
-            {
-                posField.SetValueWithoutNotify(newPos);
-                NotifyModified();
-            };
-
             // 이미지 프리뷰어 띄우기
-            ImagePreviewer.ShowWindow(sprite, posField.value, colorField.value, onMovePreviewerSprite);
+            ImagePreviewer.ShowWindow(sprite, posField.value, colorField.value, OnMovePreviewerSprite);
+        }
+
+        private void OnMovePreviewerSprite(Vector2 newPos)
+        {
+            posField.SetValueWithoutNotify(newPos);
         }
     }
 }

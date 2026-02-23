@@ -62,7 +62,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 // ID 값이 7자리가 넘지 않는 자연수가 되도록 조정
                 idField.value = Mathf.Clamp(evt.newValue, 1, 9999999);
-                NotifyModified();
             });
             extensionContainer.Add(idField);
 

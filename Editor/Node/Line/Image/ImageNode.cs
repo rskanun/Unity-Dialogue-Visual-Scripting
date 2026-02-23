@@ -76,31 +76,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 스프라이트 에셋 선택
             spriteField = new ObjectField("Sprite");
             spriteField.objectType = typeof(Sprite);
-            spriteField.RegisterValueChangedCallback(evt =>
-            {
-                selectedSprite = evt.newValue as Sprite;
-                NotifyModified();
-            });
+            spriteField.RegisterValueChangedCallback(evt => selectedSprite = evt.newValue as Sprite);
             extensionContainer.Add(spriteField);
 
             // 색 영역
             colorField = new ColorField("Color");
             colorField.value = Color.white;
-            colorField.RegisterValueChangedCallback(evt =>
-            {
-                OnColorFieldChanged(evt);
-                NotifyModified();
-            });
+            colorField.RegisterValueChangedCallback(evt => OnColorFieldChanged(evt));
             extensionContainer.Add(colorField);
 
             // 이미지 위치
             posField = new Vector2Field("Position");
             posField.AddToClassList("line-node__image-vectorfield");
-            posField.RegisterValueChangedCallback(evt =>
-            {
-                OnPositionFieldChanged(evt);
-                NotifyModified();
-            });
+            posField.RegisterValueChangedCallback(evt => OnPositionFieldChanged(evt));
             extensionContainer.Add(posField);
 
             // 이미지 위치 설정 버튼
@@ -145,14 +133,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            Action<Vector2> onMovePreviewerSprite = newPos =>
-            {
-                posField.SetValueWithoutNotify(newPos);
-                NotifyModified();
-            };
-
             // 이미지 프리뷰어 띄우기
-            ImagePreviewer.ShowWindow(previewSprite, posField.value, colorField.value, onMovePreviewerSprite);
+            ImagePreviewer.ShowWindow(previewSprite, posField.value, colorField.value, OnMovePreviewerSprite);
+        }
+
+        private void OnMovePreviewerSprite(Vector2 newPos)
+        {
+            posField.SetValueWithoutNotify(newPos);
         }
     }
 }

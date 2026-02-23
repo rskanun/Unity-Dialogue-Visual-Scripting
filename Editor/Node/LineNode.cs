@@ -11,7 +11,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
         public event Action OnNodeModified;
 
         private TextField nameField;
-        private string prevName; // 이전 값과 달라졌는 지를 확인하는 용도
         public string nodeName
         {
             get => nameField?.value;
@@ -52,6 +51,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 파괴 호출 함수
             RegisterCallback<DetachFromPanelEvent>(evt => OnDisable());
+
+            // 노드 내 요소 변경 감지 등록
+            RegisterModifiCallbacks();
         }
         public LineNode(NodeData data) : this(data.guid)
         {
@@ -66,12 +68,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 이름 필드
             nameField = new TextField() { value = "New Line" };
             nameField.RegisterValueChangedCallback(evt => nodeName = evt.newValue);
-            nameField.RegisterCallback<FocusInEvent>(evt => prevName = nodeName);
-            nameField.RegisterCallback<FocusOutEvent>(evt =>
-            {
-                // 포커스 전후 값을 비교하여 달라진 경우에만 알림
-                if (nodeName != prevName) NotifyModified();
-            });
             titleContainer.Insert(0, nameField);
 
             // 스타일 적용
@@ -79,6 +75,26 @@ namespace Rskanun.DialogueVisualScripting.Editor
             nameField.AddToClassList("line-node__textfield__hidden");
 
             extensionContainer.AddToClassList("line-node__extension-container");
+        }
+
+        private void RegisterModifiCallbacks()
+        {
+            // 모든 요소에 변경 이벤트 등록
+            RegisterCallback<ChangeEvent<string>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<int>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<float>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<double>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<bool>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<Enum>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<Vector2>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<Vector3>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<Color>>(OnFieldChanged);
+            RegisterCallback<ChangeEvent<UnityEngine.Object>>(OnFieldChanged);
+        }
+
+        private void OnFieldChanged<T>(ChangeEvent<T> evt)
+        {
+            NotifyModified();
         }
 
         protected void NotifyModified()
