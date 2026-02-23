@@ -124,7 +124,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // Output의 이름을 선택지의 이름으로 설정
             var outputTextField = new IMGUI_TextField();
             outputTextField.value = option;
-            outputTextField.RegisterValueChangedCallback(evt => NotifyModified());
             outputTextField.AddToClassList("line-node__select-textfield");
             outputPort.Add(outputTextField);
 

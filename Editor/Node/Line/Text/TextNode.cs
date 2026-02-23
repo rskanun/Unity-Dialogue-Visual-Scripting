@@ -208,27 +208,18 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 이름 선택 드롭다운 추가(아래의 업데이트에서 목록 설정)
             nameDropdownField = new DropdownField("Name", new List<string>(), 0);
             nameDropdownField.value = noneLabel;
-            nameDropdownField.RegisterValueChangedCallback(evt =>
-            {
-                speakerKey = GetSpeakerKey();
-                NotifyModified();
-            });
+            nameDropdownField.RegisterValueChangedCallback(evt => speakerKey = GetSpeakerKey());
             nameDropdownField.AddToClassList("line-node__name-dropdown");
             extensionContainer.Add(nameDropdownField);
 
             // 로컬라이제이션을 사용하지 않는 경우 이름을 적을 필드 추가
             nameField = new IMGUI_TextField("Name");
-            nameField.RegisterValueChangedCallback(evt =>
-            {
-                speakerKey = GetSpeakerKey();
-                NotifyModified();
-            });
+            nameField.RegisterValueChangedCallback(evt => speakerKey = GetSpeakerKey());
             extensionContainer.Add(nameField);
 
             // 대사 선택 요소 추가(guid를 통해 Localization를 삽입 및 수정하는 방식)
             dialogueField = new IMGUI_TextField("Dialogue Text");
             dialogueField.multiline = true;
-            dialogueField.RegisterValueChangedCallback(evt => NotifyModified());
             dialogueField.AddToClassList("line-node__dialogue-field");
             extensionContainer.Add(dialogueField);
 

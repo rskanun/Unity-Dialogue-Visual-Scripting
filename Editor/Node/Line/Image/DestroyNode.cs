@@ -64,7 +64,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 파괴할 오브젝트 선택
             targetField = new LineNodeField("Destroy Object");
-            targetField.RegisterValueChangedCallback(evt => NotifyModified());
             extensionContainer.Add(targetField);
 
             RefreshExpandedState();

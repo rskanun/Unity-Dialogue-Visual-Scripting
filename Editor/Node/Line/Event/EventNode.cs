@@ -31,7 +31,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             currentContent = EventContentFactory.Create(eventNodeData.EventName);
 
             // Register 작동하지 않으므로 직접 그려주고 데이터 삽입
-            currentContent.Draw(eventInfoContainer, NotifyModified);
+            currentContent.Draw(eventInfoContainer);
             currentContent.RestoreData(eventNodeData);
         }
 
@@ -72,11 +72,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 이벤트 타입
             eventTypeField = new DropdownField("Event Type", GetEventOptions(), 0);
-            eventTypeField.RegisterValueChangedCallback(evt =>
-            {
-                OnEventTypeChanged(evt.newValue);
-                NotifyModified();
-            });
+            eventTypeField.RegisterValueChangedCallback(evt => OnEventTypeChanged(evt.newValue));
             extensionContainer.Add(eventTypeField);
 
             eventInfoContainer = new VisualElement();
@@ -114,7 +110,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             currentContent = EventContentFactory.Create(newType);
 
             // 변경된 내용의 이벤트 정보 노드 그리기
-            currentContent.Draw(eventInfoContainer, NotifyModified);
+            currentContent.Draw(eventInfoContainer);
         }
     }
 }
