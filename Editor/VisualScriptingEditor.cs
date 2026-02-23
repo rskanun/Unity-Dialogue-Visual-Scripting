@@ -21,10 +21,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private bool isLoading;
         private bool isDirty;
 
-        [MenuItem("Window/Visual Dialogue Scripting")]
+        [MenuItem("Window/Dialogue Visual Scripting")]
         public static void OpenWindow()
         {
-            GetWindow<VisualScriptingEditor>("Visual Dialogue Scripting");
+            GetWindow<VisualScriptingEditor>("Dialogue Visual Scripting");
         }
 
         private async void OnEnable()
@@ -377,10 +377,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             if (isDirty) return;
 
             isDirty = true;
-
-            // 에디터 제목 끝에 별표 확인하고 붙이기
-            if (!titleContent.text.EndsWith('*'))
-                titleContent.text += '*';
+            hasUnsavedChanges = true;
         }
 
         private void MarkAsSaved()
@@ -389,10 +386,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             if (!isDirty) return;
 
             isDirty = false;
-
-            // 에디터 제목 끝에 별표 확인하고 없애기
-            if (titleContent.text.EndsWith('*'))
-                titleContent.text = titleContent.text.TrimEnd('*');
+            hasUnsavedChanges = false;
         }
 
         private void SetCurrentFile(ScenarioGraph file)
