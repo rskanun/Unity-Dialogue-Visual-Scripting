@@ -1,9 +1,17 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
 namespace Rskanun.DialogueVisualScripting.Editor
 {
+    [Serializable]
+    public class PreviewerResolution
+    {
+        public string label;
+        public Vector2 resolution;
+    }
+
     public class ImagePreviewer : EditorWindow
     {
         private float scale;
@@ -13,8 +21,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private Action<Vector2> onPosUpdateHandler;
 
         // 해상도 정보
-        private string[] resolutionLabels = { "1920x1080 (16:9)" };
-        private Vector2[] resolutions = { new Vector2(1920, 1080) };
         private int resolutionIndex;
 
         // 마우스 상태
@@ -44,6 +50,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 Debug.LogError("Please assign a Sprite to the ImageNode first.");
                 return;
             }
+
+            var resolutionLabels = VisualScriptingSettings.PreviewerResolutions
+                                    .Select(item => item.label)
+                                    .ToArray();
+            var resolutions = VisualScriptingSettings.PreviewerResolutions
+                                    .Select(item => item.resolution)
+                                    .ToArray();
 
             // 툴바 영역 설정
             var toolbarRect = new Rect(0, 0, position.width, EditorStyles.toolbar.fixedHeight);

@@ -2,6 +2,8 @@ using UnityEditor;
 using UnityEngine;
 using System.Linq;
 using System;
+using System.Collections.Generic;
+
 
 #if USE_LOCALIZATION
 using UnityEngine.Localization;
@@ -48,6 +50,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
         [SerializeField]
         private bool _useLocalization;
         public static bool UseLocalization => instance._useLocalization;
+
+        [SerializeField]
+        private List<PreviewerResolution> _previewerResolutions = new()
+        {
+            new PreviewerResolution()
+            {
+                label = "1920x1080 (16:9)",
+                resolution = new Vector2(1920, 1080)
+            }
+        };
+        public static List<PreviewerResolution> PreviewerResolutions => instance._previewerResolutions;
 
         [Header("Text Node Setting")]
         [SerializeField]
