@@ -6,6 +6,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
     public class LineTagData : NodeData
     {
         public override Type NodeType => typeof(LineTag);
-        public int npcID;
+        public int dialogueID;
     }
 }

@@ -9,11 +9,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
     public class LineTag : LineNode
     {
         private IntegerField idField;
-        public int ID
-        {
-            get => idField.value;
-            private set => idField.value = value; // 범위 지정을 위해 설정과 동시에 알림
-        }
+        public int ID => idField.value;
 
         public LineTag() : base() { }
         public LineTag(string guid) : base(guid) { }
@@ -26,7 +22,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            ID = tagData.npcID;
+            var clampID = Mathf.Clamp(tagData.dialogueID, 1, 9999999);
+            idField.SetValueWithoutNotify(clampID);
         }
 
         public override NodeData ToData()
@@ -36,7 +33,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             data.guid = guid;
             data.name = nodeName;
             data.pos = position;
-            data.npcID = ID;
+            data.dialogueID = ID;
 
             return data;
         }
