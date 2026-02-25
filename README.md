@@ -172,9 +172,7 @@ README.md                                     # 본 문서
 1. Unity 메뉴에서 `Window > Package Manager` 를 엽니다.
 2. 좌측 상단 `+` 버튼을 눌러 **"Add package from git URL..."** 을 선택합니다.
 3. 이 저장소의 Git URL 을 입력하고 `Add` 를 누릅니다.
-   - 예) `https://github.com/<your-org>/Unity-Dialogue-Visual-Scripting.git`
-
-> 실제 Git URL 은 사용 중인 저장소 주소에 맞게 수정해 주세요.
+   - 예) `https://github.com/rskanun/Unity-Dialogue-Visual-Scripting.git`
 
 ### 3. 로컬 패키지로 설치
 
