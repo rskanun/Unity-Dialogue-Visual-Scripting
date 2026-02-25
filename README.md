@@ -8,24 +8,30 @@
 ## 주요 기능
 
 - **시각적 대화 그래프 편집기**
+
   - Unity Editor 상단 메뉴의 `Window/Dialogue Visual Scripting` 으로 열 수 있는 전용 그래프 에디터 제공
   - 노드 기반으로 대사 흐름, 분기, 이벤트, 이미지 표시 등을 구성
 
 - **런타임 객체 데이터 자동 변환**
+
   - 그래프 상의 노드들을 `Scenario`/`ScenarioScene`/`Line` 계층 구조로 자동 변환
   - 직렬화 가능한 데이터 구조로 저장 후, 런타임 시 빠르게 복원 및 순회 가능
 
 - **분기 선택(Select) 및 순차 진행 지원**
+
   - `SelectNode` 를 통해 다중 선택지 제공
   - `ScenarioScene` 의 열거자(`IEnumerator<Line>`)를 통해 코드에서 간단하게 대사를 순회하고, `SelectOption(int index)` 로 분기 선택
 
 - **이벤트 실행 라인 지원**
+
   - `EventNode` → `EventLine` → `IDialogueEvent` 구조를 통해 대화 중 특정 시점에 커스텀 이벤트 실행 가능
 
 - **이미지/오브젝트 제어 라인**
+
   - `ImageLine`, `DestroyLine` 등을 통해 대화 중 이미지 표시/제거, 타깃 오브젝트 제어용 데이터 표현
 
 - **Addressables 자동 설정**
+
   - `ScenarioSettings` 와 `AddressableProcessor` 를 통해 시나리오 에셋을 Addressables 그룹에 자동 등록
   - 빌드 또는 플레이 모드 진입 시 해당 그룹/라벨을 자동 동기화
 
@@ -134,7 +140,7 @@ README.md                                     # 본 문서
   - 시나리오가 저장될 폴더(`ScenarioDirectory`)
   - Addressables 그룹 이름(`AddressableGroupName`)
   - 시나리오 레이블 프리픽스(`LabelPrefix`)
-  를 설정합니다.
+    를 설정합니다.
 - `AddressableProcessor` 는:
   - 플레이 모드 진입 직전, 빌드 직전마다 `UpdateAddressableGroup()` 를 호출
   - 설정된 `ScenarioDirectory` 및 하위 폴더에서 `Scenario` 타입 에셋을 검색하여 지정된 그룹에 등록
@@ -188,7 +194,7 @@ README.md                                     # 본 문서
    - `Scenario Directory` : 시나리오 에셋(Scenario)을 저장할 폴더 경로
    - `Addressable Group Name` : 시나리오를 등록할 Addressables 그룹 이름
    - `Label Prefix` : 하위 폴더명으로부터 생성될 라벨 접두어
-   를 지정합니다.
+     를 지정합니다.
 
 ### 2. 시나리오 그래프 생성
 
@@ -267,15 +273,197 @@ public class SimpleDialogueRunner : MonoBehaviour
 
 ---
 
+## 커스텀 Line / Node 확장 방법
+
+이 패키지는 기본적으로 `TextLine`, `SelectLine`, `ImageLine`, `DestroyLine`, `EventLine` 등을 제공하지만,  
+프로젝트 특성에 따라 **사용자 정의 대사 타입(커스텀 Line)** 을 추가해 확장할 수 있도록 설계되어 있습니다.  
+커스텀 Line 을 추가하기 위해서는 **런타임용 `Line` 파생 클래스**와 이를 생성하는 **에디터용 노드(`LineNode + ILineProvider`)** 를 함께 구현해야 합니다.
+
+### 1. 런타임용 커스텀 Line 클래스 작성
+
+1. `Runtime/Line` 하위(또는 그와 유사한 위치)에 `Line` 을 상속하는 새 클래스를 생성합니다.
+2. 해당 클래스는 시나리오에서 필요로 하는 데이터를 **순수 데이터 형태**로만 보관하며, 실제 표시/처리는 게임 코드에서 수행합니다.
+
+예시:
+
+```csharp
+using UnityEngine;
+
+[System.Serializable]
+public class MyCustomLine : Line
+{
+    [SerializeField] private string _myValue;
+    public string myValue => _myValue;
+
+#if UNITY_EDITOR
+    public MyCustomLine(string guid, string value) : base(guid)
+    {
+        _myValue = value;
+    }
+#endif
+}
+```
+
+- **중요 사항**
+  - `Line` 기반 클래스가 이미 `guid`, `nextLineGuids`, `nextLines` 를 관리하므로, **분기/연결 정보는 따로 들고 있을 필요가 없습니다.**
+  - 에디터에서만 사용하는 생성자(예: `MyCustomLine(string guid, ...)`) 는 `#if UNITY_EDITOR` 블록으로 감싸 런타임 빌드에 포함되지 않게 합니다.
+
+### 2. 에디터용 NodeData 정의
+
+에디터에서 **그래프 저장/로드 시 추가 상태를 유지**해야 한다면, `NodeData` 를 상속하는 전용 데이터 클래스를 정의합니다.
+
+```csharp
+using System;
+using UnityEngine;
+using Rskanun.DialogueVisualScripting.Editor;
+
+[Serializable]
+public class MyCustomNodeData : NodeData
+{
+    public string value;
+
+    public override Type NodeType => typeof(MyCustomNode);
+}
+```
+
+- `NodeType` 는 이 데이터를 사용하는 에디터 노드 타입을 반환해야 하며,  
+  `VisualScriptingGraphView.LoadNode` 에서 이 정보를 이용해 노드를 복원합니다.
+
+### 3. 에디터용 커스텀 Line 노드 구현 (`LineNode + ILineProvider`)
+
+1. `Editor/Node/Line` 하위에 `LineNode` 를 상속하고 `ILineProvider` 를 구현하는 새 노드를 정의합니다.
+2. `Draw()` 메서드에서 그래프 상에서 사용할 UI(필드, 포트 등)를 구성합니다.
+3. `ToData()` 를 통해 노드를 직렬화 가능한 `NodeData` 로 변환하고,  
+   `ToLine()` 에서 해당 데이터를 기반으로 **런타임용 커스텀 Line 인스턴스를 생성**합니다.
+
+예시:
+
+```csharp
+using UnityEditor.Experimental.GraphView;
+using UnityEngine.UIElements;
+using Rskanun.DialogueVisualScripting;
+using Rskanun.DialogueVisualScripting.Editor;
+
+[NodeMenu("My Custom Line", Order = 50)]
+public class MyCustomNode : LineNode, ILineProvider
+{
+    private TextField valueField;
+
+    public MyCustomNode() : base() { }
+    public MyCustomNode(string guid) : base(guid) { }
+    public MyCustomNode(NodeData data) : base(data)
+    {
+        if (data is not MyCustomNodeData nodeData)
+        {
+            return;
+        }
+
+        // Draw() 이후에 필드가 초기화되어야 하므로, 생성자에서는 값만 저장/복원에 집중
+        valueField?.SetValueWithoutNotify(nodeData.value);
+    }
+
+    public override NodeData ToData()
+    {
+        var data = new MyCustomNodeData();
+
+        data.guid = guid;
+        data.name = nodeName;
+        data.pos = position;
+        data.value = valueField.value;
+
+        return data;
+    }
+
+    public Line ToLine()
+    {
+        var data = ToData() as MyCustomNodeData;
+        return new MyCustomLine(data.guid, data.value);
+    }
+
+    public override void Draw()
+    {
+        base.Draw();
+
+        // Input 포트
+        var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
+        inputPort.portName = "Prev";
+        inputContainer.Add(inputPort);
+
+        // Output 포트
+        var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+        outputPort.portName = "Next";
+        outputContainer.Add(outputPort);
+
+        // 커스텀 데이터 입력용 필드
+        valueField = new TextField("Value");
+        extensionContainer.Add(valueField);
+
+        RefreshExpandedState();
+    }
+}
+```
+
+- **핵심 포인트**
+  - `ILineProvider.ToLine()` 에서 반드시 **런타임용 `Line` 파생 클래스**를 반환해야 합니다.
+  - `VisualScriptingGraphView.BuildScenario` 는 `ILineProvider` 를 구현한 노드만 대상으로 `ToLine()` 을 호출하고,  
+    해당 결과를 `Scenario.AddLine()` 에 넘기므로, 이 구현이 누락되면 런타임 시나리오에 반영되지 않습니다.
+  - `NodeMenuAttribute` 를 통해 **그래프 우클릭 메뉴의 `Create/` 하위에 항목이 등록**됩니다.
+
+### 4. 그래프 메뉴에 노드 노출 (`NodeMenuAttribute`)
+
+`NodeMenuAttribute` 를 사용하면 별도의 등록 코드 없이 **그래프 우클릭 메뉴에 자동으로 노드가 노출**됩니다.
+
+```csharp
+[NodeMenu("My Custom Line", Order = 50)]
+public class MyCustomNode : LineNode, ILineProvider
+{
+    ...
+}
+```
+
+- `MenuName` : `Create/My Custom Line` 과 같이 메뉴 경로에 표시될 이름
+- `Order` : 메뉴 정렬 순서(10 단위로 구분선이 추가되며, 기본 제공 노드들과의 위치를 제어 가능)
+
+`VisualScriptingGraphView.GraphContextMenu` 가 `TypeCache.GetTypesWithAttribute<NodeMenuAttribute>()` 를 통해  
+에디터 어셈블리 내 클래스를 자동 검색하고 메뉴를 구성합니다.
+
+### 5. 빌드/런타임 시 동작 방식
+
+- 커스텀 Line / Node 를 위 구조대로 구현하고 저장하면,
+  - 그래프 저장 시 `GraphData` 와 커스텀 `NodeData` 가 함께 직렬화됩니다.
+  - `BuildScenario` 호출 시 커스텀 노드의 `ToLine()` 이 호출되어 커스텀 `Line` 인스턴스가 `Scenario` 에 포함됩니다.
+  - `Scenario.OnAfterDeserialize` 에서 다른 Line 과 동일하게 `guid` 및 `nextLines` 가 복원되며,
+    런타임에서는 `foreach (var line in scene)` 순회 중 `MyCustomLine` 타입으로 캐스팅해 사용할 수 있습니다.
+
+게임 코드에서는 다음과 같이 기존 분기 처리에 **커스텀 Line 타입을 추가**하면 됩니다.
+
+```csharp
+foreach (var line in scene)
+{
+    if (line is MyCustomLine custom)
+    {
+        // custom.myValue 를 이용한 UI/연출 처리
+    }
+    // 나머지 TextLine / SelectLine / ... 처리
+}
+```
+
+이와 같은 구조를 통해, **핵심 프레임워크 코드는 그대로 유지한 채 프로젝트별로 다양한 대사 표현 타입을 손쉽게 추가**할 수 있습니다.
+
+---
+
 ## 기술 스택
 
 - **언어**
+
   - C# (Unity)
 
 - **런타임/엔진**
+
   - Unity 2021.3 이상
 
 - **에디터 기술**
+
   - `UnityEditor.Experimental.GraphView` 를 이용한 그래프 에디터
   - UIElements / UIToolkit (`UnityEngine.UIElements`, `UnityEditor.UIElements`)
   - `ScriptableObject`, `ScriptableSingleton` 기반 설정/데이터 관리
@@ -290,4 +478,3 @@ public class SimpleDialogueRunner : MonoBehaviour
 
 이 프로젝트는 **MIT License** 하에 배포됩니다.  
 자세한 내용은 `LICENSE` 파일을 참고하세요.
-
