@@ -67,7 +67,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 이름 필드
             nameField = new TextField() { value = "New Line" };
-            nameField.RegisterValueChangedCallback(evt => nodeName = evt.newValue);
             titleContainer.Insert(0, nameField);
 
             // 스타일 적용
