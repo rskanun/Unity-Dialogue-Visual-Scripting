@@ -8,11 +8,9 @@ namespace Rskanun.DialogueVisualScripting
         private IDialogueEvent _dialogueEvent;
         public IDialogueEvent dialogueEvent => _dialogueEvent;
 
-#if UNITY_EDITOR
         public EventLine(string guid, IDialogueEvent dialogueEvent) : base(guid)
         {
             _dialogueEvent = dialogueEvent;
         }
-#endif
     }
 }

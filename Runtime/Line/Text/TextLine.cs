@@ -13,12 +13,10 @@ namespace Rskanun.DialogueVisualScripting
         private string _dialogue;
         public string dialogue => _dialogue;
 
-#if UNITY_EDITOR
         public TextLine(string guid, string name, string text) : base(guid)
         {
             _name = name;
             _dialogue = text;
         }
     }
-#endif
 }

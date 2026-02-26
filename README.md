@@ -295,18 +295,15 @@ public class MyCustomLine : Line
     [SerializeField] private string _myValue;
     public string myValue => _myValue;
 
-#if UNITY_EDITOR
     public MyCustomLine(string guid, string value) : base(guid)
     {
         _myValue = value;
     }
-#endif
 }
 ```
 
 - **중요 사항**
   - `Line` 기반 클래스가 이미 `guid`, `nextLineGuids`, `nextLines` 를 관리하므로, **분기/연결 정보는 따로 들고 있을 필요가 없습니다.**
-  - 에디터에서만 사용하는 생성자(예: `MyCustomLine(string guid, ...)`) 는 `#if UNITY_EDITOR` 블록으로 감싸 런타임 빌드에 포함되지 않게 합니다.
 
 ### 2. 에디터용 NodeData 정의
 

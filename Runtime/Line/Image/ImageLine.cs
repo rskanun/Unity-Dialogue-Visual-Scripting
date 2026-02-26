@@ -17,13 +17,11 @@ namespace Rskanun.DialogueVisualScripting
         private Color _color;
         public Color color => _color;
 
-#if UNITY_EDITOR
         public ImageLine(string guid, Sprite sprite, Vector2 pos, Color color) : base(guid)
         {
             _sprite = sprite;
             _pos = pos;
             _color = color;
         }
-#endif
     }
 }

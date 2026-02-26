@@ -22,13 +22,11 @@ namespace Rskanun.DialogueVisualScripting
         private Color _color;
         public Color color => _color;
 
-#if UNITY_EDITOR
         public TransformLine(string guid, string targetGuid, Vector2 pos, Color color) : base(guid)
         {
             _target = targetGuid;
             _pos = pos;
             _color = color;
         }
-#endif
     }
 }

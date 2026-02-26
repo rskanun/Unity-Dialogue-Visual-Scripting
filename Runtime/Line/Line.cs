@@ -29,11 +29,9 @@ namespace Rskanun.DialogueVisualScripting
             set => _nextLines = value;
         }
 
-#if UNITY_EDITOR
         public Line(string guid)
         {
             _guid = guid;
         }
-#endif
     }
 }

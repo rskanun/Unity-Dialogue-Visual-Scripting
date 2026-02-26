@@ -9,11 +9,9 @@ namespace Rskanun.DialogueVisualScripting
         private string _target;
         public string target => _target;
 
-#if UNITY_EDITOR
         public DestroyLine(string guid, string targetGuid) : base(guid)
         {
             _target = targetGuid;
         }
-#endif
     }
 }
