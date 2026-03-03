@@ -323,6 +323,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 시나리오의 시작인 태그로부터 시나리오 빌드
             var tagNodes = nodes.OfType<LineTag>();
 
+            // 방문 노드
+            var visits = new HashSet<string>();
+
+            // 탐색 시작
             foreach (var tag in tagNodes)
             {
                 // 시나리오 내 대본 구별 번호
@@ -336,6 +340,14 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 while (stack.Count > 0)
                 {
                     var node = stack.Pop();
+
+                    // 재방문 방지
+                    if (visits.Contains(node.guid))
+                    {
+                        continue;
+                    }
+
+                    visits.Add(node.guid);
 
                     // 해당 노드의 출력 포트와 연결된 노드 탐색
                     var ports = node.outputContainer.Query<Port>().ToList();
@@ -359,6 +371,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
                     // 다음 탐색 노드 넣기
                     foreach (var next in nextNodes)
                     {
+                        // 방문한 노드는 넘기기
+                        if (visits.Contains(next.guid))
+                            continue;
+
                         stack.Push(next);
                     }
                 }
