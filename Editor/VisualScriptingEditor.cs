@@ -62,7 +62,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             graphView.OnAnyNodeModified -= OnNodeModified;
             graphView.graphViewChanged -= OnGraphChanged;
 
-            // 키다운 이벤트 등록
+            // 키다운 이벤트 등록 해제
             rootVisualElement.UnregisterCallback<KeyDownEvent>(OnKeyDown);
         }
 
@@ -71,11 +71,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 플레이 모드 진입 시엔 작동하지 않고 넘어가기
             if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                return;
+                //return;
             }
 
             // 현재 작업 내역 임시 세이브
-            graphView.SaveTempGraph(cacheData);
+            graphView.SaveGraph(cacheData);
         }
 
         private void OnKeyDown(KeyDownEvent evt)

@@ -216,20 +216,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             SaveEdge(graphData);
         }
 
-        /// <summary>
-        /// 리로드 되기 전 임시로 데이터 저장
-        /// </summary>
-        public void SaveTempGraph(GraphData graphData)
-        {
-            // 그래프 뷰 저장
-            graphData.viewScale = viewTransform.scale;
-            graphData.viewPosition = viewTransform.position;
-
-            // 현재 노드와 엣지 상황을 임시적으로 저장
-            SaveNode(graphData);
-            SaveEdge(graphData);
-        }
-
         private void SaveNode(GraphData graphData)
         {
             // 기존 데이터 초기화
