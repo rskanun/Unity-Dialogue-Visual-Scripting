@@ -130,6 +130,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             _lastComposition = newValue;
 
+            // 단일 자음/모음 삭제에 대해서만 UI 갱신
+            // 불필요한 갱신 X
+            if (newValue != "") return;
+
             // 다음 프레임에 그려지도록 알림
             _container.MarkDirtyRepaint();
         }
