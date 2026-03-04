@@ -10,7 +10,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private readonly Label _labelElement;
 
         private string _lastComposition = ""; // 조합 중인 글자 비교용
-        private string _focusValue = ""; // 포커싱 이전 이후 비교용
 
         private bool _multiline;
         public bool multiline
@@ -37,7 +36,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 if (_value == value) return;
 
                 // 값 변경 시 ChangeEvent 수신 (UI Toolkit 표준 방식 처리)
-                using (ChangeEvent<string> evt = ChangeEvent<string>.GetPooled(_value, value))
+                using (var evt = ChangeEvent<string>.GetPooled(_value, value))
                 {
                     evt.target = this;
                     SetValueWithoutNotify(value);
@@ -75,26 +74,35 @@ namespace Rskanun.DialogueVisualScripting.Editor
             _container = new IMGUIContainer(() =>
             {
                 // 읽기 전용 설정
-                GUI.enabled = !isReadOnly;
+                EditorGUI.BeginDisabledGroup(isReadOnly);
+
+                // 변화 감지
+                EditorGUI.BeginChangeCheck();
 
                 // multiline 여부에 따른 줄바꿈 설정
-                string value = multiline ? EditorGUILayout.TextArea(_value, GUILayout.Height(80)) : EditorGUILayout.TextField(_value);
+                string newValue = multiline ? EditorGUILayout.TextArea(_value, GUILayout.Height(80)) : EditorGUILayout.TextField(_value);
 
-                // 타이핑에 따른 내용 변화를 매순간 보이기(한글 전용)
-                SetValueWithoutNotify(value);
+                // 변경 내용이 있다면 적용
+                if (EditorGUI.EndChangeCheck())
+                {
+                    using (var evt = ChangeEvent<string>.GetPooled(_value, newValue))
+                    {
+                        evt.target = this;
+                        _value = newValue;
+                        SendEvent(evt);
+                    }
+                }
 
                 // 모음 또는 자음 삭제 시 변화 내용 캐치
                 SetComposition(Input.compositionString);
+
+                EditorGUI.EndDisabledGroup();
             });
 
             // container 스타일 지정
             _container.AddToClassList("line-node__IMGUI-container");
 
             Add(_container);
-
-            // 문장 완성 이벤트 추가
-            RegisterCallback<FocusInEvent>(OnFocusIn);
-            RegisterCallback<FocusOutEvent>(OnFocusOut);
         }
 
         public IMGUI_TextField(string labelText) : this()
@@ -124,24 +132,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 다음 프레임에 그려지도록 알림
             _container.MarkDirtyRepaint();
-        }
-
-        private void OnFocusIn(FocusInEvent evt)
-        {
-            _focusValue = value;
-        }
-
-        private void OnFocusOut(FocusOutEvent evt)
-        {
-            // 완성된 문장이 포커싱 이전과 같은 경우 이벤트 X
-            if (value == _focusValue) return;
-
-            using (ChangeEvent<string> cevt = ChangeEvent<string>.GetPooled(_focusValue, value))
-            {
-                cevt.target = this;
-                _focusValue = value;
-                SendEvent(cevt);
-            }
         }
     }
 }
