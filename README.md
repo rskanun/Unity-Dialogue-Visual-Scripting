@@ -235,8 +235,13 @@ public class SimpleDialogueRunner : MonoBehaviour
 
     private System.Collections.IEnumerator Run()
     {
-        foreach (var line in _scene)
+        Line line = null;
+        int selectIdx = 0;
+
+        while ((line = _scene.GetNext(selectIdx)) != null)
         {
+            selectIdx = 0;
+
             if (line is TextLine text)
             {
                 Debug.Log($"{text.name}: {text.dialogue}");
@@ -246,7 +251,7 @@ public class SimpleDialogueRunner : MonoBehaviour
             {
                 // 선택지 UI 노출 후 플레이어가 선택할 때까지 대기
                 int chosenIndex = 0; // UI 결과로부터 선택 인덱스 결정
-                _scene.SelectOption(chosenIndex);
+                selectIdx = chosenIndex;
             }
             else if (line is ImageLine image)
             {
