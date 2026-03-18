@@ -5,6 +5,8 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Linq;
+
 
 #if USE_LOCALIZATION
 using UnityEngine.Localization.Settings;
@@ -86,11 +88,14 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            bool isPressedControlKey = (evt.modifiers & (EventModifiers.Control | EventModifiers.Command)) != 0;
+            bool isPressedControlKey = evt.modifiers == EventModifiers.Control || evt.modifiers == EventModifiers.Command;
             if (evt.keyCode == KeyCode.S && isPressedControlKey)
             {
                 // 에디터 저장 실행
                 Save();
+
+                // 다른 곳 저장 방지
+                evt.StopPropagation();
             }
         }
 
