@@ -41,7 +41,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
         {
             var data = ToData() as ImageNodeData;
 
-            return new ImageLine(data.guid, data.sprite, data.spritePos, data.color);
+            string path = AssetDatabase.GetAssetPath(data.sprite);
+            string guid = AssetDatabase.AssetPathToGUID(path);
+            var spriteRef = new AssetReferenceSprite(guid);
+
+            return new ImageLine(data.guid, spriteRef, data.spritePos, data.color);
         }
 
         public override NodeData ToData()

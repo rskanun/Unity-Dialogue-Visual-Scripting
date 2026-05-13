@@ -6,8 +6,8 @@ namespace Rskanun.DialogueVisualScripting
     public class ImageLine : Line
     {
         [SerializeField]
-        private Sprite _sprite;
-        public Sprite sprite => _sprite;
+        private AssetReferenceSprite _spriteRef;
+        public AssetReferenceSprite spriteRef => _spriteRef;
 
         [SerializeField]
         private Vector2 _pos;
@@ -17,9 +17,9 @@ namespace Rskanun.DialogueVisualScripting
         private Color _color;
         public Color color => _color;
 
-        public ImageLine(string guid, Sprite sprite, Vector2 pos, Color color) : base(guid)
+        public ImageLine(string guid, AssetReferenceSprite spriteRef, Vector2 pos, Color color) : base(guid)
         {
-            _sprite = sprite;
+            _spriteRef = spriteRef;
             _pos = pos;
             _color = color;
         }
