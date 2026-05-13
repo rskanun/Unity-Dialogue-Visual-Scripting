@@ -1,10 +1,6 @@
 using UnityEngine;
 using System.IO;
 
-#if ODIN_INSPECTOR
-using Sirenix.OdinInspector;
-#endif
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -71,7 +67,6 @@ namespace Rskanun.DialogueVisualScripting
         }
 
         [SerializeField]
-        [FolderPath(RequireExistingPath = true)]
         private string _scenarioDirectory;
         public static string ScenarioDirectory => Instance._scenarioDirectory;
 
