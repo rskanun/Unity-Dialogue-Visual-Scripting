@@ -72,6 +72,9 @@ namespace Rskanun.DialogueVisualScripting
 
         [Header("Addressable Settings")]
         [SerializeField]
+        private bool _autoRegisterAddressableGroups;
+        public static bool AutoRegisterAddressableGroups => Instance._autoRegisterAddressableGroups;
+        [SerializeField]
         private string _addressableGroupName;
         public static string AddressableGroupName => Instance._addressableGroupName;
         [SerializeField]

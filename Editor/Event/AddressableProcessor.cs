@@ -24,6 +24,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
         /// </summary>
         private static void OnPlayModeStateChanged(PlayModeStateChange state)
         {
+            if (!ScenarioSettings.AutoRegisterAddressableGroups) return;
+
             // 플레이 모드 직전 실행
             if (state == PlayModeStateChange.ExitingEditMode)
             {
