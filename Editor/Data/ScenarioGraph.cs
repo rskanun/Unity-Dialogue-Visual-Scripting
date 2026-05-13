@@ -20,7 +20,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
             set => _graphData = value;
         }
 
-#if USE_LOCALIZATION
         // 설정 데이터
         [SerializeField]
         private StringTableCollection _nameTableCollection;
@@ -53,8 +52,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 var entries = _graphData.nodes.OfType<TextNodeData>()
                     .ToDictionary(data => data.dialogueKey, data => data.dialogue);
 
+#if USE_LOCALIZATION
                 // 로컬라이제이션 테이블 업데이트
                 OnTableChanged(_dialogueTableCollection, value, entries);
+#endif
 
                 _dialogueTableCollection = value;
             }
@@ -76,13 +77,16 @@ namespace Rskanun.DialogueVisualScripting.Editor
                     .SelectMany(data => data.optionKeys.Zip(data.options, (k, v) => new { k, v }))
                     .ToDictionary(pair => pair.k, pair => pair.v);
 
+#if USE_LOCALIZATION
                 // 로컬라이제이션 테이블 업데이트
                 OnTableChanged(_selectionTableCollection, value, entries);
+#endif
 
                 _selectionTableCollection = value;
             }
         }
 
+#if USE_LOCALIZATION
         /// <summary>
         /// 해당 에셋이 삭제될 때, 로컬라이제이션 테이블에 등록된 값들 삭제
         /// </summary>
