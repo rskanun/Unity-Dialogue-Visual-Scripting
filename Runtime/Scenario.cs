@@ -94,13 +94,13 @@ namespace Rskanun.DialogueVisualScripting
             scenarios.Clear();
         }
 
-        public void Copy(Scenario source, Scenario target)
+        public void CopyTo(Scenario target)
         {
-            target.nameTable = source.nameTable;
-            target.dialogueTable = source.dialogueTable;
-            target.selectionTable = source.selectionTable;
+            target.nameTable = nameTable;
+            target.dialogueTable = dialogueTable;
+            target.selectionTable = selectionTable;
 
-            target.serializedScenarios = new List<ScenarioEntry>(source.serializedScenarios);
+            target.serializedScenarios = new List<ScenarioEntry>(serializedScenarios);
         }
 #endif
 
