@@ -300,11 +300,19 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void LoadEdge(GraphData file)
         {
+            var nodeGuidLookup = nodes.Select(node => node as LineNode)
+                .Where(node => node != null)
+                .ToDictionary(node => node.guid, node => node);
+
             foreach (var data in file.edges)
             {
                 // guid가 일치하는 노드 가져오기
-                var outputNode = nodes.Where(n => (n as LineNode).guid == data.outputNodeGuid).FirstOrDefault();
-                var inputNode = nodes.Where(n => (n as LineNode).guid == data.inputNodeGuid).FirstOrDefault();
+                if (!nodeGuidLookup.TryGetValue(data.outputNodeGuid, out var outputNode) ||
+                    !nodeGuidLookup.TryGetValue(data.inputNodeGuid, out var inputNode))
+                {
+                    // 하나라도 현재 그래프에 없는 노드라면 엣지 생성 X
+                    continue;
+                }
 
                 // 포트 가져오기
                 var outputPort = outputNode.outputContainer[data.outputIndex] as Port;
