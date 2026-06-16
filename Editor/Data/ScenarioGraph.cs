@@ -11,6 +11,10 @@ namespace Rskanun.DialogueVisualScripting.Editor
 {
     public class ScenarioGraph : Scenario
     {
+        // 빌드 이후 변경 내용 존재 여부
+        private bool _isDirty;
+        public bool IsDirty => _isDirty;
+
         // 에디터 전용 그래프 데이터
         [SerializeField]
         private GraphData _graphData = new GraphData();
@@ -84,6 +88,22 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
                 _selectionTableCollection = value;
             }
+        }
+
+        /// <summary>
+        /// 빌드 이후와 달라진 데이터 값이 있다고 알림
+        /// </summary>
+        public void MarkAsUnbuilt()
+        {
+            _isDirty = true;
+        }
+
+        /// <summary>
+        /// 빌드 완료 후 내용 변경이 없어졌음을 알림
+        /// </summary>
+        public void MarkAsBuilt()
+        {
+            _isDirty = false;
         }
 
 #if USE_LOCALIZATION

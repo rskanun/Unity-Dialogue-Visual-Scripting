@@ -38,6 +38,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
         /// </summary>
         public void OnPreprocessBuild(BuildReport report)
         {
+            if (!ScenarioSettings.AutoRegisterAddressableGroups) return;
+
             UpdateAddressableGroup();
         }
 

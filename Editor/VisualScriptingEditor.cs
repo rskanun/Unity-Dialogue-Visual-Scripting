@@ -275,6 +275,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             RefreshCacheData(currentFile.graphData);
 
             // 에셋 파일에 덮어씌우기
+            currentFile.MarkAsUnbuilt();
             EditorUtility.SetDirty(currentFile);
             AssetDatabase.SaveAssets();
 
@@ -324,6 +325,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
             EditorPrefs.SetString(VisualScriptingSettings.LastOpenedFileKey, path);
 
             // 변경 사항 기록
+            loadFile.MarkAsUnbuilt();
             EditorUtility.SetDirty(loadFile);
             AssetDatabase.SaveAssets();
 
