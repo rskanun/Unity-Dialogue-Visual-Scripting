@@ -213,7 +213,16 @@ namespace Rskanun.DialogueVisualScripting.Editor
         /// </summary>
         public void OpenFile()
         {
-            string path = EditorUtility.OpenFilePanel("Load File", "Assets", "asset");
+            string lastOpenedPath = EditorPrefs.GetString(VisualScriptingSettings.LastOpenedFileKey);
+            string lastOpenedDir = Path.GetDirectoryName(lastOpenedPath);
+            if (!Directory.Exists(lastOpenedDir))
+            {
+                // 마지막으로 열었던 파일이 어떠한 이유로 존재하지 않는 경우
+                // 디폴트로 Assets 폴더부터 열기
+                lastOpenedDir = "Assets";
+            }
+
+            string path = EditorUtility.OpenFilePanel("Load File", lastOpenedDir, "asset");
 
             // 파일 유무 파악
             if (string.IsNullOrEmpty(path))
