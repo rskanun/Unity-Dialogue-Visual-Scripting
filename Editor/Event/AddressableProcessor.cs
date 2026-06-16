@@ -62,7 +62,8 @@ namespace Rskanun.DialogueVisualScripting.Editor
             if (group == null)
             {
                 // 새로 만들기
-                group = settings.CreateGroup(ScenarioSettings.AddressableGroupName, false, false, true, null);
+                var groupName = ScenarioSettings.AddressableGroupName;
+                group = settings.CreateGroup(groupName, false, false, true, null);
             }
 
             // 최상위 폴더 내 시나리오 탐색
@@ -88,12 +89,24 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             foreach (var guid in guids)
             {
+                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
+
+                // '.build.asset' 형태의 시나리오 객체만 추가
+                if (!assetPath.EndsWith(".build.asset"))
+                {
+                    continue;
+                }
+
+                // 그래프 에셋 제외
+                var assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
+                if (assetType == typeof(ScenarioGraph))
+                {
+                    continue;
+                }
+
                 // 에셋을 그룹에 등록
                 var entry = settings.CreateOrMoveEntry(guid, group);
-
                 if (entry == null) continue;
-
-                var assetPath = AssetDatabase.GUIDToAssetPath(guid);
 
                 // 이름 설정
                 entry.address = Path.GetFileNameWithoutExtension(assetPath);

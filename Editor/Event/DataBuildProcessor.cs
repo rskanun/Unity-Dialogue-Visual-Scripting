@@ -18,7 +18,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
         }
 
         /// <summary>
-        /// ÇÃ·¹ÀÌ ¸ğµå º¯°æ ½Ã È®ÀÎ ·ÎÁ÷
+        /// í”Œë ˆì´ ëª¨ë“œ ë³€ê²½ ì‹œ í™•ì¸ ë¡œì§
         /// </summary>
         private static void OnPlayModeChanged(PlayModeStateChange state)
         {
@@ -27,7 +27,29 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 return;
             }
 
-            // ºôµå ¾È µÈ ±×·¡ÇÁ È®ÀÎ
+            CheckScenarioBuild();
+        }
+
+        /// <summary>
+        /// ë¹Œë“œ ì‹œ í™•ì¸ ë¡œì§
+        /// </summary>
+        public void OnPreprocessBuild(BuildReport repport)
+        {
+            CheckScenarioBuild();
+        }
+
+        public static void BuildScenarios()
+        {
+            // ë¹Œë“œë˜ì§€ ì•Šì€ ê·¸ë˜í”„ íƒìƒ‰
+            var unbuiltGraphs = GetUnbuiltGraphs();
+
+            // ê·¸ë˜í”„ ë¹Œë“œ ì§„í–‰
+            BuildScenarios(unbuiltGraphs);
+        }
+
+        private static void CheckScenarioBuild()
+        {
+            // ë¹Œë“œ ì•ˆ ëœ ê·¸ë˜í”„ í™•ì¸
             var unbuiltGraphs = GetUnbuiltGraphs();
             if (unbuiltGraphs == null || unbuiltGraphs.Count == 0)
             {
@@ -36,28 +58,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             bool isBuild = EditorUtility.DisplayDialog(
                 "Dialogue Visual Scripting Alert",
-                "ºôµå µÇÁö ¾ÊÀº »õ ´ëÈ­¸¦ È®ÀÎÇß½À´Ï´Ù.\nÁö±İ ºôµåÇÏ°Ú½À´Ï±î?",
+                "ë¹Œë“œ ë˜ì§€ ì•Šì€ ìƒˆ ëŒ€í™”ë¥¼ í™•ì¸í–ˆìŠµë‹ˆë‹¤.\nì§€ê¸ˆ ë¹Œë“œí•˜ê² ìŠµë‹ˆê¹Œ?",
                 "Build Now", "Skip"
             );
 
-
-        }
-
-        /// <summary>
-        /// ºôµå ½Ã È®ÀÎ ·ÎÁ÷
-        /// </summary>
-        public void OnPreprocessBuild(BuildReport repport)
-        {
-
-        }
-
-        public static void BuildScenarios()
-        {
-            // ºôµåµÇÁö ¾ÊÀº ±×·¡ÇÁ Å½»ö
-            var unbuiltGraphs = GetUnbuiltGraphs();
-
-            // ±×·¡ÇÁ ºôµå ÁøÇà
-            BuildScenarios(unbuiltGraphs);
+            // ë¹Œë“œì— ë™ì˜í•œ ê²½ìš°ë§Œ ë¹Œë“œ ì§„í–‰
+            if (isBuild)
+                BuildScenarios(unbuiltGraphs);
         }
 
         private static List<ScenarioGraph> GetUnbuiltGraphs()
@@ -68,7 +75,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             if (string.IsNullOrEmpty(dir) || !Directory.Exists(dir))
             {
-                Debug.LogWarning("[DataBuildProcessor] ½Ã³ª¸®¿À Æú´õ °æ·Î¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogWarning("[DataBuildProcessor] ì‹œë‚˜ë¦¬ì˜¤ í´ë” ê²½ë¡œë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return unbuiltGraphs;
             }
 
@@ -78,7 +85,7 @@ namespace Rskanun.DialogueVisualScripting.Editor
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 var graph = AssetDatabase.LoadAssetAtPath<ScenarioGraph>(assetPath);
 
-                // ºôµå ÀÌÈÄ¿Í ´Ş¶óÁø ±×·¡ÇÁ¸¸ ¼±ÅÃ
+                // ë¹Œë“œ ì´í›„ì™€ ë‹¬ë¼ì§„ ê·¸ë˜í”„ë§Œ ì„ íƒ
                 if (graph != null && graph.IsDirty)
                 {
                     unbuiltGraphs.Add(graph);
@@ -94,31 +101,31 @@ namespace Rskanun.DialogueVisualScripting.Editor
             {
                 if (graph == null) continue;
 
-                // ºôµå ¿¡¼Â ÀúÀå °æ·Î(±âÁ¸ ¿¡¼Â °æ·Î)
+                // ë¹Œë“œ ì—ì…‹ ì €ì¥ ê²½ë¡œ(ê¸°ì¡´ ì—ì…‹ ê²½ë¡œ)
                 var assetPath = AssetDatabase.GetAssetPath(graph);
                 var fileDir = Path.GetDirectoryName(assetPath);
                 var fileName = graph.name + ".build.asset";
                 var buildPath = Path.Combine(fileDir, fileName);
 
-                // ÀÌÀü ºôµåµÈ ÆÄÀÏÀÌ ÀÖ´Â Áö Å½»ö
+                // ì´ì „ ë¹Œë“œëœ íŒŒì¼ì´ ìˆëŠ” ì§€ íƒìƒ‰
                 var scenario = AssetDatabase.LoadAssetAtPath<Scenario>(buildPath);
                 bool isNewAsset = false;
 
                 if (scenario == null)
                 {
-                    // ÀÌÀü¿¡ ºôµåµÈ ÆÄÀÏÀÌ ¾ø´Â °æ¿ì »õ·Î »ı¼º
+                    // ì´ì „ì— ë¹Œë“œëœ íŒŒì¼ì´ ì—†ëŠ” ê²½ìš° ìƒˆë¡œ ìƒì„±
                     scenario = ScriptableObject.CreateInstance<Scenario>();
                     isNewAsset = true;
                 }
 
-                // ½Ã³ª¸®¿À ¿¡¼Â »ı¼º ¹× º¹»ç
+                // ì‹œë‚˜ë¦¬ì˜¤ ì—ì…‹ ìƒì„± ë° ë³µì‚¬
                 scenario.CopyTo(graph);
 
-                // ¿¡¼Â »õ·Î ¸¸µé±â ¶Ç´Â µ¤¾î¾²±â ÇüÅÂ·Î ÀúÀå
+                // ì—ì…‹ ìƒˆë¡œ ë§Œë“¤ê¸° ë˜ëŠ” ë®ì–´ì“°ê¸° í˜•íƒœë¡œ ì €ì¥
                 if (isNewAsset) AssetDatabase.CreateAsset(scenario, buildPath);
                 else EditorUtility.SetDirty(scenario);
 
-                // ºôµå Ã³¸®
+                // ë¹Œë“œ ì²˜ë¦¬
                 graph.MarkAsBuilt();
             }
 
