@@ -5,7 +5,6 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Linq;
 
 
 #if USE_LOCALIZATION
@@ -70,12 +69,6 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         private void OnBeforeAssemblyReload()
         {
-            // 플레이 모드 진입 시엔 작동하지 않고 넘어가기
-            if (EditorApplication.isPlayingOrWillChangePlaymode)
-            {
-                //return;
-            }
-
             // 현재 작업 내역 임시 세이브
             graphView.SaveGraph(cacheData);
         }
