@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -40,11 +41,16 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
         public static void BuildScenarios()
         {
-            // 빌드되지 않은 그래프 탐색
-            var unbuiltGraphs = GetUnbuiltGraphs();
+            // 모든 그래프 탐색
+            var directory = ScenarioSettings.ScenarioDirectory;
+            var guids = AssetDatabase.FindAssets("t:ScenarioGraph", new string[] { directory });
+            var assetPaths = guids.Select(guid => AssetDatabase.GUIDToAssetPath(guid));
+            var graphs = assetPaths.Select(path => AssetDatabase.LoadAssetAtPath<ScenarioGraph>(path))
+                .Where(graph => graph != null)
+                .ToList();
 
             // 그래프 빌드 진행
-            BuildScenarios(unbuiltGraphs);
+            BuildScenarios(graphs);
         }
 
         private static void CheckScenarioBuild()
