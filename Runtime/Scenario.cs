@@ -143,6 +143,11 @@ namespace Rskanun.DialogueVisualScripting
             return scenarios.ContainsKey(id);
         }
 
+        public List<Line> GetAllLines()
+        {
+            return serializedScenarios.SelectMany(entry => entry.lines).ToList();
+        }
+
         // 직렬화 저장용 객체
         [System.Serializable]
         private class ScenarioEntry
