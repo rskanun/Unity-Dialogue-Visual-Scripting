@@ -39,12 +39,18 @@ namespace Rskanun.DialogueVisualScripting
         public void OnBeforeSerialize() { }
         public void OnAfterDeserialize()
         {
-            // 직렬화시킨 구조를 Dictionary 형태로 변경
+            // 라인 서로 연결 등록
+            UpdateNextLines();
+
+            // 직렬화 -> Dictionary로 변환
             scenarios = serializedScenarios.ToDictionary(
                 entry => entry.id,
                 entry => new ScenarioScene(FindIntroLine(entry.lines))
             );
+        }
 
+        private void UpdateNextLines()
+        {
             // guid로 저장된 연결 라인 값에 실제 값 넣기
             // 빠른 탐색을 위한 Dictionary 타입으로 변경
             var dict = serializedScenarios.SelectMany(entry => entry.lines)
