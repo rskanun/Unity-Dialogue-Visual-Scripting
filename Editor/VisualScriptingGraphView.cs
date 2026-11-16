@@ -6,6 +6,10 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using System.Reflection;
+using System.IO;
+using UnityEditor.Localization.Plugins.XLIFF.V20;
+
+
 
 
 #if USE_LOCALIZATION
@@ -40,6 +44,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
 
             // 그래프 뷰 업데이트 이벤트 등록
             graphViewChanged += OnElementRemoved;
+            serializeGraphElements = SerializeElements;
+            canPasteSerializedData = CanPasteSerializedDataCallbacks;
+            unserializeAndPaste = UnserializeAndPasteElements;
         }
 
         private GraphViewChange OnElementRemoved(GraphViewChange graphViewChange)
@@ -60,6 +67,144 @@ namespace Rskanun.DialogueVisualScripting.Editor
         private void NotifyAnyNodeModified()
         {
             OnAnyNodeModified?.Invoke();
+        }
+
+        private string SerializeElements(IEnumerable<GraphElement> elements)
+        {
+            var wrapper = new CopyPasteWrapper();
+            var copyNodeGuids = new HashSet<string>();
+
+            // LineNode 복사
+            foreach (var e in elements)
+            {
+                if (e is not LineNode lineNode) continue;
+
+                // NodeData로 만들어 직렬화
+                wrapper.nodes.Add(lineNode.ToData());
+                copyNodeGuids.Add(lineNode.guid);
+            }
+
+            // 복사된 개체가 없는 경우
+            if (wrapper.nodes.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            // Edge 복사
+            foreach (var e in elements)
+            {
+                if (e is not Edge edge) continue;
+                if (edge.output?.node is not LineNode outputNode) continue;
+                if (edge.input?.node is not LineNode inputNode) continue;
+
+                // 선택된 Node 간의 Edge만 복사
+                if (!copyNodeGuids.Contains(outputNode.guid)) continue;
+                if (!copyNodeGuids.Contains(inputNode.guid)) continue;
+
+                wrapper.edges.Add(new EdgeData
+                {
+                    outputNodeGuid = outputNode.guid,
+                    outputIndex = outputNode.outputContainer.IndexOf(edge.output),
+                    inputNodeGuid = inputNode.guid,
+                    inputIndex = inputNode.inputContainer.IndexOf(edge.input)
+                });
+            }
+
+            return JsonUtility.ToJson(wrapper);
+        }
+
+        private bool CanPasteSerializedDataCallbacks(string data)
+        {
+            if (string.IsNullOrEmpty(data)) return false;
+
+            try
+            {
+                var wrapper = JsonUtility.FromJson<CopyPasteWrapper>(data);
+                return wrapper != null && wrapper.nodes != null && wrapper.nodes.Count > 0;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void UnserializeAndPasteElements(string operationName, string data)
+        {
+            var wrapper = JsonUtility.FromJson<CopyPasteWrapper>(data);
+            if (wrapper == null || wrapper.nodes == null || wrapper.nodes.Count == 0)
+            {
+                return;
+            }
+
+            ClearSelection();
+
+            // 기존 GUID -> 새 GUID 맵핑 테이블
+            var guidMap = new Dictionary<string, string>(wrapper.nodes.Count);
+            var graphNodeGuids = nodes.OfType<LineNode>().Select(n => n.guid).ToHashSet();
+            foreach (var nodeData in wrapper.nodes)
+            {
+                if (nodeData == null) continue;
+
+                // 중복인 경우에만 새로 등록
+                string guid = graphNodeGuids.Contains(nodeData.guid) ? Guid.NewGuid().ToString() : nodeData.guid;
+                guidMap[nodeData.guid] = guid;
+            }
+
+            // NodeData 기반 LineNode 생성
+            var createdNodes = new Dictionary<string, LineNode>(wrapper.nodes.Count);
+            foreach (var nodeData in wrapper.nodes)
+            {
+                if (nodeData == null) continue;
+
+                // 새 GUID 할당 및 위치 살짝 옮기기
+                string newGuid = guidMap[nodeData.guid];
+                nodeData.guid = newGuid;
+                nodeData.pos += new Vector2(30f, 30f);
+
+                // 타입에 맞는 노드 생성
+                var type = nodeData.NodeType;
+                var node = Activator.CreateInstance(type, nodeData) as LineNode;
+
+                // 알맞은 노드를 생성하지 못했다면 스킵
+                if (node == null) continue;
+
+                // 해당 노드에 이벤트 등록
+                node.OnNodeModified += NotifyAnyNodeModified;
+
+                AddElement(node);
+                AddToSelection(node);
+                createdNodes[node.guid] = node;
+            }
+
+            // 복제 노드 Edge 재연결
+            foreach (var edgeData in wrapper.edges)
+            {
+                // 복제 노드와 연결되지 않은 Edge 차단
+                if (!guidMap.TryGetValue(edgeData.outputNodeGuid, out string outputGuid)) continue;
+                if (!guidMap.TryGetValue(edgeData.inputNodeGuid, out string inputGuid)) continue;
+
+                // 생성 노드에 연결될 수 없는 Edge 차단
+                if (!createdNodes.TryGetValue(outputGuid, out var outputNode)) continue;
+                if (!createdNodes.TryGetValue(inputGuid, out var inputNode)) continue;
+
+                // 포트 가져오기
+                var outputPort = outputNode.outputContainer[edgeData.outputIndex] as Port;
+                var inputPort = inputNode.inputContainer[edgeData.inputIndex] as Port;
+
+                // 유효성 판단
+                if (outputPort == null || inputPort == null) continue;
+
+                // 투 포트를 연결하는 엣지 생성
+                var newEdge = outputPort.ConnectTo(inputPort);
+                AddElement(newEdge);
+                AddToSelection(newEdge);
+            }
+
+            // 완료 라이프사이클 호출
+            foreach (var node in createdNodes.Values)
+            {
+                node.OnLoadCompleted();
+            }
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -192,13 +337,17 @@ namespace Rskanun.DialogueVisualScripting.Editor
             SaveGraph(graphData);
 
             // 인게임에 쓰일 수 있는 시나리오 파일로 변환
-            BuildScenario(graph);
+            CompileScenario(graph);
 
 #if USE_LOCALIZATION
             // 로컬라이제이션 업데이트
             SyncDialogueTable(graph.dialogueTableCollection, graphData.nodes, oldNodes);
             SyncSelectionTable(graph.selectionTableCollection, graphData.nodes, oldNodes);
 #endif
+
+            // 에셋 저장
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
         }
 
         /// <summary>
@@ -323,10 +472,56 @@ namespace Rskanun.DialogueVisualScripting.Editor
             }
         }
 
+        private void CompileScenario(ScenarioGraph graph)
+        {
+            if (graph == null) return;
+
+            // 빌드 에셋 저장 경로
+            var buildPath = GetBuildPath(graph);
+
+            // 이전 빌드된 파일이 있는 지 탐색
+            var scenario = AssetDatabase.LoadAssetAtPath<Scenario>(buildPath);
+            bool isNewAsset = false;
+
+            if (scenario == null)
+            {
+                // 이전에 빌드된 파일이 없는 경우 새로 생성
+                scenario = ScriptableObject.CreateInstance<Scenario>();
+                isNewAsset = true;
+            }
+
+            // 생성된 런타임 객체 시나리오에 데이터 저장
+            BuildScenario(scenario);
+
+#if USE_LOCALIZATION
+            // 언어 테이블 데이터 저장
+            scenario.nameTable = graph.nameTableCollection?.name;
+            scenario.dialogueTable = graph.dialogueTableCollection?.name;
+            scenario.selectionTable = graph.selectionTableCollection?.name;
+#endif
+
+            // 에셋 새로 만들기 또는 덮어쓰기 형태로 저장
+            if (isNewAsset) AssetDatabase.CreateAsset(scenario, buildPath);
+            else EditorUtility.SetDirty(scenario);
+
+            // 빌드 처리
+            graph.MarkAsBuilt();
+        }
+
+        private string GetBuildPath(ScenarioGraph graph)
+        {
+            if (graph == null) return null;
+
+            // 기존 에셋 경로에 저장
+            var assetPath = AssetDatabase.GetAssetPath(graph);
+            var fileDir = Path.GetDirectoryName(assetPath);
+            var fileName = graph.name + ".build.asset";
+            return Path.Combine(fileDir, fileName);
+        }
+
         private void BuildScenario(Scenario scenario)
         {
-            // 이전 시나리오 대사 초기화
-            scenario.LineClear();
+            if (scenario == null) return;
 
             // 시나리오의 시작인 태그로부터 시나리오 빌드
             var tagNodes = nodes.OfType<LineTag>();

@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using System;
+
+
 
 #if USE_LOCALIZATION
 using UnityEditor.Localization;
@@ -11,6 +15,9 @@ namespace Rskanun.DialogueVisualScripting.Editor
 {
     public class ScenarioGraph : Scenario
     {
+        // 복사 확인용 에셋 GUID
+        [SerializeField, HideInInspector] private string _assetInstanceId;
+
         // 빌드 이후 변경 내용 존재 여부
         private bool _isDirty;
         public bool IsDirty => _isDirty;
@@ -87,6 +94,58 @@ namespace Rskanun.DialogueVisualScripting.Editor
 #endif
 
                 _selectionTableCollection = value;
+            }
+        }
+
+        private void OnValidate()
+        {
+            string curAssetGuid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(this));
+
+            if (string.IsNullOrEmpty(_assetInstanceId))
+            {
+                _assetInstanceId = curAssetGuid;
+            }
+
+            // 복사 확인
+            bool isAssetDuplicated = !string.IsNullOrEmpty(curAssetGuid) && _assetInstanceId != curAssetGuid;
+            if (isAssetDuplicated)
+            {
+                // 복사 되었으면 모든 노드 GUID 새로 생성
+                _assetInstanceId = curAssetGuid;
+                RegeneratedAllNodesGuid();
+
+                MarkAsUnbuilt();
+                EditorUtility.SetDirty(this);
+
+                return;
+            }
+        }
+
+        private void RegeneratedAllNodesGuid()
+        {
+            // 기존 GUID -> 새 GUID 맵핑 테이블
+            var guidMap = new Dictionary<string, string>(graphData.nodes.Count);
+
+            // 새 GUID 설정
+            foreach (var node in graphData.nodes)
+            {
+                string newGuid = Guid.NewGuid().ToString();
+                guidMap[node.guid] = newGuid;
+                node.guid = newGuid;
+            }
+
+            // 새 GUID에 맞춰 엣지 정보 변경
+            foreach (var edge in graphData.edges)
+            {
+                if (guidMap.TryGetValue(edge.outputNodeGuid, out var newOutputGuid))
+                {
+                    edge.outputNodeGuid = newOutputGuid;
+                }
+
+                if (guidMap.TryGetValue(edge.inputNodeGuid, out var newInputGuid))
+                {
+                    edge.inputNodeGuid = newInputGuid;
+                }
             }
         }
 
