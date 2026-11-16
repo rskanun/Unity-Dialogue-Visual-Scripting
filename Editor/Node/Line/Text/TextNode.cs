@@ -60,14 +60,11 @@ namespace Rskanun.DialogueVisualScripting.Editor
             var useLocalization = VisualScriptingSettings.UseLocalization;
             string entryValue = GetSpeakerEntryValue(key); // 키 값을 통해 찾아온 이름
             string textValue = (useLocalization && entryValue != null) ? entryValue : value; // 키 값으로 가져올 이름이 있는 경우에만 해당 이름 사용(그 외엔 저장 당시의 이름 사용)
-            string dropdownValue = (entryValue != null) ? entryValue : $"Error: key({key}) is not found"; // 키 값에 맞는 값이 없다면 오류를 이름으로 설정
+            string dropdownValue = (entryValue != null) ? entryValue : noneLabel; // 키 값에 맞는 값이 없다면 None 띄우기
 
             // 이름 값 설정
             nameDropdownField.SetValueWithoutNotify(dropdownValue);
             nameField.SetValueWithoutNotify(textValue);
-
-            // 오류 여부 수정
-            hasDialogueKeyError = (entryValue == null);
         }
 
         private string GetSpeakerEntryValue(string key)
@@ -97,10 +94,13 @@ namespace Rskanun.DialogueVisualScripting.Editor
             // 키 값을 통해 대사 받아오기
             var useLocalization = VisualScriptingSettings.UseLocalization;
             var entryValue = GetDialogueEntryValue(key);
-            var text = (entryValue != null) ? entryValue : $"Error: key({key}) is not found";
+            var text = (useLocalization && entryValue != null) ? entryValue : value; // 키 값에 맞는 값이 없는 경우, 저장된 값 사용
 
-            // 대사 값 설정(로컬라이제이션을 사용하지 않는 경우 저장 당시의 값 사용)
-            dialogueField.SetValueWithoutNotify((useLocalization && !string.IsNullOrEmpty(value)) ? text : value);
+            // 대사 값 설정
+            dialogueField.SetValueWithoutNotify(text);
+
+            // 오류 여부 수정
+            hasDialogueKeyError = (entryValue == null);
         }
 
         private string GetDialogueEntryValue(string key)
